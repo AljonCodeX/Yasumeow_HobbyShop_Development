@@ -1,0 +1,46 @@
+// Login / Register pages (reuses $hero-bg from _home.scss)
+.auth-card {
+    max-width: 900px;
+    margin: 0 auto;
+    border: 0;
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 .5rem 1.5rem rgba(0, 0, 0, .15);
+}
+
+// Left slideshow panel (desktop only)
+.auth-side {
+    position: relative;
+    min-height: 520px;
+    background-color: $hero-bg;
+
+    .carousel,
+    .carousel-inner,
+    .carousel-item {
+        height: 100%;
+    }
+
+    // Own layer at the back, so the fade effect stays behind the text
+    .carousel {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+    }
+}
+
+.auth-slide-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+// Text and dark fade stay on top of the slides
+.auth-side-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    display: flex;
+    align-items: flex-end;
+    padding: 2rem;
+    background: linear-gradient(180deg, rgba($hero-bg, .1) 0%, rgba($hero-bg, .4) 45%, rgba($hero-bg, .95) 100%);
+}
