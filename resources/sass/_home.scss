@@ -1,5 +1,6 @@
 // Home page hero banner
 $hero-bg: #0d0b1f;
+$brand-cyan: #0dcaf0;
 
 // Mobile first: image on top, text below on a solid background
 .hero-banner {
@@ -24,4 +25,30 @@ $hero-bg: #0d0b1f;
         background-size: cover;
         background-position: center right;
     }
+}
+
+// Upcoming Events cards
+.event-card-img {
+    height: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $brand-cyan;
+    background: linear-gradient(135deg, #1b1446, $hero-bg);
+
+    > i {
+        font-size: 3rem;
+    }
+}
+
+.event-date {
+    position: absolute;
+    top: .75rem;
+    left: .75rem;
+    padding: .25rem .6rem;
+    border-radius: .5rem;
+    background-color: #fff;
+    color: $hero-bg;
+    text-align: center;
+    line-height: 1.1;
 }
