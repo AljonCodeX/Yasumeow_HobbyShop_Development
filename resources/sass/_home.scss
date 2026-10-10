@@ -52,3 +52,50 @@ $brand-cyan: #0dcaf0;
     text-align: center;
     line-height: 1.1;
 }
+
+// Shop by Category tiles
+.category-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+@media (min-width: 768px) {
+    .category-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (min-width: 992px) {
+    .category-grid {
+        grid-template-columns: repeat(7, 1fr);
+    }
+}
+
+.category-tile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: .5rem;
+    aspect-ratio: 1 / 1;
+    padding: .75rem;
+    border: 2px solid transparent;
+    border-radius: 1rem;
+    color: #fff;
+    text-align: center;
+    text-decoration: none;
+    background: linear-gradient(135deg, #1b1446, $hero-bg);
+    transition: transform .2s, border-color .2s;
+
+    i {
+        font-size: 2.25rem;
+        color: $brand-cyan;
+    }
+
+    &:hover {
+        color: #fff;
+        border-color: $brand-cyan;
+        transform: translateY(-4px);
+    }
+}

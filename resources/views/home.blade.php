@@ -7,6 +7,16 @@
         ['month' => 'OCT', 'day' => '31', 'title' => 'Pokemon TCG Casual Play', 'time' => '1:00 PM',  'price' => 0,   'icon' => 'bi-stars'],
         ['month' => 'NOV', 'day' => '07', 'title' => 'PS5 Game Night',         'time' => '5:00 PM',  'price' => 150, 'icon' => 'bi-controller'],
     ];
+
+    $categories = [
+        ['name' => 'Card Games',            'icon' => 'bi-suit-spade-fill'],
+        ['name' => 'Beyblade',              'icon' => 'bi-tornado'],
+        ['name' => 'Tamiya',                'icon' => 'bi-car-front-fill'],
+        ['name' => 'PS5',                   'icon' => 'bi-controller'],
+        ['name' => 'Figures & Collectibles', 'icon' => 'bi-trophy'],
+        ['name' => 'Accessories',           'icon' => 'bi-headset'],
+        ['name' => 'Others',                'icon' => 'bi-three-dots'],
+    ];
 @endphp
 
 @section('content')
@@ -73,6 +83,26 @@
                         </div>
                     </div>
                 </div>
+            @endforeach
+        </div>
+    </section>
+
+    <section class="pt-5 pb-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="h5 fw-bold text-uppercase mb-0">
+                <i class="bi bi-grid me-2"></i>Shop by Category
+            </h2>
+            <a href="{{ url('/shop') }}" class="small fw-bold text-body text-decoration-none">
+                View All Categories <i class="bi bi-arrow-right"></i>
+            </a>
+        </div>
+
+        <div class="category-grid">
+            @foreach ($categories as $category)
+                <a href="{{ url('/shop') }}" class="category-tile">
+                    <i class="bi {{ $category['icon'] }}"></i>
+                    <span class="fw-bold small">{{ $category['name'] }}</span>
+                </a>
             @endforeach
         </div>
     </section>
