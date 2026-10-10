@@ -1,0 +1,26 @@
+// Full-screen search (reuses variables from _home.scss)
+.search-modal {
+    background-color: #fff;
+
+    .btn-close {
+        width: 1.5rem;
+        height: 1.5rem;
+    }
+}
+
+.search-modal-body {
+    max-width: 720px;
+    margin-top: 12vh;
+}
+
+.search-box {
+    border-bottom: 2px solid $hero-bg;
+
+    .form-control {
+        background: transparent;
+
+        &:focus {
+            box-shadow: none;
+        }
+    }
+}

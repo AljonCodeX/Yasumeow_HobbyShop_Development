@@ -8,6 +8,10 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>Yasumeow Hobby Shop</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
+
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
@@ -69,6 +73,14 @@
                                 </div>
                             </li>
                         @endguest
+
+                        <!-- Search (last item) -->
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#searchModal" aria-label="Search">
+                                <i class="bi bi-search"></i>
+                                <span class="d-md-none ms-2">Search</span>
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -78,7 +90,7 @@
             @yield('content')
         </main>
 
-         <footer class="bg-white border-top mt-5 py-5">
+        <footer class="bg-white border-top mt-5 py-5">
             <div class="container">
                 <div class="row">
                     <div class="col-md-7 mb-4 mb-md-0">
@@ -115,5 +127,33 @@
             </div>
         </footer>
     </div>
+
+    <!-- Full-screen search -->
+    <div class="modal fade" id="searchModal" tabindex="-1" aria-label="Search" aria-hidden="true">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content search-modal">
+                <div class="d-flex justify-content-end p-4">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="container search-modal-body">
+                    <form action="{{ url('/shop') }}" method="GET" role="search">
+                        <div class="input-group search-box">
+                            <span class="input-group-text border-0 bg-transparent">
+                                <i class="bi bi-search fs-4"></i>
+                            </span>
+                            <input id="searchInput" type="search" name="q" class="form-control border-0 fs-4" placeholder="Search" autocomplete="off">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Put the cursor in the search box when the search page opens
+        document.getElementById('searchModal').addEventListener('shown.bs.modal', function () {
+            document.getElementById('searchInput').focus();
+        });
+    </script>
 </body>
 </html>
