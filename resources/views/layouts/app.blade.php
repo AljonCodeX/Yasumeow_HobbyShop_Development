@@ -28,24 +28,26 @@
                 </button>
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <!-- Left Side Of Navbar -->
-                    <ul class="navbar-nav me-auto">
-
-                    </ul>
-
                     <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url('/') }}">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url('/games') }}">Games</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url('/shop') }}">Shop</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url('/events') }}">Events</a>
+                        </li>
+
                         <!-- Authentication Links -->
                         @guest
                             @if (Route::has('login'))
                                 <li class="nav-item">
                                     <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
-                                </li>
-                            @endif
-
-                            @if (Route::has('register'))
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
                                 </li>
                             @endif
                         @else
@@ -82,8 +84,7 @@
                     <div class="col-md-7 mb-4 mb-md-0">
                         <img src="{{ asset('images/logo.png') }}" alt="Yasumeow" height="64" class="mb-3">
                         <p class="mb-3">
-                            Yasumeow Hobby Shop hosts Beyblade, Mini 4WD, Pokemon TCG and console game
-                            events in San Ildefonso, Bulacan.
+                            Your local hub for hobbies, collectibles, and gaming events. Join the YasuMeow community and share your passion for play!
                         </p>
                         <small class="text-muted">&copy; 2026 Yasumeow Hobby Shop</small>
                     </div>
