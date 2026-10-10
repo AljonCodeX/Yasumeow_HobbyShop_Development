@@ -75,6 +75,32 @@
         <main class="py-4">
             @yield('content')
         </main>
+
+        <footer class="bg-white border-top mt-5 py-5">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-7 mb-4 mb-md-0">
+                        <img src="{{ asset('images/logo.png') }}" alt="Yasumeow" height="64" class="mb-3">
+                        <p class="mb-3">
+                            Yasumeow Hobby Shop hosts Beyblade, Mini 4WD, Pokemon TCG and console game
+                            events in San Ildefonso, Bulacan.
+                        </p>
+                        <small class="text-muted">&copy; 2026 Yasumeow Hobby Shop</small>
+                    </div>
+
+                    <div class="col-md-5">
+                        <h5>Follow Us</h5>
+                        <a href="#" class="text-body fs-2 me-3" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="text-body fs-2" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+
+                        <h5 class="mt-4">Contact Us</h5>
+                        <a href="#" class="text-body text-decoration-none">
+                            <i class="bi bi-messenger me-1"></i> Messenger
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </footer>
     </div>
 </body>
 </html>
