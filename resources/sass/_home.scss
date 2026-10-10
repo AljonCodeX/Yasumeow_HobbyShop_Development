@@ -99,3 +99,18 @@ $brand-cyan: #0dcaf0;
         transform: translateY(-4px);
     }
 }
+
+// Featured Products cards
+.product-card-img {
+    aspect-ratio: 1 / 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: .5rem;
+    color: $brand-cyan;
+    background: linear-gradient(135deg, #1b1446, $hero-bg);
+
+    > i {
+        font-size: 3.5rem;
+    }
+}

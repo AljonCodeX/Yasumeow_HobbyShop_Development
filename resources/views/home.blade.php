@@ -9,13 +9,22 @@
     ];
 
     $categories = [
-        ['name' => 'Card Games',            'icon' => 'bi-suit-spade-fill'],
-        ['name' => 'Beyblade',              'icon' => 'bi-tornado'],
-        ['name' => 'Tamiya',                'icon' => 'bi-car-front-fill'],
-        ['name' => 'PS5',                   'icon' => 'bi-controller'],
+        ['name' => 'Card Games',             'icon' => 'bi-suit-spade-fill'],
+        ['name' => 'Beyblade',               'icon' => 'bi-tornado'],
+        ['name' => 'Tamiya',                 'icon' => 'bi-car-front-fill'],
+        ['name' => 'PS5',                    'icon' => 'bi-controller'],
         ['name' => 'Figures & Collectibles', 'icon' => 'bi-trophy'],
-        ['name' => 'Accessories',           'icon' => 'bi-headset'],
-        ['name' => 'Others',                'icon' => 'bi-three-dots'],
+        ['name' => 'Accessories',            'icon' => 'bi-headset'],
+        ['name' => 'Others',                 'icon' => 'bi-three-dots'],
+    ];
+
+    // stock: 'in', 'low', or 'out'
+    $products = [
+        ['name' => 'Pokemon TCG Booster Box',  'price' => 2500, 'stock' => 'in',  'icon' => 'bi-suit-spade-fill'],
+        ['name' => 'Beyblade X Starter Set',   'price' => 850,  'stock' => 'low', 'icon' => 'bi-tornado'],
+        ['name' => 'Tamiya Mini 4WD',          'price' => 1500, 'stock' => 'in',  'icon' => 'bi-car-front-fill'],
+        ['name' => 'PS5 Game - Spider-Man 2',  'price' => 2495, 'stock' => 'out', 'icon' => 'bi-controller'],
+        ['name' => 'Naruto Figure',            'price' => 1200, 'stock' => 'in',  'icon' => 'bi-trophy'],
     ];
 @endphp
 
@@ -87,7 +96,7 @@
         </div>
     </section>
 
-    <section class="pt-5 pb-4">
+    <section class="pt-5">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h2 class="h5 fw-bold text-uppercase mb-0">
                 <i class="bi bi-grid me-2"></i>Shop by Category
@@ -103,6 +112,45 @@
                     <i class="bi {{ $category['icon'] }}"></i>
                     <span class="fw-bold small">{{ $category['name'] }}</span>
                 </a>
+            @endforeach
+        </div>
+    </section>
+
+    <section class="pt-5 pb-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="h5 fw-bold text-uppercase mb-0">
+                <i class="bi bi-star me-2"></i>Featured Products
+            </h2>
+            <a href="{{ url('/shop') }}" class="small fw-bold text-body text-decoration-none">
+                View All Products <i class="bi bi-arrow-right"></i>
+            </a>
+        </div>
+
+        <div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-3">
+            @foreach ($products as $product)
+                <div class="col">
+                    <div class="card h-100 border-0 shadow-sm p-2">
+                        <div class="product-card-img">
+                            <i class="bi {{ $product['icon'] }}"></i>
+                        </div>
+                        <div class="card-body px-1 pb-2">
+                            <h3 class="h6 fw-bold">{{ $product['name'] }}</h3>
+                            <p class="fw-bold mb-1">₱{{ number_format($product['price']) }}</p>
+                            @if ($product['stock'] === 'in')
+                                <small class="text-success fw-bold">In Stock</small>
+                            @elseif ($product['stock'] === 'low')
+                                <small class="text-warning fw-bold">Low Stock</small>
+                            @else
+                                <small class="text-danger fw-bold">Sold Out</small>
+                            @endif
+                        </div>
+                        @if ($product['stock'] === 'out')
+                            <a class="btn btn-secondary btn-sm w-100 disabled">Sold Out</a>
+                        @else
+                            <a href="{{ url('/shop') }}" class="btn btn-dark btn-sm w-100">View Details</a>
+                        @endif
+                    </div>
+                </div>
             @endforeach
         </div>
     </section>
