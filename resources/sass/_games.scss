@@ -1,0 +1,39 @@
+// Games page
+// Cards reuse .event-card-img from _home.scss.
+$games-bg: #0d0b1f;
+
+.games-section {
+    padding-bottom: 2.5rem;
+}
+
+// Info box (PS5 rental)
+.games-note {
+    padding: 1rem 1.25rem;
+    border-radius: .75rem;
+    color: #fff;
+    background: linear-gradient(135deg, #1b1446, $games-bg);
+
+    > i {
+        font-size: 1.75rem;
+        color: $brand-cyan;
+    }
+
+    span {
+        color: rgba(#fff, .75);
+    }
+}
+
+// Game details page
+.game-detail-hero {
+    height: 220px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 1rem;
+    color: $brand-cyan;
+    background: linear-gradient(135deg, #1b1446, $games-bg);
+
+    > i {
+        font-size: 5rem;
+    }
+}
