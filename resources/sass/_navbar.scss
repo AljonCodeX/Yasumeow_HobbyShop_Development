@@ -1,0 +1,62 @@
+// Navbar links: cyan text + underline that grows from the center
+.navbar .nav-link {
+    position: relative;
+    transition: color 0.25s ease;
+
+    &:hover,
+    &:focus {
+        color: $brand-cyan;
+    }
+
+    // Bootstrap already uses ::after for the dropdown arrow, so skip it
+    &:not(.dropdown-toggle)::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        bottom: 2px;
+        width: 0;
+        height: 2px;
+        background: $brand-cyan;
+        transition: width 0.25s ease, left 0.25s ease;
+    }
+
+    &:not(.dropdown-toggle):hover::after,
+    &:not(.dropdown-toggle):focus::after {
+        left: 0.5rem;
+        width: calc(100% - 1rem);
+    }
+
+    // No underline under the search icon or the avatar
+    &[aria-label="Search"]::after,
+    &.nav-avatar::after {
+        display: none;
+    }
+}
+
+// Profile avatar circle (uploaded photo or default avatar)
+.avatar-circle {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+    background: #e9ecef;
+    transition: box-shadow 0.2s ease;
+}
+
+.nav-avatar:hover .avatar-circle,
+.nav-avatar:focus .avatar-circle,
+.nav-avatar.show .avatar-circle {
+    box-shadow: 0 0 0 3px rgba($brand-cyan, 0.35);
+}
+
+// Dropdown menu items
+.navbar .dropdown-item {
+    transition: background-color 0.2s ease, color 0.2s ease;
+
+    &:hover,
+    &:focus {
+        background-color: rgba($brand-cyan, 0.12);
+        color: $brand-cyan;
+    }
+}
