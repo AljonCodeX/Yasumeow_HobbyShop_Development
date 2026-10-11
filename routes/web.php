@@ -16,3 +16,4 @@ Auth::routes();
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 Route::get('/games', [PageController::class, 'games'])->name('games');
+Route::get('/games/{slug}', [PageController::class, 'gameDetails'])->name('games.show');
