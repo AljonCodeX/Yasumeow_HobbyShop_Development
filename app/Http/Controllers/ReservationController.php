@@ -13,13 +13,26 @@ use Illuminate\Support\Facades\Log;
 
 class ReservationController extends Controller
 {
-    public function add(Product $product)
+    public function add(Request $request, Product $product)
     {
         $cart = session('reserve', []);
         $qty = $cart[$product->id] ?? 0;
 
+        // The Reserve button sends checkout=1 to skip the drawer and go straight to checkout
+        $goToCheckout = $request->boolean('checkout');
+
         if ($product->stock_qty <= 0) {
             return back()->with('error', $product->name . ' is sold out.');
+        }
+
+        if ($goToCheckout) {
+            // Make sure it is in the bag, but don't add a second one if it's already there
+            if ($qty === 0) {
+                $cart[$product->id] = 1;
+                session(['reserve' => $cart]);
+            }
+
+            return redirect()->route('reserve.checkout');
         }
 
         if ($qty >= $product->stock_qty) {

@@ -36,22 +36,34 @@
 
                 <p class="product-desc">{{ $product->description ?: 'Available at Yasumeow Hobby Shop.' }}</p>
 
-                <div class="product-reserve">
+                <div class="product-actions">
                     @if ($stock === 'out')
                         <button type="button" class="shop-item-btn" disabled>Sold out</button>
                     @elseif (auth()->check())
+                        {{-- Reserve: add to the bag and go straight to checkout --}}
                         <form method="POST" action="{{ route('reserve.add', $product) }}">
                             @csrf
-                            <button type="submit" class="shop-item-btn">Reserve</button>
+                            <input type="hidden" name="checkout" value="1">
+                            <button type="submit" class="shop-item-btn is-primary">
+                                <i class="bi bi-bookmark-check me-1"></i>Reserve
+                            </button>
+                        </form>
+
+                        {{-- Add to bag: add and keep browsing --}}
+                        <form method="POST" action="{{ route('reserve.add', $product) }}">
+                            @csrf
+                            <button type="submit" class="shop-item-btn">
+                                <i class="bi bi-bag-plus me-1"></i>Add to bag
+                            </button>
                         </form>
                     @else
-                        <a href="{{ route('login') }}" class="shop-item-btn">Log in to reserve</a>
+                        <a href="{{ route('login') }}" class="shop-item-btn is-primary">Log in to reserve</a>
                     @endif
                 </div>
 
                 <ul class="product-info">
                     <li><i class="bi bi-geo-alt"></i>Pick up at Yasumeow Hobby Shop</li>
-                    <li><i class="bi bi-wallet2"></i>Pay in store or GCash</li>
+                    <li><i class="bi bi-wallet2"></i>Pay in store, or pay online</li>
                 </ul>
             </div>
         </div>

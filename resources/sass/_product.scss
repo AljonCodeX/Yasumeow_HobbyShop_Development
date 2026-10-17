@@ -53,25 +53,45 @@
     color: rgba(#fff, .8);
 }
 
-.product-reserve {
-    max-width: 320px;
+// Reserve + Add to bag, side by side
+.product-actions {
+    display: flex;
+    gap: .75rem;
+    max-width: 440px;
+
+    > form,
+    > a,
+    > button {
+        flex: 1 1 0;
+    }
 
     .shop-item-btn {
         margin-top: 0;
         padding: .7rem;
         font-size: 1rem;
-        color: $hero-bg;
-        background: $brand-cyan;
-
-        &:hover {
-            opacity: .9;
-        }
 
         &:disabled {
             color: rgba(#fff, .5);
             background: transparent;
             opacity: 1;
         }
+    }
+
+    // Main button (Reserve) is filled, Add to bag stays outlined
+    .shop-item-btn.is-primary {
+        color: $hero-bg;
+        background: $brand-cyan;
+
+        &:hover {
+            opacity: .9;
+        }
+    }
+}
+
+// Phones: stack the two buttons
+@media (max-width: 479.98px) {
+    .product-actions {
+        flex-direction: column;
     }
 }
 
