@@ -201,7 +201,7 @@
         </section>
     @endif
 
-    {{-- FEATURED PRODUCTS --}}
+{{-- FEATURED PRODUCTS --}}
     <section class="pt-5">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h2 class="h5 fw-bold text-uppercase mb-0">
@@ -238,7 +238,7 @@
                         @if ($stock === 'out')
                             <a class="btn btn-secondary btn-sm w-100 disabled">Sold Out</a>
                         @else
-                            <a href="{{ url('/shop') }}" class="btn btn-dark btn-sm w-100">View Details</a>
+                            <a href="{{ route('products.show', $product) }}" class="btn btn-dark btn-sm w-100">View Details</a>
                         @endif
                     </div>
                 </div>
