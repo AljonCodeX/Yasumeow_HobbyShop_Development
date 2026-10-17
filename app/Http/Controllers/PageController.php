@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
+use App\Models\Event;
 use App\Models\Game;
+use App\Models\Product;
 
 class PageController extends Controller
 {
@@ -28,6 +31,34 @@ class PageController extends Controller
                 ],
             ],
         ];
+    }
+
+    public function home()
+    {
+        $events = Event::with('game')
+            ->withCount(['registrations as taken_count' => function ($q) {
+                $q->where('status', 'registered');
+            }])
+            ->upcoming()
+            ->take(4)
+            ->get();
+
+        $games = Game::where('is_active', true)
+            ->orderBy('sort_order')
+            ->orderBy('name')
+            ->take(4)
+            ->get();
+
+        $categories = Category::orderBy('name')->get();
+
+        // Featured products first, then newest
+        $products = Product::with('category')
+            ->orderByDesc('is_featured')
+            ->latest()
+            ->take(5)
+            ->get();
+
+        return view('home', compact('events', 'games', 'categories', 'products'));
     }
 
     public function games()

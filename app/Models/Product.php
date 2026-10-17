@@ -29,4 +29,14 @@ class Product extends Model
     {
         return $this->belongsTo(Category::class);
     }
+
+    // 'in', 'low' (5 or fewer left) or 'out'
+    public function stockStatus(): string
+    {
+        return match (true) {
+            $this->stock_qty <= 0 => 'out',
+            $this->stock_qty <= 5 => 'low',
+            default => 'in',
+        };
+    }
 }

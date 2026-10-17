@@ -47,7 +47,8 @@ class Event extends Model
 
     public function slotsLeft(): int
     {
-        $taken = $this->registrations()->where('status', 'registered')->count();
+        $taken = $this->taken_count
+            ?? $this->registrations()->where('status', 'registered')->count();
 
         return max(0, $this->max_slots - $taken);
     }
