@@ -22,7 +22,7 @@
                 <i class="bi bi-journal-text me-2"></i>Beginner Guide
             </h2>
             <ol class="list-group list-group-numbered">
-                @foreach ($game['guide'] as $step)
+                @foreach ($game['guide'] ?? [] as $step)
                     <li class="list-group-item">{{ $step }}</li>
                 @endforeach
             </ol>
