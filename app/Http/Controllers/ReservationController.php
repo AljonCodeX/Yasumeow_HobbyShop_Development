@@ -5,8 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\Reservation;
 use App\Models\ReservationItem;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class ReservationController extends Controller
 {
@@ -73,39 +76,77 @@ class ReservationController extends Controller
         return back()->with('open_reserve', true);
     }
 
-    public function confirm()
+    // Payment options page
+    public function checkout()
     {
         $cart = session('reserve', []);
 
         if (empty($cart)) {
-            return back()
-                ->with('error', 'Your reservation is empty.')
-                ->with('open_reserve', true);
+            return redirect()->route('shop')->with('error', 'Your reservation is empty.');
+        }
+
+        $products = Product::whereIn('id', array_keys($cart))->get();
+
+        $items = $products->map(fn ($p) => [
+            'product'  => $p,
+            'qty'      => $cart[$p->id],
+            'subtotal' => (float) $p->price * $cart[$p->id],
+        ]);
+
+        $total = $items->sum('subtotal');
+        $fee = min((float) config('services.paymongo.reservation_fee'), $total);
+
+        return view('reserve-checkout', compact('items', 'total', 'fee'));
+    }
+
+    public function confirm(Request $request)
+    {
+        $request->validate([
+            'payment_option' => ['required', 'in:store,fee,online'],
+        ]);
+
+        $option = $request->payment_option;
+        $cart = session('reserve', []);
+
+        if (empty($cart)) {
+            return redirect()->route('shop')->with('error', 'Your reservation is empty.');
         }
 
         // Lock the product rows so two people can't reserve the last item at the same time
-        [$type, $message] = DB::transaction(function () use ($cart) {
+        $result = DB::transaction(function () use ($cart, $option) {
             $products = Product::whereIn('id', array_keys($cart))
                 ->lockForUpdate()
                 ->get();
 
             // A product in the cart was deleted by the admin
             if ($products->count() !== count($cart)) {
-                return ['error', 'Some items in your reservation are no longer available.'];
+                return 'Some items in your reservation are no longer available.';
             }
 
             // Check the stock again, it may have changed since the item was added
             foreach ($products as $product) {
                 if ($product->stock_qty < $cart[$product->id]) {
-                    return ['error', 'Not enough stock for ' . $product->name . '. Only ' . $product->stock_qty . ' left.'];
+                    return 'Not enough stock for ' . $product->name . '. Only ' . $product->stock_qty . ' left.';
                 }
             }
+
+            $total = $products->sum(fn ($p) => (float) $p->price * $cart[$p->id]);
+            $fee = min((float) config('services.paymongo.reservation_fee'), $total);
+
+            $due = match ($option) {
+                'online' => $total,
+                'fee'    => $fee,
+                default  => 0,
+            };
 
             $reservation = Reservation::create([
                 'user_id'        => Auth::id(),
                 'reserved_at'    => now(),
-                'payment_method' => 'store',
-                'status'         => 'pending',
+                'payment_method' => $option,
+                'status'         => $option === 'store' ? 'pending' : 'awaiting_payment',
+                'amount_total'   => $total,
+                'amount_due'     => $due,
+                'amount_paid'    => 0,
             ]);
 
             foreach ($products as $product) {
@@ -121,17 +162,103 @@ class ReservationController extends Controller
                 $product->decrement('stock_qty', $qty);
             }
 
-            return ['success', 'Reservation confirmed! Pick it up at the shop and pay in store or GCash.'];
+            return $reservation;
         });
 
-        if ($type === 'error') {
-            return back()
-                ->with('error', $message)
-                ->with('open_reserve', true);
+        // The transaction returned an error message instead of a reservation
+        if (is_string($result)) {
+            return redirect()->route('reserve.checkout')->with('error', $result);
+        }
+
+        $reservation = $result;
+
+        // Pay in store: nothing to pay now
+        if ($option === 'store') {
+            session()->forget('reserve');
+
+            return redirect()->route('reservations.thanks', $reservation);
+        }
+
+        // Fee or online: create the PayMongo checkout and send the customer there
+        $checkoutUrl = $this->createPayMongoCheckout($reservation, $option);
+
+        if (! $checkoutUrl) {
+            $reservation->cancelAndRestock();
+
+            return redirect()->route('reserve.checkout')
+                ->with('error', 'We could not start the payment. Please try again.');
         }
 
         session()->forget('reserve');
 
-        return back()->with('success', $message);
+        return redirect()->away($checkoutUrl);
+    }
+
+    // Shown after paying (or after choosing pay in store)
+    public function thanks(Reservation $reservation)
+    {
+        abort_unless($reservation->user_id === Auth::id(), 403);
+
+        $reservation->load('items');
+        $products = Product::whereIn('id', $reservation->items->pluck('product_id'))->get()->keyBy('id');
+
+        return view('reservation-thanks', compact('reservation', 'products'));
+    }
+
+    // PayMongo sends the customer here when they back out of the payment page
+    public function cancelled(Reservation $reservation)
+    {
+        abort_unless($reservation->user_id === Auth::id(), 403);
+
+        $reservation->cancelAndRestock();
+
+        return redirect()->route('shop')
+            ->with('error', 'Payment cancelled. Your items were released.');
+    }
+
+    // Returns the PayMongo checkout URL, or null if something went wrong
+    private function createPayMongoCheckout(Reservation $reservation, string $option): ?string
+    {
+        if ($option === 'fee') {
+            $lineItems = [[
+                'name'     => 'Reservation fee (#' . $reservation->id . ')',
+                'amount'   => (int) round((float) $reservation->amount_due * 100),
+                'currency' => 'PHP',
+                'quantity' => 1,
+            ]];
+        } else {
+            $lineItems = $reservation->items->map(function ($item) {
+                return [
+                    'name'     => Product::find($item->product_id)->name,
+                    'amount'   => (int) round((float) $item->unit_price * 100), // PayMongo uses centavos
+                    'currency' => 'PHP',
+                    'quantity' => $item->quantity,
+                ];
+            })->all();
+        }
+
+        $response = Http::withBasicAuth(config('services.paymongo.secret_key'), '')
+            ->post('https://api.paymongo.com/v2/checkout_sessions', [
+                'data' => [
+                    'attributes' => [
+                        'line_items'           => $lineItems,
+                        'payment_method_types' => ['gcash', 'card', 'qrph'],
+                        'success_url'          => route('reservations.thanks', $reservation),
+                        'cancel_url'           => route('reservations.cancelled', $reservation),
+                        'reference_number'     => 'RES-' . $reservation->id,
+                        'description'          => 'Yasumeow Hobby Shop reservation #' . $reservation->id,
+                    ],
+                ],
+            ]);
+
+        if (! $response->successful()) {
+            Log::error('PayMongo checkout failed', ['body' => $response->body()]);
+
+            return null;
+        }
+
+        $reservation->update(['paymongo_session_id' => $response->json('data.id')]);
+
+        return $response->json('data.attributes.checkout_url');
     }
 }

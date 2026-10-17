@@ -5,6 +5,7 @@ use App\Http\Controllers\PageController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ReservationController;
+use App\Http\Controllers\PayMongoWebhookController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Auth\GoogleController;
 
@@ -33,8 +34,15 @@ Route::delete('/events/{event}/register', [EventController::class, 'cancel'])->m
 Route::get('/shop', [ProductController::class, 'index'])->name('shop');
 Route::get('/shop/{product}', [ProductController::class, 'show'])->name('products.show');
 
+Route::get('/reserve/checkout', [ReservationController::class, 'checkout'])->middleware('auth')->name('reserve.checkout');
 Route::post('/reserve/confirm', [ReservationController::class, 'confirm'])->middleware('auth')->name('reserve.confirm');
 Route::post('/reserve/{product}', [ReservationController::class, 'add'])->middleware('auth')->name('reserve.add');
 Route::patch('/reserve/{product}/increase', [ReservationController::class, 'increase'])->middleware('auth')->name('reserve.increase');
 Route::patch('/reserve/{product}/decrease', [ReservationController::class, 'decrease'])->middleware('auth')->name('reserve.decrease');
 Route::delete('/reserve/{product}', [ReservationController::class, 'remove'])->middleware('auth')->name('reserve.remove');
+
+Route::get('/reservations/{reservation}/thanks', [ReservationController::class, 'thanks'])->middleware('auth')->name('reservations.thanks');
+Route::get('/reservations/{reservation}/cancelled', [ReservationController::class, 'cancelled'])->middleware('auth')->name('reservations.cancelled');
+
+// Called by PayMongo (no login, checked by signature instead)
+Route::post('/webhooks/paymongo', [PayMongoWebhookController::class, 'handle'])->name('paymongo.webhook');
