@@ -17,78 +17,131 @@
 </head>
 <body>
     <div id="app">
-<nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
+<nav class="navbar navbar-expand-md site-navbar sticky-top">
     <div class="container">
         <a class="navbar-brand d-flex align-items-center" href="{{ url('/') }}">
-            <img src="{{ asset('images/logo.png') }}" alt="Yasumeow" height="48" class="me-2">
+            <img src="{{ asset('images/logo.png') }}" alt="Yasumeow" height="40" class="me-2">
             <span class="fw-bold">Yasumeow Hobby Shop</span>
         </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
-            <span class="navbar-toggler-icon"></span>
-        </button>
 
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <!-- Right Side Of Navbar -->
-            <ul class="navbar-nav ms-auto align-items-md-center">
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url('/') }}">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url('/games') }}">Games</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url('/shop') }}">Shop</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url('/events') }}">Events</a>
-                </li>
+        {{-- Phone: search + menu buttons --}}
+        <div class="d-flex align-items-center gap-1 d-md-none">
+            <button type="button" class="nav-icon-btn" data-bs-toggle="modal" data-bs-target="#searchModal" aria-label="Search">
+                <i class="bi bi-search"></i>
+            </button>
+            <button type="button" class="nav-icon-btn" data-bs-toggle="offcanvas" data-bs-target="#mainMenu" aria-controls="mainMenu" aria-label="Open menu">
+                <i class="bi bi-list"></i>
+            </button>
+        </div>
 
-                <!-- Authentication Links -->
-                @guest
-                    @if (Route::has('login'))
+        <div class="offcanvas offcanvas-end site-offcanvas" tabindex="-1" id="mainMenu" aria-labelledby="mainMenuLabel">
+            <div class="offcanvas-header">
+                <span class="fw-bold" id="mainMenuLabel">Menu</span>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+
+            <div class="offcanvas-body">
+                @php
+                    $navLinks = [
+                        ['label' => 'Home',   'url' => '/',       'icon' => 'bi-house',          'active' => request()->is('/')],
+                        ['label' => 'Games',  'url' => '/games',  'icon' => 'bi-controller',     'active' => request()->is('games*')],
+                        ['label' => 'Shop',   'url' => '/shop',   'icon' => 'bi-bag',            'active' => request()->is('shop*')],
+                        ['label' => 'Events', 'url' => '/events', 'icon' => 'bi-calendar-event', 'active' => request()->is('events*')],
+                    ];
+                @endphp
+
+                <ul class="navbar-nav ms-auto align-items-md-center">
+                    @foreach ($navLinks as $link)
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
+                            <a class="nav-link {{ $link['active'] ? 'active' : '' }}"
+                               href="{{ url($link['url']) }}"
+                               @if ($link['active']) aria-current="page" @endif>
+                                <i class="bi {{ $link['icon'] }} d-md-none me-2"></i>{{ $link['label'] }}
+                            </a>
                         </li>
-                    @endif
-                @else
-                    <li class="nav-item dropdown">
-                        <a id="navbarDropdown" class="nav-link nav-avatar" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Account menu">
-                            <img src="{{ Auth::user()->avatarUrl() }}" alt="{{ Auth::user()->name }}" class="avatar-circle">
-                        </a>
+                    @endforeach
 
-                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                            <h6 class="dropdown-header">{{ Auth::user()->name }}</h6>
-                            <a class="dropdown-item" href="#">
-                                <i class="bi bi-person me-2"></i>Edit Profile
-                            </a>
-                            <a class="dropdown-item" href="#">
-                                <i class="bi bi-gear me-2"></i>Settings
-                            </a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="{{ route('logout') }}"
-                               onclick="event.preventDefault();
-                                             document.getElementById('logout-form').submit();">
-                                <i class="bi bi-box-arrow-right me-2"></i>{{ __('Logout') }}
-                            </a>
-
-                            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                                @csrf
-                            </form>
-                        </div>
+                    {{-- Desktop search --}}
+                    <li class="nav-item d-none d-md-block">
+                        <button type="button" class="nav-link nav-icon-link" data-bs-toggle="modal" data-bs-target="#searchModal" aria-label="Search">
+                            <i class="bi bi-search"></i>
+                        </button>
                     </li>
-                @endguest
 
-                <!-- Search (last item) -->
-                <li class="nav-item">
-                    <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#searchModal" aria-label="Search">
-                        <i class="bi bi-search"></i>
-                        <span class="d-md-none ms-2">Search</span>
-                    </a>
-                </li>
-            </ul>
+                    @guest
+                        @if (Route::has('login'))
+                            <li class="nav-item ms-md-2 mt-3 mt-md-0 d-grid d-md-block">
+                                <a class="btn btn-info btn-sm px-3 rounded-pill fw-bold" href="{{ route('login') }}">
+                                    <i class="bi bi-box-arrow-in-right me-1"></i>{{ __('Login') }}
+                                </a>
+                            </li>
+                        @endif
+                    @else
+                        {{-- Desktop: avatar dropdown --}}
+                        <li class="nav-item dropdown d-none d-md-block">
+                            <a id="navbarDropdown" class="nav-link nav-avatar" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Account menu">
+                                <img src="{{ Auth::user()->avatarUrl() }}" alt="{{ Auth::user()->name }}" class="avatar-circle">
+                            </a>
+
+                            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                <h6 class="dropdown-header">{{ Auth::user()->name }}</h6>
+                                @if (Auth::user()->is_admin)
+                                    <a class="dropdown-item" href="{{ url('/admin') }}">
+                                        <i class="bi bi-speedometer2 me-2"></i>Admin Panel
+                                    </a>
+                                @endif
+                                <a class="dropdown-item" href="#">
+                                    <i class="bi bi-person me-2"></i>Edit Profile
+                                </a>
+                                <a class="dropdown-item" href="#">
+                                    <i class="bi bi-gear me-2"></i>Settings
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="{{ route('logout') }}"
+                                   onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                    <i class="bi bi-box-arrow-right me-2"></i>{{ __('Logout') }}
+                                </a>
+                            </div>
+                        </li>
+
+                        {{-- Phone: account links shown directly --}}
+                        <li class="nav-item d-md-none mt-3 pt-3 border-top border-secondary-subtle">
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <img src="{{ Auth::user()->avatarUrl() }}" alt="{{ Auth::user()->name }}" class="avatar-circle">
+                                <strong>{{ Auth::user()->name }}</strong>
+                            </div>
+                            <ul class="navbar-nav">
+                                @if (Auth::user()->is_admin)
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{{ url('/admin') }}"><i class="bi bi-speedometer2 me-2"></i>Admin Panel</a>
+                                    </li>
+                                @endif
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#"><i class="bi bi-person me-2"></i>Edit Profile</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#"><i class="bi bi-gear me-2"></i>Settings</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('logout') }}"
+                                       onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                        <i class="bi bi-box-arrow-right me-2"></i>{{ __('Logout') }}
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    @endguest
+                </ul>
+            </div>
         </div>
     </div>
 </nav>
+
+@auth
+    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+        @csrf
+    </form>
+@endauth
 
         <main class="py-4">
             @yield('content')
