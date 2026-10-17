@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
 use Illuminate\Database\Eloquent\Model;
 
 class Game extends Model
@@ -17,5 +19,10 @@ class Game extends Model
             'guide' => 'array',
             'is_active' => 'boolean',
         ];
+    }
+
+    public function events(): HasMany
+    {
+        return $this->hasMany(Event::class);
     }
 }
