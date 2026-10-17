@@ -180,31 +180,26 @@
             @yield('content')
         </main>
 
-        <footer class="bg-white border-top mt-5 py-5">
+        <footer class="site-footer bg-white border-top mt-5 py-5">
             <div class="container">
-                <div class="row">
-                    <div class="col-md-7 mb-4 mb-md-0">
-                        <img src="{{ asset('images/footer_logo.png') }}" alt="Yasumeow" height="64" class="mb-3">
-                        <p class="mb-3">
+                <div class="row gy-4">
+                    <div class="col-md-7">
+                        <img src="{{ asset('images/footer_logo.png') }}" alt="Yasumeow" class="footer-logo">
+                        <p class="mb-0">
                             Your local hub for hobbies, collectibles, and gaming events. Join the YasuMeow
                             community and share your passion for play!
                         </p>
-                        <p class="small mb-1">
-                            <a href="#" class="text-body text-decoration-none">Terms and Conditions</a>
-                            |
-                            <a href="#" class="text-body text-decoration-none">Privacy Policy</a>
-                        </p>
-                        <small class="text-muted">&copy; 2026 Yasumeow Hobby Shop</small>
                     </div>
 
                     <div class="col-md-5">
                         <h5>Follow Us</h5>
-                        <a href="#" class="text-body fs-2 me-3" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
-                        <a href="#" class="text-body fs-2 me-3" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
-                        <a href="#" class="text-body fs-2" aria-label="TikTok"><i class="bi bi-tiktok"></i></a>
+                        <div class="footer-social">
+                            <a href="#" class="text-body" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+                            <a href="#" class="text-body" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+                        </div>
 
                         <h5 class="mt-4">Contact Us</h5>
-                        <div class="d-flex gap-3">
+                        <div class="footer-contact">
                             <a href="#" class="btn btn-outline-dark rounded-3 flex-fill">
                                 <i class="bi bi-chat-dots me-1"></i> Messenger
                             </a>
@@ -213,6 +208,15 @@
                             </a>
                         </div>
                     </div>
+                </div>
+
+                <div class="footer-bottom">
+                    <div class="footer-links small">
+                        <a href="#" class="text-body text-decoration-none">Terms and Conditions</a>
+                        <span class="footer-sep">|</span>
+                        <a href="#" class="text-body text-decoration-none">Privacy Policy</a>
+                    </div>
+                    <small class="text-muted">&copy; 2026 Yasumeow Hobby Shop</small>
                 </div>
             </div>
         </footer>

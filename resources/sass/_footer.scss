@@ -1,0 +1,70 @@
+// Footer
+
+.site-footer {
+    .footer-logo {
+        height: 64px;
+        margin-bottom: 1rem;
+    }
+
+    .footer-social {
+        display: flex;
+        gap: 1.25rem;
+
+        a {
+            font-size: 2rem;
+            line-height: 1;
+            transition: color .2s ease;
+
+            &:hover {
+                color: $brand-cyan !important;
+            }
+        }
+    }
+
+    .footer-contact {
+        display: flex;
+        gap: 1rem;
+    }
+
+    .footer-bottom {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: .5rem 1rem;
+        margin-top: 2rem;
+        padding-top: 1.25rem;
+        border-top: 1px solid #dee2e6;
+    }
+
+    .footer-sep {
+        margin: 0 .35rem;
+        color: #adb5bd;
+    }
+}
+
+// Phones: everything centered
+@media (max-width: 767.98px) {
+    .site-footer {
+        text-align: center;
+
+        .footer-logo {
+            display: block;
+            margin: 0 auto 1rem;
+        }
+
+        .footer-social,
+        .footer-contact {
+            justify-content: center;
+        }
+
+        .footer-social {
+            gap: 1.5rem;
+        }
+
+        .footer-bottom {
+            flex-direction: column;
+            justify-content: center;
+        }
+    }
+}
