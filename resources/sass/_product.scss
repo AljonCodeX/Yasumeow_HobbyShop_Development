@@ -1,4 +1,4 @@
-// Product details page (flat dark style, reuses variables from _shop.scss)
+// Product details page (uses the theme variables, so it works in light and dark mode)
 
 .product-back {
     display: inline-block;
@@ -9,7 +9,7 @@
     text-decoration: none;
 
     &:hover {
-        color: $brand-cyan;
+        color: var(--ym-accent);
     }
 }
 
@@ -21,7 +21,7 @@
     overflow: hidden;
     border: 1px solid $shop-line;
     border-radius: .75rem;
-    color: $brand-cyan;
+    color: var(--ym-accent);
     background: $shop-surface;
 
     > i {
@@ -38,19 +38,19 @@
 .product-name {
     margin: .25rem 0 .5rem;
     font-size: 1.75rem;
-    color: #fff;
+    color: var(--ym-text);
 }
 
 .product-price {
     margin: 0 0 .5rem;
     font-size: 1.75rem;
     font-weight: 700;
-    color: $brand-cyan;
+    color: var(--ym-accent);
 }
 
 .product-desc {
     margin: 1rem 0 1.25rem;
-    color: rgba(#fff, .8);
+    color: var(--ym-text);
 }
 
 // Reserve + Add to bag, side by side
@@ -71,7 +71,7 @@
         font-size: 1rem;
 
         &:disabled {
-            color: rgba(#fff, .5);
+            color: var(--ym-muted);
             background: transparent;
             opacity: 1;
         }
@@ -80,6 +80,7 @@
     // Main button (Reserve) is filled, Add to bag stays outlined
     .shop-item-btn.is-primary {
         color: $hero-bg;
+        border-color: $brand-cyan;
         background: $brand-cyan;
 
         &:hover {
@@ -110,7 +111,7 @@
     }
 
     i {
-        color: $brand-cyan;
+        color: var(--ym-accent);
     }
 }
 
@@ -118,5 +119,5 @@
     margin: 2.5rem 0 1rem;
     font-size: 1.1rem;
     text-transform: uppercase;
-    color: #fff;
+    color: var(--ym-text);
 }

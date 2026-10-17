@@ -1,0 +1,141 @@
+// Light / dark mode
+// Bootstrap switches its own components with the data-bs-theme attribute on <html>.
+// The variables below do the same for the shop's custom styles.
+// Parts that are always dark (navbar, menu, reservation drawer) have
+// data-bs-theme="dark" in the layout, so they keep their dark look in both modes.
+
+:root,
+[data-bs-theme="light"] {
+    --ym-bg: #f8fafc;                  // page background
+    --ym-surface: #ffffff;             // cards and panels
+    --ym-line: rgba(13, 11, 31, .12);  // borders
+    --ym-text: #0d0b1f;
+    --ym-muted: rgba(13, 11, 31, .62);
+    --ym-tint: rgba(13, 11, 31, .05);  // faint fill behind icons and images
+    --ym-accent: #0e7490;              // cyan that is readable on a light background
+    --ym-ok: #15803d;
+    --ym-warn: #b45309;
+    --ym-bad: #dc2626;
+}
+
+[data-bs-theme="dark"] {
+    --ym-bg: #0d0b1f;
+    --ym-surface: #161430;
+    --ym-line: rgba(255, 255, 255, .1);
+    --ym-text: #ffffff;
+    --ym-muted: rgba(255, 255, 255, .6);
+    --ym-tint: rgba(255, 255, 255, .06);
+    --ym-accent: #0dcaf0;
+    --ym-ok: #4ade80;
+    --ym-warn: #fbbf24;
+    --ym-bad: #f87171;
+}
+
+// ---------- Theme switch button (moon in light mode, sun in dark mode) ----------
+.theme-toggle .bi-sun-fill {
+    display: none;
+}
+
+html[data-bs-theme="dark"] .theme-toggle {
+    .bi-sun-fill {
+        display: inline-block;
+    }
+
+    .bi-moon-stars-fill {
+        display: none;
+    }
+}
+
+// ---------- Both modes ----------
+.card {
+    --bs-card-bg: var(--ym-surface);
+}
+
+.site-footer {
+    background-color: var(--ym-surface);
+}
+
+.search-modal {
+    background-color: var(--ym-surface);
+}
+
+.search-box {
+    border-bottom-color: var(--ym-text);
+}
+
+// ---------- Dark mode fixes for the pages that were built light ----------
+[data-bs-theme="dark"] {
+    // Dark buttons would disappear on a dark page, so they use the brand cyan
+    .btn-dark {
+        --bs-btn-color: #{$hero-bg};
+        --bs-btn-bg: #{$brand-cyan};
+        --bs-btn-border-color: #{$brand-cyan};
+        --bs-btn-hover-color: #{$hero-bg};
+        --bs-btn-hover-bg: #3dd5f3;
+        --bs-btn-hover-border-color: #3dd5f3;
+        --bs-btn-active-color: #{$hero-bg};
+        --bs-btn-active-bg: #6ae0f6;
+        --bs-btn-active-border-color: #6ae0f6;
+    }
+
+    .btn-outline-dark {
+        --bs-btn-color: #fff;
+        --bs-btn-border-color: #fff;
+        --bs-btn-hover-color: #{$hero-bg};
+        --bs-btn-hover-bg: #fff;
+        --bs-btn-hover-border-color: #fff;
+        --bs-btn-active-color: #{$hero-bg};
+        --bs-btn-active-bg: #fff;
+        --bs-btn-active-border-color: #fff;
+    }
+
+    .text-bg-dark {
+        color: #fff !important;
+        background-color: rgba(255, 255, 255, .14) !important;
+    }
+
+    // Cards lose their shadow on a dark page, so give them a thin edge instead
+    .card.border-0 {
+        border: 1px solid var(--ym-line) !important;
+    }
+
+    .offer-tile {
+        color: var(--ym-text);
+        background: var(--ym-surface);
+        border: 1px solid var(--ym-line);
+        box-shadow: none;
+
+        span {
+            color: var(--ym-muted);
+        }
+    }
+
+    .games-chip {
+        color: var(--ym-text);
+        background: var(--ym-surface);
+        border-color: var(--ym-line);
+
+        &:hover {
+            border-color: $brand-cyan;
+        }
+    }
+
+    .games-chip.active {
+        color: $hero-bg;
+        background: $brand-cyan;
+        border-color: $brand-cyan;
+    }
+
+    .game-card-link {
+        color: var(--ym-text);
+    }
+
+    .home-empty {
+        color: var(--ym-muted);
+        border-color: var(--ym-line);
+    }
+
+    .site-footer .footer-bottom {
+        border-top-color: var(--ym-line);
+    }
+}

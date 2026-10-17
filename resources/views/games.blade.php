@@ -56,7 +56,7 @@
                                 <h3 class="h6 fw-bold text-body mb-2">{{ $game['name'] }}</h3>
                                 <p class="small text-muted mb-0 game-card-desc">{{ $game['description'] }}</p>
                             </div>
-                            <div class="card-footer bg-white border-0 pt-0 pb-3">
+                            <div class="card-footer bg-transparent border-0 pt-0 pb-3">
                                 <span class="game-card-link">View Game Details <i class="bi bi-arrow-right ms-1"></i></span>
                             </div>
                         </a>

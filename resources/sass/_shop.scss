@@ -1,16 +1,12 @@
-// Shop page: flat dark style
-$shop-bg: $hero-bg;
-$shop-surface: #161430;
-$shop-line: rgba(#fff, .1);
-$shop-muted: rgba(#fff, .6);
-
-// Makes the whole page background dark, only when the shop page is showing
-body:has(.shop-page) {
-    background-color: $shop-bg;
-}
+// Shop page. Colors come from the theme variables (see _theme.scss),
+// so this page works in both light and dark mode.
+$shop-bg: var(--ym-bg);
+$shop-surface: var(--ym-surface);
+$shop-line: var(--ym-line);
+$shop-muted: var(--ym-muted);
 
 .shop-page {
-    color: #fff;
+    color: var(--ym-text);
     padding-bottom: 2rem;
 }
 
@@ -28,7 +24,7 @@ body:has(.shop-page) {
     margin: 0;
     font-size: 1.75rem;
     text-transform: uppercase;
-    color: #fff;
+    color: var(--ym-text);
 }
 
 .shop-sub {
@@ -51,7 +47,7 @@ body:has(.shop-page) {
 
     .form-control {
         padding: .6rem 1rem .6rem 2.4rem;
-        color: #fff;
+        color: var(--ym-text);
         background: $shop-surface;
         border: 1px solid $shop-line;
         border-radius: .6rem;
@@ -90,7 +86,7 @@ body:has(.shop-page) {
     padding: .35rem .9rem;
     border: 1px solid $shop-line;
     border-radius: 2rem;
-    color: #fff;
+    color: var(--ym-text);
     font-size: .85rem;
     font-weight: 600;
     white-space: nowrap;
@@ -98,12 +94,12 @@ body:has(.shop-page) {
     transition: all .15s ease;
 
     &:hover {
-        color: $brand-cyan;
+        color: var(--ym-accent);
         border-color: $brand-cyan;
     }
 
     &.active {
-        color: $shop-bg;
+        color: $hero-bg;
         background: $brand-cyan;
         border-color: $brand-cyan;
     }
@@ -122,13 +118,13 @@ body:has(.shop-page) {
     overflow: hidden;
     border: 1px solid $shop-line;
     border-radius: .75rem;
-    color: #fff;
+    color: var(--ym-text);
     text-decoration: none;
     background: $shop-surface;
     transition: border-color .15s ease;
 
     &:hover {
-        color: #fff;
+        color: var(--ym-text);
         border-color: $brand-cyan;
     }
 
@@ -142,8 +138,8 @@ body:has(.shop-page) {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: $brand-cyan;
-    background: rgba(#fff, .04);
+    color: var(--ym-accent);
+    background: var(--ym-tint);
 
     > i {
         font-size: 2.5rem;
@@ -171,7 +167,7 @@ body:has(.shop-page) {
 .shop-item-name {
     margin: .2rem 0 .6rem;
     font-size: .95rem;
-    color: #fff;
+    color: var(--ym-text);
 }
 
 .shop-item-foot {
@@ -183,7 +179,7 @@ body:has(.shop-page) {
 
 .shop-item-price {
     font-weight: 700;
-    color: $brand-cyan;
+    color: var(--ym-accent);
 }
 
 .shop-item-stock {
@@ -191,15 +187,15 @@ body:has(.shop-page) {
     font-weight: 600;
 
     &.stock-in {
-        color: #4ade80;
+        color: var(--ym-ok);
     }
 
     &.stock-low {
-        color: #fbbf24;
+        color: var(--ym-warn);
     }
 
     &.stock-out {
-        color: #f87171;
+        color: var(--ym-bad);
     }
 }
 
@@ -218,20 +214,20 @@ body:has(.shop-page) {
     }
 }
 
-// ---------- Pagination (dark) ----------
+// ---------- Pagination ----------
 .shop-page .pagination {
-    --bs-pagination-color: #fff;
-    --bs-pagination-bg: #{$shop-surface};
-    --bs-pagination-border-color: #{$shop-line};
-    --bs-pagination-hover-color: #{$brand-cyan};
-    --bs-pagination-hover-bg: #{$shop-surface};
+    --bs-pagination-color: var(--ym-text);
+    --bs-pagination-bg: var(--ym-surface);
+    --bs-pagination-border-color: var(--ym-line);
+    --bs-pagination-hover-color: var(--ym-accent);
+    --bs-pagination-hover-bg: var(--ym-surface);
     --bs-pagination-hover-border-color: #{$brand-cyan};
-    --bs-pagination-focus-color: #{$brand-cyan};
-    --bs-pagination-focus-bg: #{$shop-surface};
-    --bs-pagination-active-color: #{$shop-bg};
+    --bs-pagination-focus-color: var(--ym-accent);
+    --bs-pagination-focus-bg: var(--ym-surface);
+    --bs-pagination-active-color: #{$hero-bg};
     --bs-pagination-active-bg: #{$brand-cyan};
     --bs-pagination-active-border-color: #{$brand-cyan};
-    --bs-pagination-disabled-color: #{$shop-muted};
-    --bs-pagination-disabled-bg: #{$shop-surface};
-    --bs-pagination-disabled-border-color: #{$shop-line};
+    --bs-pagination-disabled-color: var(--ym-muted);
+    --bs-pagination-disabled-bg: var(--ym-surface);
+    --bs-pagination-disabled-border-color: var(--ym-line);
 }

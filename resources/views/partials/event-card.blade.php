@@ -39,7 +39,7 @@
             @endif
         </div>
     </div>
-    <div class="card-footer bg-white border-0 pt-0 pb-3">
+    <div class="card-footer bg-transparent border-0 pt-0 pb-3">
         <a href="{{ route('events.show', $event) }}" class="btn btn-dark btn-sm w-100">View Event</a>
     </div>
 </div>

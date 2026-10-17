@@ -1,4 +1,5 @@
 // Reserve button, navbar bag, and reservation drawer
+// (the drawer has data-bs-theme="dark" in the layout, so it stays dark in both modes)
 
 // ---------- Card links + Reserve button ----------
 .shop-item-link {
@@ -7,7 +8,7 @@
     text-decoration: none;
 
     &:hover {
-        color: $brand-cyan;
+        color: var(--ym-accent);
     }
 }
 
@@ -16,10 +17,10 @@
     width: 100%;
     margin-top: .75rem;
     padding: .45rem;
-    border: 1px solid $brand-cyan;
+    border: 1px solid var(--ym-accent);
     border-radius: .5rem;
     background: transparent;
-    color: $brand-cyan;
+    color: var(--ym-accent);
     font-size: .85rem;
     font-weight: 700;
     text-align: center;
@@ -28,12 +29,13 @@
 
     &:hover {
         color: $hero-bg;
+        border-color: $brand-cyan;
         background: $brand-cyan;
     }
 
     &:disabled {
-        color: rgba(#fff, .5);
-        border-color: rgba(#fff, .2);
+        color: var(--ym-muted);
+        border-color: var(--ym-line);
         background: transparent;
         cursor: not-allowed;
     }
@@ -60,7 +62,7 @@
     text-align: center;
 }
 
-// ---------- Drawer ----------
+// ---------- Drawer + rows (also used on the checkout and thanks pages) ----------
 .reserve-drawer {
     --bs-offcanvas-width: 380px;
 }
@@ -76,7 +78,7 @@
     align-items: center;
     gap: .75rem;
     padding: .75rem 0;
-    border-bottom: 1px solid $shop-line;
+    border-bottom: 1px solid var(--ym-line);
 
     form {
         margin: 0;
@@ -91,9 +93,9 @@
     justify-content: center;
     overflow: hidden;
     border-radius: .5rem;
-    color: $brand-cyan;
+    color: var(--ym-accent);
     font-size: 1.4rem;
-    background: rgba(#fff, .06);
+    background: var(--ym-tint);
 
     > img {
         width: 100%;
@@ -112,7 +114,7 @@
 
 .reserve-name {
     overflow: hidden;
-    color: #fff;
+    color: var(--ym-text);
     font-size: .9rem;
     font-weight: 600;
     text-decoration: none;
@@ -120,12 +122,12 @@
     white-space: nowrap;
 
     &:hover {
-        color: $brand-cyan;
+        color: var(--ym-accent);
     }
 }
 
 .reserve-price {
-    color: $brand-cyan;
+    color: var(--ym-accent);
     font-size: .85rem;
     font-weight: 700;
 }
@@ -149,14 +151,14 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid $shop-line;
+    border: 1px solid var(--ym-line);
     border-radius: .4rem;
     background: transparent;
-    color: #fff;
+    color: var(--ym-text);
     transition: border-color .15s ease, color .15s ease;
 
     &:hover {
-        color: $brand-cyan;
+        color: var(--ym-accent);
         border-color: $brand-cyan;
     }
 }
@@ -164,18 +166,18 @@
 .reserve-remove {
     border: 0;
     background: transparent;
-    color: $shop-muted;
+    color: var(--ym-muted);
     font-size: 1.1rem;
     transition: color .15s ease;
 
     &:hover {
-        color: #f87171;
+        color: var(--ym-bad);
     }
 }
 
 .reserve-foot {
     padding-top: 1rem;
-    border-top: 1px solid $shop-line;
+    border-top: 1px solid var(--ym-line);
 }
 
 .reserve-total {
@@ -185,34 +187,34 @@
     font-weight: 700;
 
     > span:last-child {
-        color: $brand-cyan;
+        color: var(--ym-accent);
     }
 }
 
 .reserve-note {
     margin: 0 0 .25rem;
     font-size: .8rem;
-    color: $shop-muted;
+    color: var(--ym-muted);
 }
 
 .reserve-empty {
     padding: 3rem 1rem;
     text-align: center;
-    color: $shop-muted;
+    color: var(--ym-muted);
 
     > i {
         display: block;
         margin-bottom: .75rem;
         font-size: 2.5rem;
-        color: $brand-cyan;
+        color: var(--ym-accent);
     }
 }
 
 .reserve-error {
     margin: 0 0 .75rem;
     padding: .5rem .75rem;
-    border: 1px solid rgba(#f87171, .4);
+    border: 1px solid var(--ym-bad);
     border-radius: .5rem;
     font-size: .85rem;
-    color: #f87171;
+    color: var(--ym-bad);
 }

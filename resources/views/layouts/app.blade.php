@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-bs-theme="light">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -12,20 +12,34 @@
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
 
+    <!-- Light / dark mode: runs before the page is drawn so it doesn't flash the wrong colors -->
+    <script>
+        (function () {
+            var saved = null;
+            try { saved = localStorage.getItem('ym-theme'); } catch (e) {}
+            var dark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            document.documentElement.setAttribute('data-bs-theme', saved || (dark ? 'dark' : 'light'));
+        })();
+    </script>
+
     <!-- Scripts -->
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 </head>
 <body>
     <div id="app">
-<nav class="navbar navbar-expand-md site-navbar sticky-top">
+<nav class="navbar navbar-expand-md site-navbar sticky-top" data-bs-theme="dark">
     <div class="container">
         <a class="navbar-brand d-flex align-items-center" href="{{ url('/') }}">
             <img src="{{ asset('images/logo.png') }}" alt="Yasumeow" height="40" class="me-2">
             <span class="fw-bold">Yasumeow Hobby Shop</span>
         </a>
 
-        {{-- Phone: search + reservation + menu buttons --}}
+        {{-- Phone: theme + search + reservation + menu buttons --}}
         <div class="d-flex align-items-center gap-1 d-md-none">
+            <button type="button" class="nav-icon-btn theme-toggle" data-theme-toggle aria-label="Switch theme">
+                <i class="bi bi-moon-stars-fill"></i>
+                <i class="bi bi-sun-fill"></i>
+            </button>
             <button type="button" class="nav-icon-btn" data-bs-toggle="modal" data-bs-target="#searchModal" aria-label="Search">
                 <i class="bi bi-search"></i>
             </button>
@@ -77,6 +91,14 @@
                     <li class="nav-item d-none d-md-block">
                         <button type="button" class="nav-link nav-icon-link" data-bs-toggle="modal" data-bs-target="#searchModal" aria-label="Search">
                             <i class="bi bi-search"></i>
+                        </button>
+                    </li>
+
+                    {{-- Theme switch --}}
+                    <li class="nav-item d-none d-md-block">
+                        <button type="button" class="nav-link nav-icon-link theme-toggle" data-theme-toggle aria-label="Switch theme">
+                            <i class="bi bi-moon-stars-fill"></i>
+                            <i class="bi bi-sun-fill"></i>
                         </button>
                     </li>
 
@@ -186,7 +208,7 @@
             @yield('content')
         </main>
 
-        <footer class="site-footer bg-white border-top mt-5 py-5">
+        <footer class="site-footer border-top mt-5 py-5">
             <div class="container">
                 <div class="row gy-4">
                     <div class="col-md-7">
@@ -251,7 +273,7 @@
 
     <!-- Reservation drawer -->
     @auth
-        <div class="offcanvas offcanvas-end site-offcanvas reserve-drawer" tabindex="-1" id="reserveDrawer"
+            <div class="offcanvas offcanvas-end site-offcanvas reserve-drawer" tabindex="-1" id="reserveDrawer" data-bs-theme="dark"
              aria-labelledby="reserveDrawerLabel" @if (session('open_reserve')) data-auto-open @endif>
             <div class="offcanvas-header">
                 <span class="fw-bold" id="reserveDrawerLabel">My Reservation ({{ $reserveCount }})</span>
