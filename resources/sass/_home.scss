@@ -1,33 +1,202 @@
-// Home page hero banner
-$hero-bg: #0d0b1f;
-$brand-cyan: #0dcaf0;
+// Home page
 
-// Mobile first: image on top, text below on a solid background
-.hero-banner {
-    padding: 224px 1.5rem 1.5rem;
-    background-color: $hero-bg;
-    background-image:
-        linear-gradient(180deg, rgba($hero-bg, 0) 60%, $hero-bg 100%),
-        var(--banner-image);
-    background-size: 100% 200px, auto 200px;
-    background-position: top, right top;
-    background-repeat: no-repeat;
-}
+// ---------- Hero carousel ----------
+.home-hero {
+    border-radius: 1rem;
+    overflow: hidden;
+    background: $hero-bg;
 
-// Tablet and desktop: text over the image
-@media (min-width: 768px) {
-    .hero-banner {
-        padding: 3rem;
-        min-height: 320px;
-        background-image:
-            linear-gradient(90deg, rgba(0, 0, 0, .85) 0%, rgba(0, 0, 0, .4) 55%, rgba(0, 0, 0, 0) 100%),
-            var(--banner-image);
-        background-size: cover;
-        background-position: center right;
+    .carousel-indicators {
+        top: .75rem;
+        bottom: auto;
+        justify-content: flex-end;
+        margin: 0 1rem;
+
+        [data-bs-target] {
+            width: 8px;
+            height: 8px;
+            margin: 0 3px;
+            border: 0;
+            border-radius: 50%;
+            background: #fff;
+            opacity: .5;
+        }
+
+        .active {
+            width: 22px;
+            border-radius: 4px;
+            background: $brand-cyan;
+            opacity: 1;
+        }
     }
 }
 
-// Upcoming Events cards
+// Phone first: 4:3 box, text at the bottom over a dark fade
+.home-slide {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    aspect-ratio: 4 / 3;
+    padding: 1.25rem;
+}
+
+.home-slide-hero {
+    background-color: $hero-bg;
+    background-image:
+        linear-gradient(180deg, rgba($hero-bg, 0) 30%, rgba($hero-bg, .96) 100%),
+        var(--banner-image);
+    background-size: cover;
+    background-position: center, 58% center; // move the number to re-center the image
+    background-repeat: no-repeat;
+}
+
+.home-slide-text h1 {
+    font-size: 1.6rem;
+    line-height: 1.1;
+    margin-bottom: .75rem;
+}
+
+.home-slide-actions .btn {
+    flex: 1 1 0;
+    padding: .5rem;
+    font-size: .9rem;
+    white-space: nowrap;
+}
+
+.home-slide-promo {
+    padding: 0;
+
+    > img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+}
+
+// Tablet and desktop: wide, text on the left
+@media (min-width: 768px) {
+    .home-slide {
+        aspect-ratio: auto;
+        min-height: 320px;
+        align-items: center;
+        padding: 3rem;
+    }
+
+    .home-slide-promo {
+        padding: 0;
+    }
+
+    .home-slide-hero {
+        background-image:
+            linear-gradient(90deg, rgba(0, 0, 0, .85) 0%, rgba(0, 0, 0, .4) 55%, rgba(0, 0, 0, 0) 100%),
+            var(--banner-image);
+        background-position: center, center right;
+    }
+
+    .home-slide-text h1 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .home-slide-actions .btn {
+        flex: 0 0 auto;
+        padding: .375rem .75rem;
+        font-size: 1rem;
+    }
+}
+
+// ---------- Ticker strip ----------
+.home-ticker {
+    margin-top: .75rem;
+    overflow: hidden;
+    border-radius: .6rem;
+    color: $hero-bg;
+    background: $brand-cyan;
+
+    &:hover .home-ticker-track {
+        animation-play-state: paused;
+    }
+}
+
+.home-ticker-track {
+    display: flex;
+    width: max-content;
+    animation: home-ticker 28s linear infinite;
+}
+
+.home-ticker-group {
+    display: flex;
+    flex-shrink: 0;
+
+    span {
+        padding: .5rem 1.5rem;
+        font-size: .8rem;
+        font-weight: 700;
+        letter-spacing: .04em;
+        white-space: nowrap;
+
+        &::after {
+            content: "\2022";
+            margin-left: 3rem;
+            opacity: .5;
+        }
+    }
+}
+
+@keyframes home-ticker {
+    to {
+        transform: translateX(-50%);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .home-ticker-track {
+        animation: none;
+    }
+}
+
+// ---------- What we offer ----------
+.offer-tile {
+    display: flex;
+    align-items: center;
+    gap: .9rem;
+    padding: 1rem 1.1rem;
+    border-radius: .85rem;
+    color: #212529;
+    text-decoration: none;
+    background: #fff;
+    box-shadow: 0 .125rem .5rem rgba(0, 0, 0, .08);
+    transition: transform .2s, box-shadow .2s;
+
+    > i {
+        flex-shrink: 0;
+        width: 2.75rem;
+        height: 2.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: .65rem;
+        font-size: 1.35rem;
+        color: $brand-cyan;
+        background: linear-gradient(135deg, #1b1446, $hero-bg);
+    }
+
+    span {
+        color: #6c757d;
+        line-height: 1.3;
+        display: block;
+    }
+
+    &:hover {
+        color: #212529;
+        transform: translateY(-3px);
+        box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .12);
+    }
+}
+
+// ---------- Upcoming Events cards ----------
 .event-card-img {
     height: 140px;
     display: flex;
@@ -53,7 +222,7 @@ $brand-cyan: #0dcaf0;
     line-height: 1.1;
 }
 
-// Shop by Category tiles
+// ---------- Shop by Category tiles ----------
 .category-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -100,7 +269,7 @@ $brand-cyan: #0dcaf0;
     }
 }
 
-// Featured Products cards
+// ---------- Featured Products cards ----------
 .product-card-img {
     aspect-ratio: 1 / 1;
     display: flex;
@@ -112,5 +281,140 @@ $brand-cyan: #0dcaf0;
 
     > i {
         font-size: 3.5rem;
+    }
+}
+
+// Real images inside cards
+.event-card-img,
+.product-card-img {
+    overflow: hidden;
+
+    > img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+}
+
+// ---------- Empty state ----------
+.home-empty {
+    padding: 2.5rem 1rem;
+    text-align: center;
+    color: #6c757d;
+    border: 2px dashed #dee2e6;
+    border-radius: 1rem;
+
+    > i {
+        display: block;
+        margin-bottom: .5rem;
+        font-size: 2rem;
+    }
+}
+
+// ---------- Visit us strip ----------
+.shop-info {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.5rem 2.5rem;
+    padding: 1.5rem 2rem;
+    border-radius: 1rem;
+    color: #fff;
+    background: linear-gradient(135deg, #1b1446, $hero-bg);
+
+    .btn {
+        margin-left: auto;
+    }
+}
+
+.shop-info-item {
+    display: flex;
+    align-items: center;
+    gap: .9rem;
+
+    > i {
+        font-size: 1.75rem;
+        color: $brand-cyan;
+    }
+
+    span {
+        font-size: .85rem;
+        color: rgba(#fff, .75);
+    }
+}
+
+// ---------- Mobile layout (phones) ----------
+@media (max-width: 767.98px) {
+    .shop-info .btn {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    // Offer tiles: icon + title only
+    .offer-tile {
+        padding: .75rem;
+        gap: .65rem;
+
+        span {
+            display: none;
+        }
+
+        > i {
+            width: 2.25rem;
+            height: 2.25rem;
+            font-size: 1.1rem;
+        }
+    }
+
+    // Less space between sections
+    .container > section.pt-5 {
+        padding-top: 2rem !important;
+    }
+
+    // Swipe rows (events, games)
+    .scroll-row {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: .5rem;
+        scroll-snap-type: x mandatory;
+        scroll-padding: 0 .75rem;
+        scrollbar-width: none;
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
+
+        > .col {
+            flex: 0 0 auto;
+            width: 78%;
+            scroll-snap-align: start;
+        }
+    }
+
+    // Categories: swipe row, all visible
+    .category-grid {
+        display: flex;
+        gap: .6rem;
+        overflow-x: auto;
+        margin: 0 -.75rem;
+        padding: 0 .75rem .5rem;
+        scroll-snap-type: x mandatory;
+        scrollbar-width: none;
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
+    }
+
+    .category-tile {
+        flex: 0 0 96px;
+        aspect-ratio: auto;
+        min-height: 96px;
+        padding: .75rem .4rem;
+        scroll-snap-align: start;
+    }
+
+    .category-grid .category-extra.d-none {
+        display: flex !important;
     }
 }
