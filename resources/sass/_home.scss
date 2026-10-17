@@ -387,6 +387,7 @@
         > .col {
             flex: 0 0 auto;
             width: 78%;
+            max-width: 300px;
             scroll-snap-align: start;
         }
     }
@@ -417,4 +418,8 @@
     .category-grid .category-extra.d-none {
         display: flex !important;
     }
+}
+
+.load-more-link:hover {
+    text-decoration: underline !important;
 }

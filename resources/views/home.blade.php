@@ -3,8 +3,9 @@
 @php
     // EDIT THESE: shown in the "Visit us" strip at the bottom
     $shop = [
-        'hours'     => 'Add your opening hours here',
-        'location'  => 'Add your shop address here',
+        'hours'     => '8:00 AM – 6:00 PM',
+        'location'  => 'View on Google Maps',
+        'map'       => 'https://maps.app.goo.gl/5JJaqa135g6njbxC8',
         'messenger' => '#',
     ];
 
@@ -117,7 +118,7 @@
             </a>
         </div>
 
-        <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-3 scroll-row">
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-3" data-load-more data-step="4" data-step-mobile="2">
             @forelse ($events as $event)
                 <div class="col">
                     @include('partials.event-card', ['event' => $event])
@@ -145,7 +146,7 @@
                 </a>
             </div>
 
-            <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-3 scroll-row">
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-3" data-load-more data-step="4" data-step-mobile="2">
                 @foreach ($games as $game)
                     <div class="col">
                         <a href="{{ url('/games/' . $game->slug) }}" class="game-card card h-100 border-0 shadow-sm overflow-hidden text-decoration-none">
@@ -192,7 +193,7 @@
 
             @if ($categories->count() > $categoryLimit)
                 <div class="text-center mt-3 d-none d-md-block">
-                    <button type="button" id="categoryToggle" class="btn btn-outline-dark btn-sm rounded-pill px-4" aria-expanded="false">
+                    <button type="button" id="categoryToggle" class="btn btn-link load-more-link p-0 fw-bold text-body text-decoration-none" aria-expanded="false">
                         Show more categories ({{ $categories->count() - $categoryLimit }})
                     </button>
                 </div>
@@ -266,7 +267,7 @@
                 <i class="bi bi-geo-alt"></i>
                 <div>
                     <strong class="d-block">Find us</strong>
-                    <span>{{ $shop['location'] }}</span>
+                    <a href="{{ $shop['map'] }}" target="_blank" rel="noopener" class="text-white">{{ $shop['location'] }}</a>
                 </div>
             </div>
             <a href="{{ $shop['messenger'] }}" class="btn btn-info">
