@@ -242,7 +242,7 @@ class ReservationController extends Controller
                 'data' => [
                     'attributes' => [
                         'line_items'           => $lineItems,
-                        'payment_method_types' => ['gcash', 'card', 'qrph'],
+                        'payment_method_types' => ['qrph'],
                         'success_url'          => route('reservations.thanks', $reservation),
                         'cancel_url'           => route('reservations.cancelled', $reservation),
                         'reference_number'     => 'RES-' . $reservation->id,
