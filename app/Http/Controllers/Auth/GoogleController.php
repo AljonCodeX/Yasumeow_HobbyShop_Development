@@ -28,6 +28,6 @@ class GoogleController extends Controller
 
         Auth::login($user, true);
 
-        return redirect('/');
+        return redirect($user->is_admin ? '/admin' : '/');
     }
 }

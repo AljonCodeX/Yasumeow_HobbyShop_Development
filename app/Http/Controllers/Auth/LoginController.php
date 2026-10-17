@@ -37,4 +37,12 @@ class LoginController extends Controller
         $this->middleware('guest')->except('logout');
         $this->middleware('auth')->only('logout');
     }
+
+    protected function authenticated(\Illuminate\Http\Request $request, $user)
+    {
+        // Admins go straight to the admin panel; everyone else uses the normal redirect
+        if ($user->is_admin) {
+            return redirect('/admin');
+        }
+    }
 }
