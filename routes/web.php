@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Auth\GoogleController;
 
@@ -27,3 +28,6 @@ Route::get('/events', [EventController::class, 'index'])->name('events');
 Route::get('/events/{event}', [EventController::class, 'show'])->name('events.show');
 Route::post('/events/{event}/register', [EventController::class, 'register'])->middleware('auth')->name('events.register');
 Route::delete('/events/{event}/register', [EventController::class, 'cancel'])->middleware('auth')->name('events.cancel');
+
+Route::get('/shop', [ProductController::class, 'index'])->name('shop');
+Route::get('/shop/{product}', [ProductController::class, 'show'])->name('products.show');
