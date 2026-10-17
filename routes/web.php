@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ReservationController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Auth\GoogleController;
 
@@ -31,3 +32,5 @@ Route::delete('/events/{event}/register', [EventController::class, 'cancel'])->m
 
 Route::get('/shop', [ProductController::class, 'index'])->name('shop');
 Route::get('/shop/{product}', [ProductController::class, 'show'])->name('products.show');
+
+Route::post('/reserve/{product}', [ReservationController::class, 'add'])->middleware('auth')->name('reserve.add');
