@@ -317,7 +317,10 @@
                             <span>₱{{ number_format($reserveTotal) }}</span>
                         </div>
                         <p class="reserve-note">Pick up at the shop. Pay in store or GCash.</p>
-                        <button type="button" class="shop-item-btn" disabled>Confirm reservation</button>
+                        <form method="POST" action="{{ route('reserve.confirm') }}">
+                            @csrf
+                            <button type="submit" class="shop-item-btn">Confirm reservation</button>
+                        </form>
                     </div>
                 @endif
             </div>
