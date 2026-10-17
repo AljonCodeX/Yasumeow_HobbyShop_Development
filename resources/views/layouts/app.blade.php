@@ -128,31 +128,37 @@
                             </div>
                         </li>
 
-                        {{-- Phone: account links shown directly --}}
+                        {{-- Phone: tap the profile row to show the account links --}}
                         <li class="nav-item d-md-none mt-3 pt-3 border-top border-secondary-subtle">
-                            <div class="d-flex align-items-center gap-2 mb-2">
-                                <img src="{{ Auth::user()->avatarUrl() }}" alt="{{ Auth::user()->name }}" class="avatar-circle">
-                                <strong>{{ Auth::user()->name }}</strong>
-                            </div>
-                            <ul class="navbar-nav">
-                                @if (Auth::user()->is_admin)
+                            <button type="button" class="account-toggle collapsed" data-bs-toggle="collapse" data-bs-target="#accountMenu" aria-expanded="false" aria-controls="accountMenu">
+                                <span class="d-flex align-items-center gap-2">
+                                    <img src="{{ Auth::user()->avatarUrl() }}" alt="{{ Auth::user()->name }}" class="avatar-circle">
+                                    <strong>{{ Auth::user()->name }}</strong>
+                                </span>
+                                <i class="bi bi-chevron-down account-chevron"></i>
+                            </button>
+
+                            <div class="collapse" id="accountMenu">
+                                <ul class="navbar-nav">
+                                    @if (Auth::user()->is_admin)
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="{{ url('/admin') }}"><i class="bi bi-speedometer2 me-2"></i>Admin Panel</a>
+                                        </li>
+                                    @endif
                                     <li class="nav-item">
-                                        <a class="nav-link" href="{{ url('/admin') }}"><i class="bi bi-speedometer2 me-2"></i>Admin Panel</a>
+                                        <a class="nav-link" href="#"><i class="bi bi-person me-2"></i>Edit Profile</a>
                                     </li>
-                                @endif
-                                <li class="nav-item">
-                                    <a class="nav-link" href="#"><i class="bi bi-person me-2"></i>Edit Profile</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="#"><i class="bi bi-gear me-2"></i>Settings</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('logout') }}"
-                                       onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                        <i class="bi bi-box-arrow-right me-2"></i>{{ __('Logout') }}
-                                    </a>
-                                </li>
-                            </ul>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="#"><i class="bi bi-gear me-2"></i>Settings</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{{ route('logout') }}"
+                                           onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                            <i class="bi bi-box-arrow-right me-2"></i>{{ __('Logout') }}
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
                         </li>
                     @endguest
                 </ul>

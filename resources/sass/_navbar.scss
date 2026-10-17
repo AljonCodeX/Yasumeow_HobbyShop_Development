@@ -165,6 +165,29 @@
     }
 }
 
+// Phone menu: profile row with chevron (opens the account links)
+.account-toggle {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: .5rem .25rem;
+    border: 0;
+    background: transparent;
+    color: #fff;
+    text-align: left;
+}
+
+.account-chevron {
+    font-size: 1.1rem;
+    color: $brand-cyan;
+    transition: transform .25s ease;
+}
+
+.account-toggle:not(.collapsed) .account-chevron {
+    transform: rotate(180deg);
+}
+
 // Profile avatar circle (uploaded photo or default avatar)
 .avatar-circle {
     width: 36px;
