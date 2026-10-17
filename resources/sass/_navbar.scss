@@ -58,13 +58,29 @@
     }
 }
 
-// Desktop search button (looks like a nav link)
-.nav-icon-link {
-    background: none;
+// Desktop round buttons: search and bag (same size as the avatar)
+.site-navbar .nav-icon-link {
+    width: 2.5rem;
+    height: 2.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
     border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: #fff;
+    font-size: 1.2rem;
+    transition: background-color .2s ease, color .2s ease;
+
+    &:hover,
+    &:focus-visible {
+        background: rgba(#fff, .1);
+        color: $brand-cyan;
+    }
 }
 
-// Round icon buttons on phones (search, menu)
+// Round icon buttons on phones (search, bag, menu)
 .nav-icon-btn {
     width: 2.5rem;
     height: 2.5rem;
@@ -82,6 +98,45 @@
     &:focus-visible {
         background: rgba(#fff, .1);
         color: $brand-cyan;
+    }
+}
+
+// Desktop: 3 columns. Logo | links centered | actions right
+@media (min-width: 768px) {
+    .site-navbar > .container {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+        align-items: center;
+    }
+
+    // Let the menu lists sit directly in the grid
+    .site-navbar .offcanvas.site-offcanvas,
+    .site-navbar .site-offcanvas .offcanvas-body {
+        display: contents;
+    }
+
+    .site-navbar .navbar-brand {
+        grid-column: 1;
+    }
+
+    .site-navbar .nav-links {
+        grid-column: 2;
+        gap: .25rem;
+    }
+
+    .site-navbar .nav-actions {
+        grid-column: 3;
+        justify-self: end;
+        gap: .25rem;
+    }
+
+    .site-navbar .nav-avatar {
+        width: 2.5rem;
+        height: 2.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
     }
 }
 

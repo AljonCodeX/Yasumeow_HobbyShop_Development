@@ -58,7 +58,8 @@
                     ];
                 @endphp
 
-                <ul class="navbar-nav ms-auto align-items-md-center">
+                {{-- Page links (centered on desktop) --}}
+                <ul class="navbar-nav nav-links align-items-md-center">
                     @foreach ($navLinks as $link)
                         <li class="nav-item">
                             <a class="nav-link {{ $link['active'] ? 'active' : '' }}"
@@ -68,7 +69,10 @@
                             </a>
                         </li>
                     @endforeach
+                </ul>
 
+                {{-- Actions: search, reservation, account (right side on desktop) --}}
+                <ul class="navbar-nav nav-actions align-items-md-center">
                     {{-- Desktop search --}}
                     <li class="nav-item d-none d-md-block">
                         <button type="button" class="nav-link nav-icon-link" data-bs-toggle="modal" data-bs-target="#searchModal" aria-label="Search">
