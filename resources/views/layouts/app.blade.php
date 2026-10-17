@@ -24,11 +24,19 @@
             <span class="fw-bold">Yasumeow Hobby Shop</span>
         </a>
 
-        {{-- Phone: search + menu buttons --}}
+        {{-- Phone: search + reservation + menu buttons --}}
         <div class="d-flex align-items-center gap-1 d-md-none">
             <button type="button" class="nav-icon-btn" data-bs-toggle="modal" data-bs-target="#searchModal" aria-label="Search">
                 <i class="bi bi-search"></i>
             </button>
+            @auth
+                <button type="button" class="nav-icon-btn reserve-btn" data-bs-toggle="offcanvas" data-bs-target="#reserveDrawer" aria-controls="reserveDrawer" aria-label="My reservation">
+                    <i class="bi bi-bag"></i>
+                    @if ($reserveCount > 0)
+                        <span class="reserve-badge">{{ $reserveCount }}</span>
+                    @endif
+                </button>
+            @endauth
             <button type="button" class="nav-icon-btn" data-bs-toggle="offcanvas" data-bs-target="#mainMenu" aria-controls="mainMenu" aria-label="Open menu">
                 <i class="bi bi-list"></i>
             </button>
@@ -67,6 +75,18 @@
                             <i class="bi bi-search"></i>
                         </button>
                     </li>
+
+                    {{-- Desktop reservation --}}
+                    @auth
+                        <li class="nav-item d-none d-md-block">
+                            <button type="button" class="nav-link nav-icon-link reserve-btn" data-bs-toggle="offcanvas" data-bs-target="#reserveDrawer" aria-controls="reserveDrawer" aria-label="My reservation">
+                                <i class="bi bi-bag"></i>
+                                @if ($reserveCount > 0)
+                                    <span class="reserve-badge">{{ $reserveCount }}</span>
+                                @endif
+                            </button>
+                        </li>
+                    @endauth
 
                     @guest
                         @if (Route::has('login'))
@@ -214,6 +234,81 @@
             </div>
         </div>
     </div>
+
+    <!-- Reservation drawer -->
+    @auth
+        <div class="offcanvas offcanvas-end site-offcanvas reserve-drawer" tabindex="-1" id="reserveDrawer"
+             aria-labelledby="reserveDrawerLabel" @if (session('open_reserve')) data-auto-open @endif>
+            <div class="offcanvas-header">
+                <span class="fw-bold" id="reserveDrawerLabel">My Reservation ({{ $reserveCount }})</span>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+
+            <div class="offcanvas-body d-flex flex-column">
+                @if ($reserveItems->isEmpty())
+                    <div class="reserve-empty">
+                        <i class="bi bi-bag"></i>
+                        <p class="fw-bold mb-1">Your reservation is empty</p>
+                        <p class="small mb-3">Pick something from the shop and it will show up here.</p>
+                        <a href="{{ url('/shop') }}" class="shop-item-btn">Browse shop</a>
+                    </div>
+                @else
+                    @if (session('open_reserve') && session('error'))
+                        <p class="reserve-error">{{ session('error') }}</p>
+                    @endif
+
+                    <ul class="reserve-list">
+                        @foreach ($reserveItems as $item)
+                            @php $p = $item['product']; @endphp
+                            <li class="reserve-row">
+                                <div class="reserve-thumb">
+                                    @if ($p->image)
+                                        <img src="{{ asset('storage/' . $p->image) }}" alt="{{ $p->name }}">
+                                    @else
+                                        <i class="bi {{ $p->category?->icon ?? 'bi-box-seam' }}"></i>
+                                    @endif
+                                </div>
+
+                                <div class="reserve-info">
+                                    <a href="{{ route('products.show', $p) }}" class="reserve-name">{{ $p->name }}</a>
+                                    <span class="reserve-price">₱{{ number_format($item['subtotal']) }}</span>
+
+                                    <div class="reserve-qty">
+                                        <form method="POST" action="{{ route('reserve.decrease', $p) }}">
+                                            @csrf
+                                            @method('PATCH')
+                                            <button type="submit" class="reserve-qty-btn" aria-label="Decrease quantity"><i class="bi bi-dash"></i></button>
+                                        </form>
+                                        <span>{{ $item['qty'] }}</span>
+                                        <form method="POST" action="{{ route('reserve.increase', $p) }}">
+                                            @csrf
+                                            @method('PATCH')
+                                            <button type="submit" class="reserve-qty-btn" aria-label="Increase quantity"><i class="bi bi-plus"></i></button>
+                                        </form>
+                                    </div>
+                                </div>
+
+                                <form method="POST" action="{{ route('reserve.remove', $p) }}">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="reserve-remove" aria-label="Remove {{ $p->name }}"><i class="bi bi-trash"></i></button>
+                                </form>
+                            </li>
+                        @endforeach
+                    </ul>
+
+                    <div class="reserve-foot mt-auto">
+                        <div class="reserve-total">
+                            <span>Total</span>
+                            <span>₱{{ number_format($reserveTotal) }}</span>
+                        </div>
+                        <p class="reserve-note">Pick up at the shop. Pay in store or GCash.</p>
+                        <button type="button" class="shop-item-btn" disabled>Confirm reservation</button>
+                    </div>
+                @endif
+            </div>
+        </div>
+    @endauth
 
     <script>
         // Put the cursor in the search box when the search page opens

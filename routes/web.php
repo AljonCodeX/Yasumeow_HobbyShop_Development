@@ -34,3 +34,6 @@ Route::get('/shop', [ProductController::class, 'index'])->name('shop');
 Route::get('/shop/{product}', [ProductController::class, 'show'])->name('products.show');
 
 Route::post('/reserve/{product}', [ReservationController::class, 'add'])->middleware('auth')->name('reserve.add');
+Route::patch('/reserve/{product}/increase', [ReservationController::class, 'increase'])->middleware('auth')->name('reserve.increase');
+Route::patch('/reserve/{product}/decrease', [ReservationController::class, 'decrease'])->middleware('auth')->name('reserve.decrease');
+Route::delete('/reserve/{product}', [ReservationController::class, 'remove'])->middleware('auth')->name('reserve.remove');
