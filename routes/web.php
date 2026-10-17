@@ -4,6 +4,10 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\EventController;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Auth\GoogleController;
+
+Route::get('/auth/google', [GoogleController::class, 'redirect'])->name('google.login');
+Route::get('/auth/google/callback', [GoogleController::class, 'callback']);
 
 Route::get('/', [PageController::class, 'home'])->name('welcome');
 
