@@ -1,19 +1,29 @@
-<div class="col-6 col-md-4 col-lg-3">
-    <a href="{{ route('products.show', $product) }}" class="text-decoration-none text-dark">
-        <div class="card h-100 shadow-sm">
-            <img src="{{ $product->image ? asset('storage/' . $product->image) : 'https://placehold.co/400x300?text=No+Image' }}"
-                 class="card-img-top" alt="{{ $product->name }}" style="aspect-ratio:4/3; object-fit:cover;">
-            <div class="card-body">
-                <small class="text-muted">{{ $product->category->name ?? 'Uncategorized' }}</small>
-                <h6 class="card-title mt-1 mb-2">{{ $product->name }}</h6>
-                <div class="d-flex justify-content-between align-items-center">
-                    <strong>₱{{ number_format($product->price, 2) }}</strong>
-                    @if ($product->stock <= 0)
-                        <span class="badge bg-secondary">Out of stock</span>
-                    @elseif ($product->stock <= 3)
-                        <span class="badge bg-warning text-dark">Low stock</span>
-                    @endif
-                </div>
+@php $stock = $product->stockStatus(); @endphp
+
+<div class="col">
+    <a href="{{ route('products.show', $product) }}" class="shop-item {{ $stock === 'out' ? 'is-out' : '' }}">
+        <div class="shop-item-img">
+            @if ($product->image)
+                <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}">
+            @else
+                <i class="bi {{ $product->category?->icon ?? 'bi-box-seam' }}"></i>
+            @endif
+        </div>
+
+        <div class="shop-item-body">
+            <span class="shop-item-cat">{{ $product->category?->name ?? 'Others' }}</span>
+            <h3 class="shop-item-name">{{ $product->name }}</h3>
+
+            <div class="shop-item-foot">
+                <span class="shop-item-price">₱{{ number_format((float) $product->price) }}</span>
+
+                @if ($stock === 'in')
+                    <span class="shop-item-stock stock-in">In stock</span>
+                @elseif ($stock === 'low')
+                    <span class="shop-item-stock stock-low">Only {{ $product->stock_qty }} left</span>
+                @else
+                    <span class="shop-item-stock stock-out">Sold out</span>
+                @endif
             </div>
         </div>
     </a>

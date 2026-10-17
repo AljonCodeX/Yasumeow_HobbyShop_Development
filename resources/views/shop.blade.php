@@ -1,37 +1,49 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container py-4">
-    <h1 class="h3 mb-3">Shop</h1>
+<div class="shop-page">
+    <div class="container">
 
-    <form method="GET" action="{{ route('shop') }}" class="row g-2 mb-3">
-        @if ($activeCategory)
-            <input type="hidden" name="category" value="{{ $activeCategory }}">
-        @endif
-        <div class="col-12 col-md-6">
-            <input type="search" name="q" value="{{ request('q') }}" class="form-control" placeholder="Search products...">
+        <header class="shop-head">
+            <div>
+                <h1 class="shop-title">Shop</h1>
+                <p class="shop-sub">Reserve online, pick up at the shop.</p>
+            </div>
+
+            <form method="GET" action="{{ route('shop') }}" class="shop-search" role="search">
+                @if ($activeCategory)
+                    <input type="hidden" name="category" value="{{ $activeCategory }}">
+                @endif
+                <i class="bi bi-search"></i>
+                <input type="search" name="q" value="{{ request('q') }}" class="form-control" placeholder="Search products">
+            </form>
+        </header>
+
+        <nav class="shop-chips" aria-label="Filter products by category">
+            <a href="{{ route('shop', request()->only('q')) }}"
+               class="shop-chip {{ $activeCategory ? '' : 'active' }}">All</a>
+            @foreach ($categories as $category)
+                <a href="{{ route('shop', array_merge(request()->only('q'), ['category' => $category->id])) }}"
+                   class="shop-chip {{ $activeCategory === $category->id ? 'active' : '' }}">{{ $category->name }}</a>
+            @endforeach
+        </nav>
+
+        <p class="shop-count">{{ $products->total() }} {{ $products->total() === 1 ? 'product' : 'products' }}</p>
+
+        <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3">
+            @forelse ($products as $product)
+                @include('partials.product-card', ['product' => $product])
+            @empty
+                <div class="col-12">
+                    <div class="shop-empty">
+                        <i class="bi bi-box-seam"></i>
+                        <p class="mb-0">No products found. Try another search or category.</p>
+                    </div>
+                </div>
+            @endforelse
         </div>
-    </form>
 
-    <div class="d-flex flex-wrap gap-2 mb-4">
-        <a href="{{ route('shop', request()->only('q')) }}"
-           class="btn btn-sm {{ !$activeCategory ? 'btn-dark' : 'btn-outline-dark' }}">All</a>
-        @foreach ($categories as $category)
-            <a href="{{ route('shop', array_merge(request()->only('q'), ['category' => $category->id])) }}"
-               class="btn btn-sm {{ $activeCategory === $category->id ? 'btn-dark' : 'btn-outline-dark' }}">
-                {{ $category->name }}
-            </a>
-        @endforeach
+        <div class="mt-4">{{ $products->links() }}</div>
     </div>
-
-    <div class="row g-3">
-        @forelse ($products as $product)
-            @include('partials.product-card', ['product' => $product])
-        @empty
-            <p class="text-muted">No products found.</p>
-        @endforelse
-    </div>
-
-    <div class="mt-4">{{ $products->links() }}</div>
 </div>
 @endsection
