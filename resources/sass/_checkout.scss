@@ -1,0 +1,189 @@
+// Checkout page (reuses variables from _shop.scss and rows from _reserve.scss)
+
+.checkout-head {
+    margin-bottom: 1.5rem;
+}
+
+.checkout-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    align-items: start;
+
+    @media (min-width: 992px) {
+        grid-template-columns: minmax(0, 1fr) 380px;
+    }
+}
+
+.checkout-section-title {
+    margin: 0 0 .75rem;
+    font-size: .8rem;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: $shop-muted;
+}
+
+// ---------- Payment option cards ----------
+.pay-option {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: .75rem;
+    padding: 1.1rem 1.25rem;
+    border: 1px solid $shop-line;
+    border-radius: .85rem;
+    background: $shop-surface;
+    cursor: pointer;
+    transition: border-color .15s ease, background-color .15s ease, box-shadow .15s ease;
+
+    // The real radio is hidden, the whole card acts as the button
+    input {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    &:hover {
+        border-color: rgba($brand-cyan, .5);
+    }
+
+    &:has(input:checked) {
+        border-color: $brand-cyan;
+        background: rgba($brand-cyan, .08);
+        box-shadow: 0 0 0 1px $brand-cyan;
+    }
+
+    &:has(input:focus-visible) {
+        outline: 2px solid $brand-cyan;
+        outline-offset: 2px;
+    }
+}
+
+.pay-option-icon {
+    flex: 0 0 2.75rem;
+    height: 2.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: .65rem;
+    font-size: 1.25rem;
+    color: $brand-cyan;
+    background: rgba(#fff, .06);
+}
+
+.pay-option-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.pay-option-title {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: .25rem .75rem;
+    font-weight: 700;
+    color: #fff;
+}
+
+.pay-option-amount {
+    color: $brand-cyan;
+    font-weight: 700;
+}
+
+.pay-option-desc {
+    margin: .25rem 0 0;
+    font-size: .85rem;
+    line-height: 1.45;
+    color: $shop-muted;
+}
+
+// Round tick on the right side of the card
+.pay-option-check {
+    flex: 0 0 1.4rem;
+    width: 1.4rem;
+    height: 1.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: .1rem;
+    border: 2px solid $shop-line;
+    border-radius: 50%;
+    font-size: .85rem;
+    color: transparent;
+    transition: all .15s ease;
+}
+
+.pay-option:has(input:checked) .pay-option-check {
+    border-color: $brand-cyan;
+    background: $brand-cyan;
+    color: $hero-bg;
+}
+
+// ---------- Order summary ----------
+.checkout-summary {
+    padding: 1.25rem;
+    border: 1px solid $shop-line;
+    border-radius: .85rem;
+    background: $shop-surface;
+
+    @media (min-width: 992px) {
+        position: sticky;
+        top: 5.5rem;
+    }
+
+    .reserve-row:last-child {
+        border-bottom: 0;
+    }
+}
+
+.checkout-totals {
+    margin-top: .5rem;
+    padding-top: 1rem;
+    border-top: 1px solid $shop-line;
+}
+
+.checkout-total-row {
+    display: flex;
+    justify-content: space-between;
+    padding: .25rem 0;
+    font-size: .9rem;
+    color: $shop-muted;
+
+    &.is-main {
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: #fff;
+    }
+
+    &.is-now > span:last-child {
+        font-weight: 700;
+        color: $brand-cyan;
+    }
+}
+
+.checkout-btn {
+    margin-top: 1.25rem;
+    padding: .8rem;
+    font-size: 1rem;
+    color: $hero-bg;
+    background: $brand-cyan;
+
+    &:hover {
+        opacity: .9;
+    }
+}
+
+.checkout-note {
+    display: flex;
+    gap: .5rem;
+    margin: .85rem 0 0;
+    font-size: .78rem;
+    line-height: 1.4;
+    color: $shop-muted;
+
+    > i {
+        color: $brand-cyan;
+    }
+}
