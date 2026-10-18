@@ -65,6 +65,7 @@
                         ['label' => 'Games',  'url' => '/games',  'icon' => 'bi-controller',     'active' => request()->is('games*')],
                         ['label' => 'Shop',   'url' => '/shop',   'icon' => 'bi-bag',            'active' => request()->is('shop*')],
                         ['label' => 'Events', 'url' => '/events', 'icon' => 'bi-calendar-event', 'active' => request()->is('events*')],
+                        ['label' => 'About',  'url' => '/about',  'icon' => 'bi-info-circle',    'active' => request()->is('about*')],
                     ];
                 @endphp
 
@@ -225,6 +226,8 @@
 
                 <div class="footer-bottom">
                     <div class="footer-links small">
+                        <a href="{{ route('about') }}" class="text-body text-decoration-none">About Us</a>
+                        <span class="footer-sep">|</span>
                         <a href="#" class="text-body text-decoration-none">Terms and Conditions</a>
                         <span class="footer-sep">|</span>
                         <a href="#" class="text-body text-decoration-none">Privacy Policy</a>
