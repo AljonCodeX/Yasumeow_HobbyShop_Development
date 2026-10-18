@@ -72,6 +72,24 @@
     background: var(--ym-tint);
 }
 
+// Cards with only a title: center vertically; logos fit the icon box
+.pay-option.is-simple {
+    align-items: center;
+}
+
+// Logo tile: white rounded frame with padding, so the logo has breathing room
+.pay-option-icon:has(> img) {
+    padding: 0;
+    background: transparent;
+    overflow: visible;
+}
+
+.pay-option-icon > img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
 .pay-option-body {
     flex: 1;
     min-width: 0;

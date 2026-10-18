@@ -12,11 +12,16 @@
                 <p class="mb-0">We are waiting for PayMongo to confirm your payment. Refresh this page in a few seconds.</p>
             </div>
         @elseif ($reservation->status === 'cancelled')
-            <div class="shop-empty mb-4">
-                <i class="bi bi-x-circle"></i>
-                <p class="mb-0">This reservation was cancelled.</p>
-            </div>
-        @else
+                <div class="shop-empty mb-4">
+                    <i class="bi bi-x-circle"></i>
+                    <p class="mb-0">This reservation was cancelled.</p>
+                </div>
+            @elseif ($reservation->status === 'expired')
+                <div class="shop-empty mb-4">
+                    <i class="bi bi-calendar-x"></i>
+                    <p class="mb-0">This reservation expired because it was not picked up in time. The items were released.</p>
+                </div>
+            @else
             <div class="shop-empty mb-4">
                 <i class="bi bi-check-circle"></i>
                 <p class="mb-0">
@@ -49,6 +54,11 @@
             <p class="reserve-note mt-2">
                 To pay in store: ₱{{ number_format((float) $reservation->amount_total - (float) $reservation->amount_paid, 2) }}
             </p>
+            @if ($reservation->pickup_by)
+                <p class="reserve-note">
+                    <i class="bi bi-clock-history me-1"></i>Pick up by {{ $reservation->pickup_by->format('M j, Y g:i A') }}. After that the reservation expires and the items are released.
+                </p>
+            @endif
         @endif
 
         <a href="{{ route('shop') }}" class="shop-item-btn mt-3">Back to shop</a>

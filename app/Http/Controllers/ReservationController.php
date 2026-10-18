@@ -120,9 +120,9 @@ class ReservationController extends Controller
         ]);
 
         $total = $items->sum('subtotal');
-        $fee = min((float) config('services.paymongo.reservation_fee'), $total);
+        $pickupBy = now()->addDays(Reservation::PICKUP_DAYS);
 
-        return view('reserve-checkout', compact('items', 'total', 'fee'));
+        return view('reserve-checkout', compact('items', 'total', 'pickupBy'));
     }
 
     public function confirm(Request $request)
@@ -130,7 +130,7 @@ class ReservationController extends Controller
         $request->merge(['contact_phone' => preg_replace('/[\s-]/', '', (string) $request->input('contact_phone'))]);
 
         $data = $request->validate([
-            'payment_option' => ['required', 'in:store,fee,online'],
+            'payment_option' => ['required', 'in:store,online'],
             'contact_name'   => ['required', 'string', 'max:255'],
             'contact_phone'  => ['required', 'regex:/^(09|\+639)\d{9}$/'],
             'note'           => ['nullable', 'string', 'max:255'],
@@ -164,13 +164,7 @@ class ReservationController extends Controller
             }
 
             $total = $products->sum(fn ($p) => (float) $p->price * $cart[$p->id]);
-            $fee = min((float) config('services.paymongo.reservation_fee'), $total);
-
-            $due = match ($option) {
-                'online' => $total,
-                'fee'    => $fee,
-                default  => 0,
-            };
+            $due = $option === 'online' ? $total : 0;
 
             $reservation = Reservation::create([
                 'user_id'        => Auth::id(),
@@ -178,6 +172,7 @@ class ReservationController extends Controller
                 'contact_phone'  => $data['contact_phone'],
                 'note'           => $data['note'] ?? null,
                 'reserved_at'    => now(),
+                'pickup_by'      => $option === 'store' ? now()->addDays(Reservation::PICKUP_DAYS) : null,
                 'payment_method' => $option,
                 'status'         => $option === 'store' ? 'pending' : 'awaiting_payment',
                 'amount_total'   => $total,
@@ -215,8 +210,8 @@ class ReservationController extends Controller
             return redirect()->route('reservations.thanks', $reservation);
         }
 
-        // Fee or online: create the PayMongo checkout and send the customer there
-        $checkoutUrl = $this->createPayMongoCheckout($reservation, $option);
+        // Online: create the PayMongo checkout and send the customer there
+        $checkoutUrl = $this->createPayMongoCheckout($reservation);
 
         if (! $checkoutUrl) {
             $reservation->cancelAndRestock();
@@ -265,25 +260,14 @@ class ReservationController extends Controller
     }
 
     // Returns the PayMongo checkout URL, or null if something went wrong
-    private function createPayMongoCheckout(Reservation $reservation, string $option): ?string
+    private function createPayMongoCheckout(Reservation $reservation): ?string
     {
-        if ($option === 'fee') {
-            $lineItems = [[
-                'name'     => 'Reservation fee (#' . $reservation->id . ')',
-                'amount'   => (int) round((float) $reservation->amount_due * 100),
-                'currency' => 'PHP',
-                'quantity' => 1,
-            ]];
-        } else {
-            $lineItems = $reservation->items->map(function ($item) {
-                return [
-                    'name'     => Product::find($item->product_id)->name,
-                    'amount'   => (int) round((float) $item->unit_price * 100), // PayMongo uses centavos
-                    'currency' => 'PHP',
-                    'quantity' => $item->quantity,
-                ];
-            })->all();
-        }
+        $lineItems = $reservation->items->map(fn ($item) => [
+            'name'     => Product::find($item->product_id)->name,
+            'amount'   => (int) round((float) $item->unit_price * 100), // PayMongo uses centavos
+            'currency' => 'PHP',
+            'quantity' => $item->quantity,
+        ])->all();
 
         $response = Http::withBasicAuth(config('services.paymongo.secret_key'), '')
             ->post('https://api.paymongo.com/v2/checkout_sessions', [

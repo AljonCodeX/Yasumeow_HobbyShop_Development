@@ -9,19 +9,29 @@ class ReleaseUnpaidReservations extends Command
 {
     protected $signature = 'reservations:release-unpaid';
 
-    protected $description = 'Cancel reservations not paid within 30 minutes and return their stock';
+    protected $description = 'Cancel unpaid online reservations (30 min) and expire pay-in-store reservations not picked up in time';
 
     public function handle(): int
     {
-        $expired = Reservation::where('status', 'awaiting_payment')
+        $unpaid = Reservation::where('status', 'awaiting_payment')
             ->where('created_at', '<', now()->subMinutes(30))
             ->get();
 
-        foreach ($expired as $reservation) {
+        foreach ($unpaid as $reservation) {
             $reservation->cancelAndRestock();
         }
 
-        $this->info($expired->count() . ' reservation(s) released.');
+        $late = Reservation::where('status', 'pending')
+            ->where('payment_method', 'store')
+            ->whereNotNull('pickup_by')
+            ->where('pickup_by', '<', now())
+            ->get();
+
+        foreach ($late as $reservation) {
+            $reservation->expireAndRestock();
+        }
+
+        $this->info($unpaid->count() . ' unpaid cancelled, ' . $late->count() . ' expired.');
 
         return self::SUCCESS;
     }

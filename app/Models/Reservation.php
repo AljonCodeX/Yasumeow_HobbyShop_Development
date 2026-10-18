@@ -9,16 +9,20 @@ use Illuminate\Support\Facades\DB;
 
 class Reservation extends Model
 {
+    // Days a pay-in-store reservation is held before it expires
+    public const PICKUP_DAYS = 2;
+
     protected $fillable = [
-    'user_id', 'reserved_at', 'payment_method', 'status',
-    'amount_total', 'amount_due', 'amount_paid', 'paymongo_session_id',
-    'contact_name', 'contact_phone', 'note',
+        'user_id', 'reserved_at', 'pickup_by', 'payment_method', 'status',
+        'amount_total', 'amount_due', 'amount_paid', 'paymongo_session_id',
+        'contact_name', 'contact_phone', 'note',
     ];
 
     protected function casts(): array
     {
         return [
             'reserved_at'  => 'datetime',
+            'pickup_by'    => 'datetime',
             'amount_total' => 'decimal:2',
             'amount_due'   => 'decimal:2',
             'amount_paid'  => 'decimal:2',
@@ -35,13 +39,24 @@ class Reservation extends Model
         return $this->hasMany(ReservationItem::class);
     }
 
-    // Cancels an unpaid reservation and gives the held stock back
+    // Unpaid online reservation: cancel and return stock
     public function cancelAndRestock(): void
     {
-        DB::transaction(function () {
+        $this->release('awaiting_payment', 'cancelled');
+    }
+
+    // Pay-in-store reservation not picked up in time: expire and return stock
+    public function expireAndRestock(): void
+    {
+        $this->release('pending', 'expired');
+    }
+
+    private function release(string $from, string $to): void
+    {
+        DB::transaction(function () use ($from, $to) {
             $reservation = self::lockForUpdate()->find($this->id);
 
-            if (! $reservation || $reservation->status !== 'awaiting_payment') {
+            if (! $reservation || $reservation->status !== $from) {
                 return;
             }
 
@@ -49,7 +64,7 @@ class Reservation extends Model
                 Product::where('id', $item->product_id)->increment('stock_qty', $item->quantity);
             }
 
-            $reservation->update(['status' => 'cancelled']);
+            $reservation->update(['status' => $to]);
         });
     }
 }
