@@ -5,12 +5,11 @@
 
 <div class="account-stats">
     @foreach ($stats as $stat)
-        <a href="{{ route('account.reservations', $stat['status'] ? ['status' => $stat['status']] : []) }}"
-           class="account-stat">
+        <div class="account-stat">
             <span class="account-stat-count">{{ $stat['count'] }}</span>
             <i class="bi {{ $stat['icon'] }}"></i>
             <span class="account-stat-label">{{ $stat['label'] }}</span>
-        </a>
+        </div>
     @endforeach
 </div>
 @endsection

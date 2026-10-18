@@ -246,3 +246,24 @@
         box-shadow: none;
     }
 }
+
+// Desktop navbar avatar: smaller, with a border
+.site-navbar .nav-avatar {
+    .avatar-circle {
+        width: 30px;
+        height: 30px;
+        border: 2px solid rgba(#fff, .35);
+        transition: border-color .2s ease;
+    }
+
+    .avatar-icon {
+        flex-basis: 30px;
+        font-size: 1.2rem;
+    }
+
+    &:hover .avatar-circle,
+    &:focus-visible .avatar-circle,
+    &.show .avatar-circle {
+        border-color: $brand-cyan;
+    }
+}

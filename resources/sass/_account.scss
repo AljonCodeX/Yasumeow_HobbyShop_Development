@@ -123,19 +123,12 @@
     border: 1px solid var(--ym-line);
     border-radius: .85rem;
     color: var(--ym-text);
-    text-decoration: none;
     background: var(--ym-surface);
-    transition: border-color .15s ease;
 
     > i {
         font-size: 2rem;
         line-height: 1;
         color: var(--ym-accent);
-    }
-
-    &:hover {
-        color: var(--ym-text);
-        border-color: $brand-cyan;
     }
 }
 
