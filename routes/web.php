@@ -58,6 +58,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('account')->name('account.')->group(function () {
         Route::get('/', [AccountController::class, 'dashboard'])->name('dashboard');
         Route::get('/reservations', [AccountController::class, 'reservations'])->name('reservations');
+        Route::get('/bag', [ReservationController::class, 'bag'])->name('bag');
         Route::get('/info', [AccountController::class, 'info'])->name('info');
         Route::put('/info', [AccountController::class, 'updateInfo'])->name('info.update');
         Route::post('/photo', [AccountController::class, 'updatePhoto'])->name('photo.update');
@@ -73,6 +74,7 @@ Route::middleware('auth')->group(function () {
 
     // Reservation bag and checkout
     Route::get('/reserve/checkout', [ReservationController::class, 'checkout'])->name('reserve.checkout');
+    Route::get('/bag', [ReservationController::class, 'bag'])->name('bag');
     Route::post('/reserve/confirm', [ReservationController::class, 'confirm'])->name('reserve.confirm');
     Route::post('/reserve/{product}', [ReservationController::class, 'add'])->name('reserve.add');
     Route::patch('/reserve/{product}/increase', [ReservationController::class, 'increase'])->name('reserve.increase');

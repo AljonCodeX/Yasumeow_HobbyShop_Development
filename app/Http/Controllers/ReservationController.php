@@ -18,7 +18,7 @@ class ReservationController extends Controller
         $cart = session('reserve', []);
         $qty = $cart[$product->id] ?? 0;
 
-        // The Reserve button sends checkout=1 to skip the drawer and go straight to checkout
+        // The Reserve button sends checkout=1: check out only this product, leave the bag alone
         $goToCheckout = $request->boolean('checkout');
 
         if ($product->stock_qty <= 0) {
@@ -26,25 +26,19 @@ class ReservationController extends Controller
         }
 
         if ($goToCheckout) {
-            // Make sure it is in the bag, but don't add a second one if it's already there
-            if ($qty === 0) {
-                $cart[$product->id] = 1;
-                session(['reserve' => $cart]);
-            }
+            session(['reserve_now' => [$product->id => 1]]);
 
             return redirect()->route('reserve.checkout');
         }
 
         if ($qty >= $product->stock_qty) {
-            return back()->with('error', 'You already reserved all available stock of ' . $product->name . '.');
+            return back()->with('error', 'You already added all available stock of ' . $product->name . '.');
         }
 
         $cart[$product->id] = $qty + 1;
         session(['reserve' => $cart]);
 
-        return back()
-            ->with('success', $product->name . ' added to your reservation.')
-            ->with('open_reserve', true);
+        return back()->with('success', $product->name . ' added to your bag.');
     }
 
     public function increase(Product $product)
@@ -53,15 +47,13 @@ class ReservationController extends Controller
         $qty = $cart[$product->id] ?? 0;
 
         if ($qty >= $product->stock_qty) {
-            return back()
-                ->with('error', 'No more stock available for ' . $product->name . '.')
-                ->with('open_reserve', true);
+            return back()->with('error', 'No more stock available for ' . $product->name . '.');
         }
 
         $cart[$product->id] = $qty + 1;
         session(['reserve' => $cart]);
 
-        return back()->with('open_reserve', true);
+        return back();
     }
 
     public function decrease(Product $product)
@@ -77,7 +69,7 @@ class ReservationController extends Controller
 
         session(['reserve' => $cart]);
 
-        return back()->with('open_reserve', true);
+        return back();
     }
 
     public function remove(Product $product)
@@ -86,16 +78,37 @@ class ReservationController extends Controller
         unset($cart[$product->id]);
         session(['reserve' => $cart]);
 
-        return back()->with('open_reserve', true);
+        return back();
+    }
+
+    // My Bag page
+    public function bag()
+    {
+        // Coming to the bag means checking out the whole bag, not a single Reserve item
+        session()->forget('reserve_now');
+
+        $cart = session('reserve', []);
+
+        $products = Product::with('category')->whereIn('id', array_keys($cart))->get();
+
+        $items = $products->map(fn ($p) => [
+            'product'  => $p,
+            'qty'      => $cart[$p->id],
+            'subtotal' => (float) $p->price * $cart[$p->id],
+        ]);
+
+        $total = $items->sum('subtotal');
+
+        return view('bag', compact('items', 'total'));
     }
 
     // Payment options page
     public function checkout()
     {
-        $cart = session('reserve', []);
+        $cart = $this->checkoutCart();
 
         if (empty($cart)) {
-            return redirect()->route('shop')->with('error', 'Your reservation is empty.');
+            return redirect()->route('shop')->with('error', 'Your bag is empty.');
         }
 
         $products = Product::whereIn('id', array_keys($cart))->get();
@@ -119,10 +132,10 @@ class ReservationController extends Controller
         ]);
 
         $option = $request->payment_option;
-        $cart = session('reserve', []);
+        $cart = $this->checkoutCart();
 
         if (empty($cart)) {
-            return redirect()->route('shop')->with('error', 'Your reservation is empty.');
+            return redirect()->route('shop')->with('error', 'Your bag is empty.');
         }
 
         // Lock the product rows so two people can't reserve the last item at the same time
@@ -131,9 +144,9 @@ class ReservationController extends Controller
                 ->lockForUpdate()
                 ->get();
 
-            // A product in the cart was deleted by the admin
+            // A product in the bag was deleted by the admin
             if ($products->count() !== count($cart)) {
-                return 'Some items in your reservation are no longer available.';
+                return 'Some items in your bag are no longer available.';
             }
 
             // Check the stock again, it may have changed since the item was added
@@ -187,7 +200,7 @@ class ReservationController extends Controller
 
         // Pay in store: nothing to pay now
         if ($option === 'store') {
-            session()->forget('reserve');
+            $this->clearCheckoutCart();
 
             return redirect()->route('reservations.thanks', $reservation);
         }
@@ -202,7 +215,7 @@ class ReservationController extends Controller
                 ->with('error', 'We could not start the payment. Please try again.');
         }
 
-        session()->forget('reserve');
+        $this->clearCheckoutCart();
 
         return redirect()->away($checkoutUrl);
     }
@@ -227,6 +240,18 @@ class ReservationController extends Controller
 
         return redirect()->route('shop')
             ->with('error', 'Payment cancelled. Your items were released.');
+    }
+
+    // What checkout uses: the single Reserve item if there is one, otherwise the whole bag
+    private function checkoutCart(): array
+    {
+        return session('reserve_now', session('reserve', []));
+    }
+
+    // After a successful checkout, clear only what was checked out
+    private function clearCheckoutCart(): void
+    {
+        session()->forget(session()->has('reserve_now') ? 'reserve_now' : 'reserve');
     }
 
     // Returns the PayMongo checkout URL, or null if something went wrong
