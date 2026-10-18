@@ -121,13 +121,53 @@
 
                         {{-- Phone: tap the profile row to show the account links --}}
                         <li class="nav-item d-md-none mt-3 pt-3 border-top border-secondary-subtle">
-                            <a class="account-toggle collapsed text-decoration-none" href="{{ route('account.dashboard') }}">
+                            <button type="button" class="account-toggle collapsed"
+                                    data-bs-toggle="collapse" data-bs-target="#accountLinks"
+                                    aria-expanded="false" aria-controls="accountLinks">
                                 <span class="d-flex align-items-center gap-2">
                                     @include('partials.avatar')
                                     <strong>{{ Auth::user()->name }}</strong>
                                 </span>
-                                <i class="bi bi-chevron-right account-chevron"></i>
-                            </a>
+                                <i class="bi bi-chevron-down account-chevron"></i>
+                            </button>
+
+                            <div class="collapse" id="accountLinks">
+                                <ul class="navbar-nav">
+                                    @php
+                                        $accountLinks = [
+                                            ['route' => 'account.dashboard',    'icon' => 'bi-grid',      'label' => 'Dashboard'],
+                                            ['route' => 'account.info',         'icon' => 'bi-person',    'label' => 'Account Info'],
+                                            ['route' => 'account.favourites',   'icon' => 'bi-heart',     'label' => 'Favourites'],
+                                            ['route' => 'account.reservations', 'icon' => 'bi-bag-check', 'label' => 'Reservations'],
+                                            ['route' => 'account.appearance',   'icon' => 'bi-palette',   'label' => 'Appearance'],
+                                        ];
+                                    @endphp
+
+                                    @foreach ($accountLinks as $link)
+                                        <li class="nav-item">
+                                            <a class="nav-link {{ request()->routeIs($link['route']) ? 'active' : '' }}"
+                                            href="{{ route($link['route']) }}">
+                                                <i class="bi {{ $link['icon'] }} me-2"></i>{{ $link['label'] }}
+                                            </a>
+                                        </li>
+                                    @endforeach
+
+                                    @if (Auth::user()->is_admin)
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="{{ url('/admin') }}">
+                                                <i class="bi bi-speedometer2 me-2"></i>Admin Panel
+                                            </a>
+                                        </li>
+                                    @endif
+
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{{ route('logout') }}"
+                                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                            <i class="bi bi-box-arrow-right me-2"></i>Log out
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
                         </li>
                     @endguest
                 </ul>

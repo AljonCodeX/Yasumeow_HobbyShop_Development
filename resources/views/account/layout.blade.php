@@ -16,7 +16,7 @@
     <div class="container" style="max-width: 1000px;">
         <div class="account-grid">
 
-            <aside>
+            <aside class="d-none d-lg-block">
                 <h2 class="checkout-section-title">Menu</h2>
                 <nav class="account-menu">
                     @foreach ($menu as $item)

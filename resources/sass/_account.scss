@@ -1,7 +1,7 @@
 // My Account pages (theme variables, so light and dark both work)
 .account-grid {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 1.5rem;
     align-items: start;
 
@@ -151,17 +151,6 @@
     font-size: .85rem;
     color: var(--ym-muted);
 }
-
-    strong {
-        display: block;
-        font-size: 1.5rem;
-        color: var(--ym-text);
-    }
-
-    span {
-        font-size: .8rem;
-        color: var(--ym-muted);
-    }
 
 // Cards (reservations, forms)
 .account-card {
