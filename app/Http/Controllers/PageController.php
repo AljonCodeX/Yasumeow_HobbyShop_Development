@@ -17,8 +17,8 @@ class PageController extends Controller
                 'title' => 'Board Games',
                 'icon'  => 'bi-dice-5-fill',
             ],
-            'Physical Toy Games' => [
-                'title' => 'Physical Toy Games',
+            'Hobby Toys' => [
+                'title' => 'Hobby Toys',
                 'icon'  => 'bi-puzzle-fill',
             ],
             'PS5 Games' => [

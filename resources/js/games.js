@@ -1,6 +1,6 @@
 // Games page: category filter chips
 document.addEventListener('DOMContentLoaded', function () {
-    const chips    = document.querySelectorAll('.games-chip');
+    const chips    = document.querySelectorAll('.shop-chip[data-filter]');
     const sections = document.querySelectorAll('.games-section');
     const empty    = document.getElementById('gamesEmpty');
 
