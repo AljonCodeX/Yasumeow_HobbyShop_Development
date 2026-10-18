@@ -34,4 +34,32 @@ class ProductController extends Controller
 
         return view('product-details', compact('product', 'related'));
     }
+
+    // Product suggestions for the search box (returns JSON)
+    public function suggestions(Request $request)
+    {
+        $q = trim((string) $request->query('q', ''));
+
+        // Too short to search
+        if (mb_strlen($q) < 2) {
+            return response()->json([]);
+        }
+
+        $products = Product::with('category')
+            ->where('name', 'like', '%' . $q . '%')
+            ->orderByDesc('is_featured')
+            ->orderBy('name')
+            ->take(6)
+            ->get();
+
+        return response()->json($products->map(fn ($p) => [
+            'name'     => $p->name,
+            'category' => $p->category?->name ?? 'Others',
+            'price'    => '₱' . number_format((float) $p->price),
+            'url'      => route('products.show', $p),
+            'image'    => $p->image ? asset('storage/' . $p->image) : null,
+            'icon'     => $p->category?->icon ?? 'bi-box-seam',
+            'stock'    => $p->stockStatus(),
+        ]));
+    }
 }

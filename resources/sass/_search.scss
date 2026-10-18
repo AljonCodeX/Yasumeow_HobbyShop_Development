@@ -1,6 +1,7 @@
 // Full-screen search (reuses variables from _home.scss)
 .search-modal {
     background-color: #fff;
+    overflow-y: auto; // long suggestion lists can scroll on small screens
 
     .btn-close {
         width: 1.5rem;
@@ -23,4 +24,102 @@
             box-shadow: none;
         }
     }
+}
+
+// ---------- Suggestions under the search box ----------
+.search-suggestions {
+    margin-top: 1rem;
+    padding-bottom: 2rem;
+}
+
+.suggestion {
+    display: flex;
+    align-items: center;
+    gap: .9rem;
+    padding: .65rem .75rem;
+    border-radius: .75rem;
+    color: var(--ym-text);
+    text-decoration: none;
+    transition: background-color .15s ease;
+
+    &:hover,
+    &:focus-visible {
+        color: var(--ym-text);
+        background: var(--ym-tint);
+    }
+}
+
+.suggestion-thumb {
+    flex: 0 0 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-radius: .5rem;
+    font-size: 1.3rem;
+    color: var(--ym-accent);
+    background: var(--ym-tint);
+
+    > img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+}
+
+.suggestion-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.suggestion-name {
+    overflow: hidden;
+    font-weight: 500;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    .suggestion-match {
+        font-weight: 700;
+        color: var(--ym-accent);
+    }
+}
+
+.suggestion-cat {
+    font-size: .72rem;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: var(--ym-muted);
+}
+
+.suggestion-price {
+    font-weight: 700;
+    color: var(--ym-accent);
+
+    &.is-out {
+        font-size: .8rem;
+        color: var(--ym-bad);
+    }
+}
+
+.suggestion-all {
+    display: block;
+    margin-top: .5rem;
+    padding: .65rem .75rem;
+    font-weight: 700;
+    color: var(--ym-text);
+    text-decoration: none;
+
+    &:hover {
+        color: var(--ym-accent);
+        text-decoration: underline;
+    }
+}
+
+.suggestion-empty {
+    margin: 0;
+    padding: 1rem .75rem;
+    color: var(--ym-muted);
 }

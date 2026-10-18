@@ -246,7 +246,7 @@
                 <div class="d-flex justify-content-end p-4">
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="container search-modal-body">
+                   <div class="container search-modal-body">
                     <form action="{{ url('/shop') }}" method="GET" role="search">
                         <div class="input-group search-box">
                             <span class="input-group-text border-0 bg-transparent">
@@ -255,6 +255,11 @@
                             <input id="searchInput" type="search" name="q" class="form-control border-0 fs-4" placeholder="Search" autocomplete="off">
                         </div>
                     </form>
+
+                    {{-- Product suggestions appear here while typing --}}
+                    <div id="searchSuggestions" class="search-suggestions"
+                         data-url="{{ route('search.suggestions') }}"
+                         data-shop="{{ route('shop') }}"></div>
                 </div>
             </div>
         </div>
