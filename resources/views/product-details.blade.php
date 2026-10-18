@@ -57,7 +57,12 @@
                             </button>
                         </form>
                     @else
-                        <a href="{{ route('login') }}" class="shop-item-btn is-primary">Log in to reserve</a>
+                        <a href="{{ route('login') }}" class="shop-item-btn is-primary">
+                            <i class="bi bi-bookmark-check me-1"></i>Reserve
+                        </a>
+                        <a href="{{ route('login') }}" class="shop-item-btn">
+                            <i class="bi bi-bag-plus me-1"></i>Add to bag
+                        </a>
                     @endif
                 </div>
 

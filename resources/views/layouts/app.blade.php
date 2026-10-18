@@ -105,11 +105,9 @@
 
                     @guest
                         @if (Route::has('login'))
-                            <li class="nav-item ms-md-2 mt-3 mt-md-0 d-grid d-md-block">
-                                <a class="btn btn-info btn-sm px-3 rounded-pill fw-bold" href="{{ route('login') }}">
-                                    <i class="bi bi-box-arrow-in-right me-1"></i>{{ __('Login') }}
-                                </a>
-                            </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('login') }}">Log in</a>
+                        </li>
                         @endif
                     @else
                         {{-- Desktop: avatar dropdown --}}
