@@ -87,6 +87,35 @@
                     </div>
 
                     <h2 class="checkout-section-title mt-4">Payment method</h2>
+                    @foreach ($options as $value => $option)
+                        <label class="pay-option">
+                            <input type="radio"
+                                name="payment_option"
+                                value="{{ $value }}"
+                                data-now="{{ $option['now'] }}"
+                                data-store="{{ $option['later'] }}"
+                                data-button="{{ $option['button'] }}"
+                                {{ $selected === $value ? 'checked' : '' }}>
+
+                            <span class="pay-option-icon"><i class="bi {{ $option['icon'] }}"></i></span>
+
+                            <span class="pay-option-body">
+                                <span class="pay-option-title">
+                                    <span>{{ $option['title'] }}</span>
+                                    @if ($option['amount'])
+                                        <span class="pay-option-amount">{{ $option['amount'] }}</span>
+                                    @endif
+                                </span>
+                                <span class="pay-option-desc d-block">{{ $option['desc'] }}</span>
+                            </span>
+
+                            <span class="pay-option-check"><i class="bi bi-check-lg"></i></span>
+                        </label>
+                    @endforeach
+
+                    @error('payment_option')
+                        <p class="reserve-error">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 {{-- Order summary --}}
