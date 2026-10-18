@@ -127,11 +127,18 @@ class ReservationController extends Controller
 
     public function confirm(Request $request)
     {
-        $request->validate([
+        $request->merge(['contact_phone' => preg_replace('/[\s-]/', '', (string) $request->input('contact_phone'))]);
+
+        $data = $request->validate([
             'payment_option' => ['required', 'in:store,fee,online'],
+            'contact_name'   => ['required', 'string', 'max:255'],
+            'contact_phone'  => ['required', 'regex:/^(09|\+639)\d{9}$/'],
+            'note'           => ['nullable', 'string', 'max:255'],
+        ], [
+            'contact_phone.regex' => 'Enter a valid mobile number, like 09171234567.',
         ]);
 
-        $option = $request->payment_option;
+        $option = $data['payment_option'];
         $cart = $this->checkoutCart();
 
         if (empty($cart)) {
@@ -139,7 +146,7 @@ class ReservationController extends Controller
         }
 
         // Lock the product rows so two people can't reserve the last item at the same time
-        $result = DB::transaction(function () use ($cart, $option) {
+        $result = DB::transaction(function () use ($cart, $option, $data) {
             $products = Product::whereIn('id', array_keys($cart))
                 ->lockForUpdate()
                 ->get();
@@ -167,6 +174,9 @@ class ReservationController extends Controller
 
             $reservation = Reservation::create([
                 'user_id'        => Auth::id(),
+                'contact_name'   => $data['contact_name'],
+                'contact_phone'  => $data['contact_phone'],
+                'note'           => $data['note'] ?? null,
                 'reserved_at'    => now(),
                 'payment_method' => $option,
                 'status'         => $option === 'store' ? 'pending' : 'awaiting_payment',

@@ -57,37 +57,36 @@
 
                 {{-- Payment options --}}
                 <div>
-                    <h2 class="checkout-section-title">Payment method</h2>
+                    <h2 class="checkout-section-title">Your details</h2>
 
-                    @foreach ($options as $value => $option)
-                        <label class="pay-option">
-                            <input type="radio"
-                                   name="payment_option"
-                                   value="{{ $value }}"
-                                   data-now="{{ $option['now'] }}"
-                                   data-store="{{ $option['later'] }}"
-                                   data-button="{{ $option['button'] }}"
-                                   {{ $selected === $value ? 'checked' : '' }}>
+                    <div class="account-card">
+                        <div class="mb-3">
+                            <label for="contact_name" class="form-label fw-bold small">Full name</label>
+                            <input id="contact_name" type="text" name="contact_name"
+                                value="{{ old('contact_name', Auth::user()->name) }}"
+                                class="form-control @error('contact_name') is-invalid @enderror" required>
+                            @error('contact_name') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        </div>
 
-                            <span class="pay-option-icon"><i class="bi {{ $option['icon'] }}"></i></span>
+                        <div class="mb-3">
+                            <label for="contact_phone" class="form-label fw-bold small">Mobile number</label>
+                            <input id="contact_phone" type="tel" name="contact_phone"
+                                value="{{ old('contact_phone', Auth::user()->phone) }}"
+                                placeholder="09171234567"
+                                class="form-control @error('contact_phone') is-invalid @enderror" required>
+                            @error('contact_phone') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        </div>
 
-                            <span class="pay-option-body">
-                                <span class="pay-option-title">
-                                    <span>{{ $option['title'] }}</span>
-                                    @if ($option['amount'])
-                                        <span class="pay-option-amount">{{ $option['amount'] }}</span>
-                                    @endif
-                                </span>
-                                <span class="pay-option-desc d-block">{{ $option['desc'] }}</span>
-                            </span>
+                        <div>
+                            <label for="note" class="form-label fw-bold small">Note <span class="text-muted fw-normal">(optional)</span></label>
+                            <textarea id="note" name="note" rows="2" maxlength="255"
+                                    placeholder="Anything we should know? Example: I will pick up after 3 PM."
+                                    class="form-control @error('note') is-invalid @enderror">{{ old('note') }}</textarea>
+                            @error('note') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        </div>
+                    </div>
 
-                            <span class="pay-option-check"><i class="bi bi-check-lg"></i></span>
-                        </label>
-                    @endforeach
-
-                    @error('payment_option')
-                        <p class="reserve-error">{{ $message }}</p>
-                    @enderror
+                    <h2 class="checkout-section-title mt-4">Payment method</h2>
                 </div>
 
                 {{-- Order summary --}}

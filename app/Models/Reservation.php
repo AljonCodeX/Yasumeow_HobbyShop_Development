@@ -10,8 +10,9 @@ use Illuminate\Support\Facades\DB;
 class Reservation extends Model
 {
     protected $fillable = [
-        'user_id', 'reserved_at', 'payment_method', 'status',
-        'amount_total', 'amount_due', 'amount_paid', 'paymongo_session_id',
+    'user_id', 'reserved_at', 'payment_method', 'status',
+    'amount_total', 'amount_due', 'amount_paid', 'paymongo_session_id',
+    'contact_name', 'contact_phone', 'note',
     ];
 
     protected function casts(): array
