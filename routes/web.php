@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AccountController;
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\PageController;
@@ -51,8 +52,18 @@ Route::get('/search/suggestions', [SearchController::class, 'data'])
 */
 Route::middleware('auth')->group(function () {
 
-    Route::get('/settings', fn () => view('settings'))->name('settings');
+     // My Account
+    Route::redirect('/settings', '/account/appearance')->name('settings');
 
+    Route::prefix('account')->name('account.')->group(function () {
+        Route::get('/', [AccountController::class, 'dashboard'])->name('dashboard');
+        Route::get('/reservations', [AccountController::class, 'reservations'])->name('reservations');
+        Route::get('/info', [AccountController::class, 'info'])->name('info');
+        Route::put('/info', [AccountController::class, 'updateInfo'])->name('info.update');
+        Route::get('/favourites', [AccountController::class, 'favourites'])->name('favourites');
+        Route::post('/favourites/{product}', [AccountController::class, 'toggleFavourite'])->name('favourites.toggle');
+        Route::view('/appearance', 'account.appearance')->name('appearance');
+    });
     // Events
     Route::post('/events/{event}/register', [EventController::class, 'register'])->name('events.register');
     Route::delete('/events/{event}/register', [EventController::class, 'cancel'])->name('events.cancel');

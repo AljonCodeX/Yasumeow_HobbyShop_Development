@@ -61,6 +61,17 @@
                     @endif
                 </div>
 
+                @auth
+                    @php $isFavourite = auth()->user()->favourites()->whereKey($product->id)->exists(); @endphp
+                    <form method="POST" action="{{ route('account.favourites.toggle', $product) }}" class="mt-3">
+                        @csrf
+                        <button type="submit" class="btn btn-link p-0 text-body text-decoration-none small fw-bold">
+                            <i class="bi {{ $isFavourite ? 'bi-heart-fill text-danger' : 'bi-heart' }} me-1"></i>
+                            {{ $isFavourite ? 'Remove from favourites' : 'Add to favourites' }}
+                        </button>
+                    </form>
+                @endauth
+
                 <ul class="product-info">
                     <li><i class="bi bi-geo-alt"></i>Pick up at Yasumeow Hobby Shop</li>
                     <li><i class="bi bi-wallet2"></i>Pay in store, or pay online</li>

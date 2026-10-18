@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Filament\Models\Contracts\FilamentUser;
@@ -58,14 +59,17 @@ use Filament\Panel;
     }
 
     /**
-     * Uploaded photo if the user has one, otherwise the default avatar.
+     * Uploaded photo URL, or null when the user has none (the layout shows an icon instead).
      */
-    public function avatarUrl(): string
+    public function avatarUrl(): ?string
     {
-        if ($this->profile_photo) {
-            return asset('storage/' . $this->profile_photo);
-        }
+        return $this->profile_photo
+            ? asset('storage/' . $this->profile_photo)
+            : null;
+    }
 
-        return asset('images/user_avatar.svg');
+    public function favourites(): BelongsToMany
+    {
+        return $this->belongsToMany(Product::class, 'favourites')->withTimestamps();
     }
 }

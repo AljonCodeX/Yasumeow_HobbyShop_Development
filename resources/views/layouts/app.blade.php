@@ -113,63 +113,21 @@
                         @endif
                     @else
                         {{-- Desktop: avatar dropdown --}}
-                        <li class="nav-item dropdown d-none d-md-block">
-                            <a id="navbarDropdown" class="nav-link nav-avatar" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Account menu">
-                                <img src="{{ Auth::user()->avatarUrl() }}" alt="{{ Auth::user()->name }}" class="avatar-circle">
+                        <li class="nav-item d-none d-md-block">
+                            <a class="nav-link nav-avatar" href="{{ route('account.dashboard') }}" aria-label="My account">
+                                @include('partials.avatar')
                             </a>
-
-                            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                <h6 class="dropdown-header">{{ Auth::user()->name }}</h6>
-                                @if (Auth::user()->is_admin)
-                                    <a class="dropdown-item" href="{{ url('/admin') }}">
-                                        <i class="bi bi-speedometer2 me-2"></i>Admin Panel
-                                    </a>
-                                @endif
-                                <a class="dropdown-item" href="#">
-                                    <i class="bi bi-person me-2"></i>Edit Profile
-                                </a>
-                                <a class="dropdown-item" href="{{ route('settings') }}">
-                                    <i class="bi bi-gear me-2"></i>Settings
-                                </a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="{{ route('logout') }}"
-                                   onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                    <i class="bi bi-box-arrow-right me-2"></i>{{ __('Logout') }}
-                                </a>
-                            </div>
                         </li>
 
                         {{-- Phone: tap the profile row to show the account links --}}
                         <li class="nav-item d-md-none mt-3 pt-3 border-top border-secondary-subtle">
-                            <button type="button" class="account-toggle collapsed" data-bs-toggle="collapse" data-bs-target="#accountMenu" aria-expanded="false" aria-controls="accountMenu">
+                            <a class="account-toggle collapsed text-decoration-none" href="{{ route('account.dashboard') }}">
                                 <span class="d-flex align-items-center gap-2">
-                                    <img src="{{ Auth::user()->avatarUrl() }}" alt="{{ Auth::user()->name }}" class="avatar-circle">
+                                    @include('partials.avatar')
                                     <strong>{{ Auth::user()->name }}</strong>
                                 </span>
-                                <i class="bi bi-chevron-down account-chevron"></i>
-                            </button>
-
-                            <div class="collapse" id="accountMenu">
-                                <ul class="navbar-nav">
-                                    @if (Auth::user()->is_admin)
-                                        <li class="nav-item">
-                                            <a class="nav-link" href="{{ url('/admin') }}"><i class="bi bi-speedometer2 me-2"></i>Admin Panel</a>
-                                        </li>
-                                    @endif
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="#"><i class="bi bi-person me-2"></i>Edit Profile</a>
-                                    </li>
-                                    <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('settings') }}"><i class="bi bi-gear me-2"></i>Settings</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="{{ route('logout') }}"
-                                           onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                            <i class="bi bi-box-arrow-right me-2"></i>{{ __('Logout') }}
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
+                                <i class="bi bi-chevron-right account-chevron"></i>
+                            </a>
                         </li>
                     @endguest
                 </ul>

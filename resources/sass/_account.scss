@@ -1,0 +1,440 @@
+// My Account pages (theme variables, so light and dark both work)
+.account-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    align-items: start;
+
+    @media (min-width: 992px) {
+        grid-template-columns: 240px minmax(0, 1fr);
+    }
+}
+
+.account-menu {
+    display: flex;
+    flex-direction: column;
+    gap: .25rem;
+
+    // Phones and tablets: one swipeable row above the content
+    @media (max-width: 991.98px) {
+        flex-direction: row;
+        overflow-x: auto;
+        scrollbar-width: none;
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
+    }
+}
+
+.account-link {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    padding: .7rem .9rem;
+    border-radius: .6rem;
+    color: var(--ym-text);
+    font-weight: 500;
+    white-space: nowrap;
+    text-decoration: none;
+    transition: background-color .15s ease;
+
+    > i {
+        font-size: 1.1rem;
+        color: var(--ym-muted);
+    }
+
+    &:hover {
+        color: var(--ym-text);
+        background: var(--ym-tint);
+    }
+
+    &.active {
+        font-weight: 700;
+        background: var(--ym-tint);
+
+        > i {
+            color: var(--ym-accent);
+        }
+    }
+}
+
+// Profile header
+.account-profile {
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.account-avatar {
+    width: 110px;
+    height: 110px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid var(--ym-line);
+    background: var(--ym-tint);
+
+    &.is-icon {
+        font-size: 3.5rem;
+        color: var(--ym-muted);
+    }
+}
+
+.account-name {
+    margin: .75rem 0 0;
+    font-size: 1.5rem;
+    color: var(--ym-text);
+}
+
+.account-email {
+    margin: 0 0 .5rem;
+    color: var(--ym-muted);
+}
+
+.account-badge {
+    display: inline-block;
+    padding: .2rem .9rem;
+    border-radius: .4rem;
+    font-size: .8rem;
+    font-weight: 700;
+    color: $hero-bg;
+    background: $brand-cyan;
+}
+
+// Dashboard summary cards
+.account-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: .75rem;
+    margin-bottom: 1.5rem;
+}
+
+.account-stat {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: .9rem;
+    padding: 1rem 1.1rem;
+    border: 1px solid var(--ym-line);
+    border-radius: .85rem;
+    color: var(--ym-text);
+    text-decoration: none;
+    background: var(--ym-surface);
+    transition: border-color .15s ease;
+
+    > i {
+        font-size: 2rem;
+        line-height: 1;
+        color: var(--ym-accent);
+    }
+
+    &:hover {
+        color: var(--ym-text);
+        border-color: $brand-cyan;
+    }
+}
+
+.account-stat-count {
+    position: absolute;
+    top: .9rem;
+    right: 1.1rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.account-stat-label {
+    font-size: .85rem;
+    color: var(--ym-muted);
+}
+
+    strong {
+        display: block;
+        font-size: 1.5rem;
+        color: var(--ym-text);
+    }
+
+    span {
+        font-size: .8rem;
+        color: var(--ym-muted);
+    }
+
+// Cards (reservations, forms)
+.account-card {
+    margin-bottom: 1rem;
+    padding: 1.1rem 1.25rem;
+    border: 1px solid var(--ym-line);
+    border-radius: .75rem;
+    background: var(--ym-surface);
+    color: var(--ym-text);
+
+    .form-control {
+        color: var(--ym-text);
+    }
+}
+
+.account-card-head,
+.account-card-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.account-card-head {
+    margin-bottom: .5rem;
+}
+
+.account-card-foot {
+    margin-top: .75rem;
+}
+
+.account-status {
+    padding: .2rem .7rem;
+    border-radius: 2rem;
+    font-size: .75rem;
+    font-weight: 700;
+    color: var(--ym-muted);
+    border: 1px solid var(--ym-line);
+
+    &.is-ok   { color: var(--ym-ok);   border-color: var(--ym-ok); }
+    &.is-warn { color: var(--ym-warn); border-color: var(--ym-warn); }
+    &.is-bad  { color: var(--ym-bad);  border-color: var(--ym-bad); }
+}
+
+// Reservation history
+.history-title {
+    margin: 0 0 1rem;
+    font-size: 1.5rem;
+    color: var(--ym-text);
+}
+
+.history-filters {
+    display: flex;
+    flex-direction: column;
+    gap: .75rem;
+    margin-bottom: 1.25rem;
+
+    .form-control,
+    .form-select {
+        color: var(--ym-text);
+        background-color: var(--ym-surface);
+        border-color: var(--ym-line);
+    }
+}
+
+.history-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: .75rem;
+
+    @media (min-width: 576px) {
+        grid-template-columns: 1fr 1.5fr;
+    }
+}
+
+.history-card {
+    display: block;
+    margin-bottom: 1rem;
+    padding: 1.1rem 1.35rem;
+    border: 1px solid var(--ym-line);
+    border-radius: .85rem;
+    color: var(--ym-text);
+    text-decoration: none;
+    background: var(--ym-surface);
+    transition: border-color .15s ease;
+
+    &:hover {
+        color: var(--ym-text);
+        border-color: $brand-cyan;
+    }
+}
+
+.history-card-title {
+    padding-bottom: .75rem;
+    font-size: 1.05rem;
+    font-weight: 600;
+    border-bottom: 1px solid var(--ym-line);
+}
+
+.history-card-body {
+    padding-top: .75rem;
+}
+
+.history-item {
+    margin-bottom: .25rem;
+
+    small {
+        color: var(--ym-muted);
+    }
+}
+
+.history-card-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: .5rem;
+    color: var(--ym-muted);
+}
+
+.history-status {
+    font-weight: 600;
+
+    &.is-ok   { color: var(--ym-ok); }
+    &.is-warn { color: var(--ym-warn); }
+    &.is-bad  { color: var(--ym-bad); }
+}
+
+// Date range box
+.history-range {
+    text-align: center;
+    cursor: pointer;
+    background-color: var(--ym-surface) !important;
+}
+
+// Calendar (follows light and dark mode)
+.flatpickr-calendar {
+    color: var(--ym-text);
+    background: var(--ym-surface);
+    border: 1px solid var(--ym-line);
+    box-shadow: 0 .5rem 1.5rem rgba(0, 0, 0, .25);
+
+    &::before,
+    &::after {
+        display: none;
+    }
+
+    .flatpickr-months .flatpickr-month,
+    .flatpickr-current-month input.cur-year,
+    .flatpickr-current-month .flatpickr-monthDropdown-months,
+    span.flatpickr-weekday,
+    .flatpickr-day {
+        color: var(--ym-text);
+    }
+
+    .flatpickr-current-month .flatpickr-monthDropdown-months {
+        background: var(--ym-surface);
+
+        option {
+            background: var(--ym-surface);
+        }
+    }
+
+    .flatpickr-months .flatpickr-prev-month svg,
+    .flatpickr-months .flatpickr-next-month svg {
+        fill: var(--ym-text);
+    }
+
+    .flatpickr-day {
+        &.prevMonthDay,
+        &.nextMonthDay,
+        &.flatpickr-disabled {
+            color: var(--ym-muted);
+        }
+
+        &:hover {
+            background: var(--ym-tint);
+            border-color: transparent;
+        }
+
+        &.today {
+            border-color: var(--ym-accent);
+        }
+
+        &.inRange {
+            background: var(--ym-tint);
+            border-color: transparent;
+            box-shadow: -5px 0 0 var(--ym-tint), 5px 0 0 var(--ym-tint);
+        }
+
+        &.selected,
+        &.startRange,
+        &.endRange {
+            color: $hero-bg;
+            background: $brand-cyan;
+            border-color: $brand-cyan;
+        }
+    }
+}
+
+// Status dropdown
+.status-toggle {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: .375rem .75rem;
+    border: 1px solid var(--ym-line);
+    border-radius: .375rem;
+    color: var(--ym-text);
+    background: var(--ym-surface);
+    text-align: left;
+
+    > i {
+        font-size: .8rem;
+        color: var(--ym-muted);
+        transition: transform .2s ease;
+    }
+
+    &[aria-expanded="true"] {
+        border-color: $brand-cyan;
+
+        > i {
+            transform: rotate(180deg);
+        }
+    }
+}
+
+.status-menu {
+    min-width: 100%;
+    padding: .4rem;
+    border: 1px solid var(--ym-line);
+    border-radius: .75rem;
+    background: var(--ym-surface);
+    box-shadow: 0 .5rem 1.5rem rgba(0, 0, 0, .25);
+}
+
+.status-item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: .65rem;
+    padding: .55rem .7rem;
+    border: 0;
+    border-radius: .5rem;
+    color: var(--ym-text);
+    background: transparent;
+    text-align: left;
+
+    > i {
+        color: var(--ym-accent);
+        opacity: 0;
+    }
+
+    &:hover {
+        background: var(--ym-tint);
+    }
+
+    &.active {
+        font-weight: 700;
+        background: var(--ym-tint);
+
+        > i {
+            opacity: 1;
+        }
+    }
+}
+
+.status-dot {
+    flex: 0 0 .6rem;
+    width: .6rem;
+    height: .6rem;
+    border-radius: 50%;
+    background: var(--ym-muted);
+
+    &.is-ok   { background: var(--ym-ok); }
+    &.is-warn { background: var(--ym-warn); }
+    &.is-bad  { background: var(--ym-bad); }
+    &.is-info { background: var(--ym-accent); }
+}

@@ -136,7 +136,8 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 0;
+        padding: 0 !important;
+        border-radius: 50%;
     }
 }
 
@@ -199,11 +200,25 @@
     transition: box-shadow .2s ease;
 }
 
-.nav-avatar:hover .avatar-circle,
-.nav-avatar:focus .avatar-circle,
-.nav-avatar.show .avatar-circle {
-    box-shadow: 0 0 0 3px rgba($brand-cyan, .35);
+// Default avatar: a person icon instead of a picture
+.avatar-icon {
+    flex: 0 0 36px;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    color: #fff;
+    font-size: 1.5rem;
+    transition: color .2s ease, box-shadow .2s ease;
 }
+
+.nav-avatar:hover .avatar-icon,
+.nav-avatar.show .avatar-icon {
+    color: $brand-cyan;
+}
+
 
 // Dropdown menu items
 .site-navbar .dropdown-item {
@@ -213,5 +228,20 @@
     &:focus {
         background-color: rgba($brand-cyan, .12);
         color: $brand-cyan;
+    }
+}
+
+// Avatar button: same hover as the search and bag icons (soft circle, no ring)
+.site-navbar .nav-avatar {
+    border-radius: 50%;
+    background: transparent;
+    transition: background-color .2s ease, color .2s ease;
+
+    &:hover,
+    &:focus-visible,
+    &.show {
+        background: rgba(#fff, .1);
+        outline: none;
+        box-shadow: none;
     }
 }
