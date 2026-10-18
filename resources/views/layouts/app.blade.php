@@ -34,12 +34,8 @@
             <span class="fw-bold">Yasumeow Hobby Shop</span>
         </a>
 
-        {{-- Phone: theme + search + reservation + menu buttons --}}
+        {{-- Phone: search + reservation + menu buttons --}}
         <div class="d-flex align-items-center gap-1 d-md-none">
-            <button type="button" class="nav-icon-btn theme-toggle" data-theme-toggle aria-label="Switch theme">
-                <i class="bi bi-moon-stars-fill"></i>
-                <i class="bi bi-sun-fill"></i>
-            </button>
             <button type="button" class="nav-icon-btn" data-bs-toggle="modal" data-bs-target="#searchModal" aria-label="Search">
                 <i class="bi bi-search"></i>
             </button>
@@ -94,13 +90,6 @@
                         </button>
                     </li>
 
-                    {{-- Theme switch --}}
-                    <li class="nav-item d-none d-md-block">
-                        <button type="button" class="nav-link nav-icon-link theme-toggle" data-theme-toggle aria-label="Switch theme">
-                            <i class="bi bi-moon-stars-fill"></i>
-                            <i class="bi bi-sun-fill"></i>
-                        </button>
-                    </li>
 
                     {{-- Desktop reservation --}}
                     @auth

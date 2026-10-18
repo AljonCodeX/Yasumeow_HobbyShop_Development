@@ -31,21 +31,6 @@
     --ym-bad: #f87171;
 }
 
-// ---------- Theme switch button (moon in light mode, sun in dark mode) ----------
-.theme-toggle .bi-sun-fill {
-    display: none;
-}
-
-html[data-bs-theme="dark"] .theme-toggle {
-    .bi-sun-fill {
-        display: inline-block;
-    }
-
-    .bi-moon-stars-fill {
-        display: none;
-    }
-}
-
 // ---------- Both modes ----------
 .card {
     --bs-card-bg: var(--ym-surface);
