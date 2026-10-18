@@ -123,16 +123,20 @@ class AccountController extends Controller
 
     public function updatePassword(Request $request)
     {
-        // Own error bag, so these errors don't show up in the info form
-        $request->validateWithBag('password', [
-            'current_password' => ['required', 'current_password'],
-            'password'         => ['required', 'string', 'min:8', 'confirmed'],
-        ]);
+        $user = $request->user();
 
-        // The User model hashes the password automatically
-        $request->user()->update(['password' => $request->password]);
+        $rules = ['password' => ['required', 'string', 'min:8', 'confirmed']];
 
-        return back()->with('success', 'Your password was changed.');
+        // Google accounts have no password yet, so there is no current one to check
+        if ($user->has_password) {
+            $rules['current_password'] = ['required', 'current_password'];
+        }
+
+        $request->validateWithBag('password', $rules);
+
+        $user->update(['password' => $request->password, 'has_password' => true]);
+
+        return back()->with('success', 'Your password was saved.');
     }
 
     public function favourites(Request $request)

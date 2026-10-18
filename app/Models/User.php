@@ -28,6 +28,7 @@ use Filament\Panel;
     'password',
     'profile_photo',
     'is_admin',
+    'has_password' => 'boolean',
     ];
 
     /**
@@ -56,6 +57,7 @@ use Filament\Panel;
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_admin' => 'boolean',
+            'has_password' => 'boolean',
         ];
     }
 

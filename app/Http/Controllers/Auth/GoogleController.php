@@ -22,9 +22,13 @@ class GoogleController extends Controller
 
         // Matches by email: an existing account with the same email is logged in
         $user = User::firstOrCreate(
-            ['email' => $google->getEmail()],
-            ['name' => $google->getName(), 'password' => Hash::make(Str::random(32))]
-        );
+        ['email' => $google->getEmail()],
+        [
+            'name'         => $google->getName(),
+            'password'     => Hash::make(Str::random(32)),
+            'has_password' => false,
+        ]
+    );
 
         Auth::login($user, true);
 
