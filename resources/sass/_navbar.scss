@@ -8,8 +8,9 @@
     .navbar-brand {
         min-width: 0;
         margin-right: .5rem;
-        font-size: 1rem;
         color: #fff;
+        font-family: $headings-font-family;
+        font-size: 1.25rem;
 
         &:hover,
         &:focus {
