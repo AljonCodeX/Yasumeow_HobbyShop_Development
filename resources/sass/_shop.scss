@@ -231,3 +231,10 @@ $shop-muted: var(--ym-muted);
     --bs-pagination-disabled-bg: var(--ym-surface);
     --bs-pagination-disabled-border-color: var(--ym-line);
 }
+
+// Event cards (same look as product cards)
+.event-item-meta {
+    margin: -.3rem 0 .6rem;
+    font-size: .8rem;
+    color: $shop-muted;
+}
