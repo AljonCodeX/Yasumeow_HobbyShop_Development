@@ -6,3 +6,4 @@ import './checkout';
 import './theme';
 import './search';
 import './history';
+import './account';

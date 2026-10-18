@@ -72,24 +72,67 @@ class AccountController extends Controller
 
     public function updateInfo(Request $request)
     {
+        $request->merge(['phone' => preg_replace('/[\s-]/', '', (string) $request->input('phone'))]);
+
         $data = $request->validate([
             'name'  => ['required', 'string', 'max:255'],
-            'photo' => ['nullable', 'image', 'max:2048'],
+            'phone' => ['nullable', 'regex:/^(09|\+639)\d{9}$/'],
+        ], [
+            'phone.regex' => 'Enter a valid mobile number, like 09171234567.',
         ]);
 
         $user = $request->user();
-        $user->name = $data['name'];
-
-        if ($request->hasFile('photo')) {
-            if ($user->profile_photo) {
-                Storage::disk('public')->delete($user->profile_photo);
-            }
-            $user->profile_photo = $request->file('photo')->store('profiles', 'public');
-        }
-
+        $user->name  = $data['name'];
+        $user->phone = $data['phone'] ?: null;
         $user->save();
 
         return back()->with('success', 'Your account was updated.');
+    }
+
+    // Camera icon on the avatar: picking a file uploads it right away
+    public function updatePhoto(Request $request)
+    {
+        $request->validate([
+            'photo' => ['required', 'image', 'max:2048'],
+        ]);
+
+        $user = $request->user();
+
+        if ($user->profile_photo) {
+            Storage::disk('public')->delete($user->profile_photo);
+        }
+
+        $user->profile_photo = $request->file('photo')->store('profiles', 'public');
+        $user->save();
+
+        return back()->with('success', 'Your profile photo was updated.');
+    }
+
+    public function removePhoto(Request $request)
+    {
+        $user = $request->user();
+
+        if ($user->profile_photo) {
+            Storage::disk('public')->delete($user->profile_photo);
+            $user->profile_photo = null;
+            $user->save();
+        }
+
+        return back()->with('success', 'Your profile photo was removed.');
+    }
+
+    public function updatePassword(Request $request)
+    {
+        // Own error bag, so these errors don't show up in the info form
+        $request->validateWithBag('password', [
+            'current_password' => ['required', 'current_password'],
+            'password'         => ['required', 'string', 'min:8', 'confirmed'],
+        ]);
+
+        // The User model hashes the password automatically
+        $request->user()->update(['password' => $request->password]);
+
+        return back()->with('success', 'Your password was changed.');
     }
 
     public function favourites(Request $request)

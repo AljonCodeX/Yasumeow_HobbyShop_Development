@@ -40,18 +40,59 @@
             </aside>
 
             <section>
-                <div class="account-profile">
-                    <a href="{{ route('account.info') }}" class="account-profile-link" aria-label="Edit account info">
-                        @if ($user->profile_photo)
-                            <img src="{{ $user->avatarUrl() }}" alt="{{ $user->name }}" class="account-avatar">
-                        @else
-                            <span class="account-avatar is-icon"><i class="bi bi-person"></i></span>
-                        @endif
-                        <h1 class="account-name">{{ $user->name }}</h1>
-                        <p class="account-email">{{ $user->email }}</p>
-                    </a>
-                    <span class="account-badge">{{ $user->is_admin ? 'Admin' : 'Member' }}</span>
-                </div>
+                @php $editable = request()->routeIs('account.info'); @endphp
+
+                @if ($editable)
+                    {{-- Account Info page: profile on the left, camera icon changes the photo --}}
+                    <div class="account-profile is-left">
+                        <div class="account-avatar-wrap">
+                            @if ($user->profile_photo)
+                                <img src="{{ $user->avatarUrl() }}" alt="{{ $user->name }}" class="account-avatar">
+                            @else
+                                <span class="account-avatar is-icon"><i class="bi bi-person"></i></span>
+                            @endif
+
+                            <form id="photoForm" method="POST" action="{{ route('account.photo.update') }}" enctype="multipart/form-data">
+                                @csrf
+                                <input type="file" name="photo" id="photoInput" accept="image/*" class="d-none">
+                                <button type="button" id="photoButton" class="account-avatar-edit" aria-label="Change profile photo">
+                                    <i class="bi bi-camera-fill"></i>
+                                </button>
+                            </form>
+                        </div>
+
+                        <div class="account-profile-text">
+                            <h1 class="account-name">{{ $user->name }}</h1>
+                            <p class="account-email">{{ $user->email }}</p>
+                            <span class="account-badge">{{ $user->is_admin ? 'Admin' : 'Member' }}</span>
+
+                            @error('photo')
+                                <p class="text-danger small mt-2 mb-0">{{ $message }}</p>
+                            @enderror
+
+                            @if ($user->profile_photo)
+                                <form method="POST" action="{{ route('account.photo.remove') }}" class="mt-2">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-link btn-sm p-0 text-body-secondary">Remove photo</button>
+                                </form>
+                            @endif
+                        </div>
+                    </div>
+                @else
+                    <div class="account-profile">
+                        <a href="{{ route('account.info') }}" class="account-profile-link" aria-label="Edit account info">
+                            @if ($user->profile_photo)
+                                <img src="{{ $user->avatarUrl() }}" alt="{{ $user->name }}" class="account-avatar">
+                            @else
+                                <span class="account-avatar is-icon"><i class="bi bi-person"></i></span>
+                            @endif
+                            <h1 class="account-name">{{ $user->name }}</h1>
+                            <p class="account-email">{{ $user->email }}</p>
+                        </a>
+                        <span class="account-badge">{{ $user->is_admin ? 'Admin' : 'Member' }}</span>
+                    </div>
+                @endif
 
                 @yield('account')
             </section>

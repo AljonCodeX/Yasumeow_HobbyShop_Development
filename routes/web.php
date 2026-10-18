@@ -60,6 +60,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/reservations', [AccountController::class, 'reservations'])->name('reservations');
         Route::get('/info', [AccountController::class, 'info'])->name('info');
         Route::put('/info', [AccountController::class, 'updateInfo'])->name('info.update');
+        Route::post('/photo', [AccountController::class, 'updatePhoto'])->name('photo.update');
+        Route::delete('/photo', [AccountController::class, 'removePhoto'])->name('photo.remove');
+        Route::put('/password', [AccountController::class, 'updatePassword'])->name('password.update');
         Route::get('/favourites', [AccountController::class, 'favourites'])->name('favourites');
         Route::post('/favourites/{product}', [AccountController::class, 'toggleFavourite'])->name('favourites.toggle');
         Route::view('/appearance', 'account.appearance')->name('appearance');

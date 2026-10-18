@@ -24,6 +24,7 @@ use Filament\Panel;
     protected $fillable = [
     'name',
     'email',
+    'phone',
     'password',
     'profile_photo',
     'is_admin',
