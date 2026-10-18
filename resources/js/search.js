@@ -1,5 +1,5 @@
-// Search suggestions: shows matching products while typing in the search window.
-// The page text is built with textContent (not innerHTML), so a product name can never inject HTML.
+// Universal search. The whole list is loaded once, then filtered in the browser,
+// so results appear instantly while typing. Text is set with textContent, never innerHTML.
 document.addEventListener('DOMContentLoaded', function () {
     const input = document.getElementById('searchInput');
     const box   = document.getElementById('searchSuggestions');
@@ -8,13 +8,32 @@ document.addEventListener('DOMContentLoaded', function () {
     // No search box on this page, nothing to do
     if (!input || !box) return;
 
-    let timer  = null;
-    let latest = 0; // counts searches, so an answer that arrives late is ignored
+    let index   = null; // the full list, loaded once
+    let loading = null;
 
-    // Bolds the part of the name that matches what was typed
+    function loadIndex() {
+        if (index) return Promise.resolve(index);
+
+        if (!loading) {
+            loading = fetch(box.dataset.url, { headers: { 'Accept': 'application/json' } })
+                .then(function (r) { return r.json(); })
+                .then(function (data) { index = data; return data; })
+                .catch(function () { loading = null; });
+        }
+
+        return loading;
+    }
+
+    function el(tag, className, text) {
+        const node = document.createElement(tag);
+        if (className) node.className = className;
+        if (text !== undefined) node.textContent = text;
+        return node;
+    }
+
     function highlight(text, query) {
         const fragment = document.createDocumentFragment();
-        const start = text.toLowerCase().indexOf(query.toLowerCase());
+        const start = query ? text.toLowerCase().indexOf(query.toLowerCase()) : -1;
 
         if (start === -1) {
             fragment.append(text);
@@ -22,125 +41,135 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         const end = start + query.length;
-        const match = document.createElement('strong');
-        match.className = 'suggestion-match';
-        match.textContent = text.slice(start, end);
-
-        fragment.append(text.slice(0, start), match, text.slice(end));
+        fragment.append(text.slice(0, start), el('strong', 'suggestion-match', text.slice(start, end)), text.slice(end));
 
         return fragment;
     }
 
-    function render(items, query) {
+    function thumb(item) {
+        const wrap = el('span', 'suggestion-thumb');
+
+        if (item.image) {
+            const img = el('img');
+            img.src = item.image;
+            img.alt = '';
+            wrap.appendChild(img);
+        } else {
+            wrap.appendChild(el('i', 'bi ' + item.icon));
+        }
+
+        return wrap;
+    }
+
+    function row(item, title, sub, side, query) {
+        const link = el('a', 'suggestion');
+        link.href = item.url;
+
+        const info = el('span', 'suggestion-info');
+        const name = el('span', 'suggestion-name');
+        name.appendChild(highlight(title, query));
+        info.append(name, el('span', 'suggestion-cat', sub));
+
+        link.append(thumb(item), info);
+
+        if (side) {
+            const price = el('span', 'suggestion-price', side.text);
+            if (side.out) price.classList.add('is-out');
+            link.appendChild(price);
+        }
+
+        return link;
+    }
+
+    function group(label, rows) {
+        if (!rows.length) return;
+
+        box.appendChild(el('p', 'suggestion-group', label));
+        rows.forEach(function (r) { box.appendChild(r); });
+    }
+
+    // Starts-with first, then name contains, then matches in category/description
+    function filter(list, q, key, limit) {
+        const found = [];
+
+        list.forEach(function (item) {
+            const name = item[key].toLowerCase();
+            let rank = -1;
+
+            if (name.startsWith(q)) rank = 0;
+            else if (name.indexOf(q) !== -1) rank = 1;
+            else if (item.s.indexOf(q) !== -1) rank = 2;
+
+            if (rank >= 0) found.push({ item: item, rank: rank });
+        });
+
+        found.sort(function (a, b) { return a.rank - b.rank; });
+
+        return found.slice(0, limit).map(function (f) { return f.item; });
+    }
+
+    function renderResults(query) {
+        const q = query.toLowerCase();
+        const products = filter(index.products, q, 'name', 4);
+        const games    = filter(index.games, q, 'name', 4);
+        const events   = filter(index.events, q, 'title', 4);
+
         box.innerHTML = '';
 
-        if (items.length === 0) {
-            const empty = document.createElement('p');
-            empty.className = 'suggestion-empty';
-            empty.textContent = 'No products found for "' + query + '".';
-            box.appendChild(empty);
+        if (!products.length && !games.length && !events.length) {
+            box.appendChild(el('p', 'suggestion-empty', 'Nothing found for "' + query + '".'));
             return;
         }
 
-        items.forEach(function (item) {
-            const link = document.createElement('a');
-            link.className = 'suggestion';
-            link.href = item.url;
+        group('Products', products.map(function (p) {
+            return row(p, p.name, p.category,
+                { text: p.stock === 'out' ? 'Sold out' : p.price, out: p.stock === 'out' }, query);
+        }));
 
-            // Picture, or the category icon when the product has no image
-            const thumb = document.createElement('span');
-            thumb.className = 'suggestion-thumb';
+        group('Games', games.map(function (g) {
+            return row(g, g.name, g.type, null, query);
+        }));
 
-            if (item.image) {
-                const img = document.createElement('img');
-                img.src = item.image;
-                img.alt = '';
-                thumb.appendChild(img);
-            } else {
-                const icon = document.createElement('i');
-                icon.className = 'bi ' + item.icon;
-                thumb.appendChild(icon);
-            }
+        group('Events', events.map(function (e) {
+            return row(e, e.title, e.when, e.fee, query);
+        }));
 
-            // Name and category
-            const info = document.createElement('span');
-            info.className = 'suggestion-info';
-
-            const name = document.createElement('span');
-            name.className = 'suggestion-name';
-            name.appendChild(highlight(item.name, query));
-
-            const category = document.createElement('span');
-            category.className = 'suggestion-cat';
-            category.textContent = item.category;
-
-            info.append(name, category);
-
-            // Price, or "Sold out"
-            const price = document.createElement('span');
-            price.className = 'suggestion-price';
-
-            if (item.stock === 'out') {
-                price.classList.add('is-out');
-                price.textContent = 'Sold out';
-            } else {
-                price.textContent = item.price;
-            }
-
-            link.append(thumb, info, price);
-            box.appendChild(link);
-        });
-
-        // Link to the full results page
-        const all = document.createElement('a');
-        all.className = 'suggestion-all';
-        all.href = box.dataset.shop + '?q=' + encodeURIComponent(query);
-        all.textContent = 'See all results for "' + query + '"';
+        const all = el('a', 'suggestion-all', 'See all results for "' + query + '"');
+        all.href = box.dataset.results + '?q=' + encodeURIComponent(query);
         box.appendChild(all);
     }
 
-    function search(query) {
-        const id = ++latest;
-
-        fetch(box.dataset.url + '?q=' + encodeURIComponent(query), {
-            headers: { 'Accept': 'application/json' },
-        })
-            .then(function (response) {
-                return response.json();
-            })
-            .then(function (items) {
-                // A newer search was started while waiting, so skip this answer
-                if (id !== latest) return;
-
-                render(items, query);
-            })
-            .catch(function () {
-                if (id === latest) box.innerHTML = '';
-            });
-    }
-
-    // Wait a moment after typing stops, so we don't search on every key
-    input.addEventListener('input', function () {
+    function update() {
         const query = input.value.trim();
 
-        clearTimeout(timer);
-        latest++;
-
-        if (query.length < 2) {
+        if (query.length === 1) {
             box.innerHTML = '';
             return;
         }
 
-        timer = setTimeout(function () {
-            search(query);
-        }, 250);
-    });
+        if (!index) {
+            box.innerHTML = '';
 
-    // Start fresh next time the search window opens
+            // Nothing typed yet: stay blank. Otherwise show a short message until the list arrives
+            if (query.length > 0) box.appendChild(el('p', 'suggestion-empty', 'Loading...'));
+
+            loadIndex().then(function (data) { if (data) update(); });
+            return;
+        }
+
+        if (query.length === 0) box.innerHTML = '';
+        else renderResults(query);
+    }
+
+    input.addEventListener('input', update);
+
+    // Load the list quietly soon after the page opens, so it is ready before you search
+    setTimeout(loadIndex, 800);
+
     if (modal) {
+        modal.addEventListener('show.bs.modal', update);
+
         modal.addEventListener('hidden.bs.modal', function () {
-            clearTimeout(timer);
-            latest++;
             box.innerHTML = '';
             input.value = '';
         });

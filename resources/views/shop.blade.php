@@ -4,20 +4,12 @@
 <div class="shop-page">
     <div class="container">
 
-        <header class="shop-head">
-            <div>
-                <h1 class="shop-title">Shop</h1>
-                <p class="shop-sub">Reserve online, pick up at the shop.</p>
-            </div>
-
-            <form method="GET" action="{{ route('shop') }}" class="shop-search" role="search">
-                @if ($activeCategory)
-                    <input type="hidden" name="category" value="{{ $activeCategory }}">
-                @endif
-                <i class="bi bi-search"></i>
-                <input type="search" name="q" value="{{ request('q') }}" class="form-control" placeholder="Search products">
-            </form>
-        </header>
+    <header class="shop-head">
+        <div>
+            <h1 class="shop-title">Shop</h1>
+            <p class="shop-sub">Reserve online, pick up at the shop.</p>
+        </div>
+    </header>
 
         <nav class="shop-chips" aria-label="Filter products by category">
             <a href="{{ route('shop', request()->only('q')) }}"

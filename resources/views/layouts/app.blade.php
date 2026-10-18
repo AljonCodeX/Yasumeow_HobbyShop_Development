@@ -247,7 +247,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                    <div class="container search-modal-body">
-                    <form action="{{ url('/shop') }}" method="GET" role="search">
+                    <form action="{{ route('search') }}" method="GET" role="search">
                         <div class="input-group search-box">
                             <span class="input-group-text border-0 bg-transparent">
                                 <i class="bi bi-search fs-4"></i>
@@ -258,8 +258,8 @@
 
                     {{-- Product suggestions appear here while typing --}}
                     <div id="searchSuggestions" class="search-suggestions"
-                         data-url="{{ route('search.suggestions') }}"
-                         data-shop="{{ route('shop') }}"></div>
+                        data-url="{{ route('search.suggestions') }}"
+                        data-results="{{ route('search') }}"></div>
                 </div>
             </div>
         </div>
