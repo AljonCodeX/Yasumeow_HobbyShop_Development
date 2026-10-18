@@ -13,7 +13,7 @@
         ['icon' => 'bi-bag-fill',       'title' => 'Shop',       'text' => 'Cards, beys, kits, figures and more.', 'url' => '/shop'],
         ['icon' => 'bi-controller',     'title' => 'Play',       'text' => 'Try board games, toy games and PS5.',  'url' => '/games'],
         ['icon' => 'bi-trophy-fill',    'title' => 'Compete',    'text' => 'Join tournaments and races.',          'url' => '/events'],
-        ['icon' => 'bi-clock-history',  'title' => 'Rent a PS5', 'text' => '₱50 per hour, up to 2 players.',       'url' => '/games'],
+        ['icon' => 'bi-clock-history',  'title' => 'Play PS5',   'text' => 'Pick a game and play on the shop PS5.', 'url' => '/games'],
     ];
 
     // Promo banners: any image in public/images/banners becomes a slide (sorted by file name)
@@ -23,7 +23,7 @@
         ->sort()
         ->values();
 
-    $ticker = ['WEEKLY TOURNAMENTS', 'PS5 RENTAL ₱50/HR', 'BEGINNERS WELCOME', 'NEW ARRIVALS'];
+        $ticker = ['WEEKLY TOURNAMENTS', 'PLAY PS5', 'BEGINNERS WELCOME', 'NEW ARRIVALS'];
 @endphp
 
 @section('content')
