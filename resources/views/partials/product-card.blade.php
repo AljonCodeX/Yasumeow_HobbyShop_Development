@@ -29,17 +29,6 @@
                     <span class="shop-item-stock stock-out">Sold out</span>
                 @endif
             </div>
-
-            @if ($stock === 'out')
-                <button type="button" class="shop-item-btn" disabled>Sold out</button>
-            @elseif (auth()->check())
-                <form method="POST" action="{{ route('reserve.add', $product) }}">
-                    @csrf
-                    <button type="submit" class="shop-item-btn">Reserve</button>
-                </form>
-            @else
-                <a href="{{ route('login') }}" class="shop-item-btn">Log in to reserve</a>
-            @endif
         </div>
     </div>
 </div>
