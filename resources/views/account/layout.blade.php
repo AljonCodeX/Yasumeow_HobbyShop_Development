@@ -5,9 +5,9 @@
     $user = Auth::user();
     $menu = [
         ['route' => 'account.dashboard',    'icon' => 'bi-grid',      'label' => 'Dashboard'],
-        ['route' => 'account.reservations', 'icon' => 'bi-bag-check', 'label' => 'Reservations'],
         ['route' => 'account.info',         'icon' => 'bi-person',    'label' => 'Account Info'],
         ['route' => 'account.favourites',   'icon' => 'bi-heart',     'label' => 'Favourites'],
+        ['route' => 'account.reservations', 'icon' => 'bi-bag-check', 'label' => 'Reservations'],
         ['route' => 'account.appearance',   'icon' => 'bi-palette',   'label' => 'Appearance'],
     ];
 @endphp
@@ -41,13 +41,15 @@
 
             <section>
                 <div class="account-profile">
-                    @if ($user->profile_photo)
-                        <img src="{{ $user->avatarUrl() }}" alt="{{ $user->name }}" class="account-avatar">
-                    @else
-                        <span class="account-avatar is-icon"><i class="bi bi-person"></i></span>
-                    @endif
-                    <h1 class="account-name">{{ $user->name }}</h1>
-                    <p class="account-email">{{ $user->email }}</p>
+                    <a href="{{ route('account.info') }}" class="account-profile-link" aria-label="Edit account info">
+                        @if ($user->profile_photo)
+                            <img src="{{ $user->avatarUrl() }}" alt="{{ $user->name }}" class="account-avatar">
+                        @else
+                            <span class="account-avatar is-icon"><i class="bi bi-person"></i></span>
+                        @endif
+                        <h1 class="account-name">{{ $user->name }}</h1>
+                        <p class="account-email">{{ $user->email }}</p>
+                    </a>
                     <span class="account-badge">{{ $user->is_admin ? 'Admin' : 'Member' }}</span>
                 </div>
 
