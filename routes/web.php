@@ -33,6 +33,7 @@ Route::delete('/events/{event}/register', [EventController::class, 'cancel'])->m
 
 Route::get('/shop', [ProductController::class, 'index'])->name('shop');
 Route::get('/shop/{product}', [ProductController::class, 'show'])->name('products.show');
+Route::get('/settings', fn () => view('settings'))->middleware('auth')->name('settings');
 
 Route::get('/reserve/checkout', [ReservationController::class, 'checkout'])->middleware('auth')->name('reserve.checkout');
 Route::post('/reserve/confirm', [ReservationController::class, 'confirm'])->middleware('auth')->name('reserve.confirm');

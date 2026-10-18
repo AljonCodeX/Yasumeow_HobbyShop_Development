@@ -139,7 +139,7 @@
                                 <a class="dropdown-item" href="#">
                                     <i class="bi bi-person me-2"></i>Edit Profile
                                 </a>
-                                <a class="dropdown-item" href="#">
+                                <a class="dropdown-item" href="{{ route('settings') }}">
                                     <i class="bi bi-gear me-2"></i>Settings
                                 </a>
                                 <div class="dropdown-divider"></div>
@@ -171,7 +171,7 @@
                                         <a class="nav-link" href="#"><i class="bi bi-person me-2"></i>Edit Profile</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" href="#"><i class="bi bi-gear me-2"></i>Settings</a>
+                                    <a class="nav-link" href="{{ route('settings') }}"><i class="bi bi-gear me-2"></i>Settings</a>
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" href="{{ route('logout') }}"
