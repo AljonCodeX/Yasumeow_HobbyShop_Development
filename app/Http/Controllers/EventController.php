@@ -7,6 +7,7 @@ use App\Models\Registration;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Support\AdminAlert;
 
 class EventController extends Controller
 {
@@ -87,6 +88,15 @@ class EventController extends Controller
             return ['success', 'You are registered for ' . $event->title . '!'];
         });
 
+            if ($type === 'success') {
+            AdminAlert::send(
+                'New event registration',
+                Auth::user()->name . ' registered for ' . $event->title,
+                'heroicon-o-user-plus',
+                'success'
+            );
+        }
+
         return redirect()->route('events.show', $event)->with($type, $message);
     }
 
@@ -106,6 +116,13 @@ class EventController extends Controller
         }
 
         $registration->update(['status' => 'cancelled']);
+
+        AdminAlert::send(
+            'Registration cancelled',
+            Auth::user()->name . ' cancelled for ' . $event->title,
+            'heroicon-o-user-minus',
+            'warning'
+        );
 
         return redirect()->route('events.show', $event)->with('success', 'Your registration was cancelled.');
     }

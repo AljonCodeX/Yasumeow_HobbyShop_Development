@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use App\Support\AdminAlert;
 
 class ReservationController extends Controller
 {
@@ -202,6 +203,25 @@ class ReservationController extends Controller
         }
 
         $reservation = $result;
+
+        // Pay in store is confirmed right away. Online reservations alert when the payment arrives.
+        if ($option === 'store') {
+            AdminAlert::send(
+                'New reservation #' . $reservation->id,
+                $reservation->contact_name . ' reserved ₱' . number_format((float) $reservation->amount_total, 2) . ' (pay in store)',
+                'heroicon-o-clipboard-document-check',
+                'info'
+            );
+        }
+
+        // Low stock warning for the items just reserved
+        Product::whereIn('id', array_keys($cart))->where('stock_qty', '<=', 5)->get()
+            ->each(fn ($p) => AdminAlert::send(
+                $p->stock_qty <= 0 ? 'Sold out' : 'Low stock',
+                $p->name . ($p->stock_qty <= 0 ? ' is sold out.' : ' has only ' . $p->stock_qty . ' left.'),
+                'heroicon-o-exclamation-triangle',
+                $p->stock_qty <= 0 ? 'danger' : 'warning'
+            ));
 
         // Pay in store: nothing to pay now
         if ($option === 'store') {

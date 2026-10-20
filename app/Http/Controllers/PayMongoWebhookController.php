@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Reservation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Support\AdminAlert;
 
 class PayMongoWebhookController extends Controller
 {
@@ -25,19 +26,32 @@ class PayMongoWebhookController extends Controller
         $sessionId = $event['data']['id'] ?? null;
 
         DB::transaction(function () use ($sessionId) {
+            $paid = DB::transaction(function () use ($sessionId) {
             $reservation = Reservation::where('paymongo_session_id', $sessionId)
                 ->lockForUpdate()
                 ->first();
 
             // Unknown, or already handled (PayMongo can send the same event twice)
             if (! $reservation || $reservation->status !== 'awaiting_payment') {
-                return;
+                return null;
             }
 
             $reservation->update([
                 'status'      => 'pending',
                 'amount_paid' => $reservation->amount_due,
             ]);
+
+            return $reservation;
+        });
+
+        if ($paid) {
+            AdminAlert::send(
+                'Payment received, reservation #' . $paid->id,
+                $paid->contact_name . ' paid ₱' . number_format((float) $paid->amount_paid, 2) . ' (QR Ph)',
+                'heroicon-o-banknotes',
+                'success'
+            );
+        }
         });
 
         return response()->json(['message' => 'OK']);

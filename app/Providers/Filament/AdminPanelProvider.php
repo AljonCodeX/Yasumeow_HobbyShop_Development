@@ -19,6 +19,21 @@ use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Illuminate\Support\HtmlString;
 
+use App\Filament\Pages\Dashboard;
+use App\Filament\Pages\EventDashboard;
+use App\Filament\Pages\InventoryReport;
+use App\Filament\Pages\ShopDashboard;
+use App\Filament\Resources\Categories\CategoryResource;
+use App\Filament\Resources\Events\EventResource;
+use App\Filament\Resources\Games\GameResource;
+use App\Filament\Resources\Products\ProductResource;
+use App\Filament\Resources\Registrations\RegistrationResource;
+use App\Filament\Resources\Reservations\ReservationResource;
+use App\Filament\Resources\Results\ResultResource;
+use App\Filament\Resources\Users\UserResource;
+use Filament\Navigation\NavigationBuilder;
+use Filament\Navigation\NavigationGroup;
+
 class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
@@ -31,6 +46,8 @@ class AdminPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Amber,
             ])
+            ->databaseNotifications()
+            ->databaseNotificationsPolling('30s')
             ->brandLogo(new HtmlString(
                 '<div style="display:flex;align-items:center;gap:.6rem;">'
                 . '<img src="' . asset('images/logo.png') . '" alt="Yasumeow" style="height:2.25rem;">'
@@ -38,7 +55,32 @@ class AdminPanelProvider extends PanelProvider
                 . '</div>'
             ))
             ->favicon(asset('images/logo.png'))
-            ->navigationGroups(['Shop', 'Events', 'Reports'])
+            ->navigation(function (NavigationBuilder $builder): NavigationBuilder {
+                return $builder->groups([
+                    NavigationGroup::make()->items([
+                        ...Dashboard::getNavigationItems(),
+                        ...ShopDashboard::getNavigationItems(),
+                        ...EventDashboard::getNavigationItems(),
+                    ]),
+                    NavigationGroup::make('Shop')->items([
+                        ...ProductResource::getNavigationItems(),
+                        ...CategoryResource::getNavigationItems(),
+                        ...ReservationResource::getNavigationItems(),
+                    ]),
+                    NavigationGroup::make('Events')->items([
+                        ...EventResource::getNavigationItems(),
+                        ...RegistrationResource::getNavigationItems(),
+                        ...ResultResource::getNavigationItems(),
+                    ]),
+                    NavigationGroup::make('Reports')->items([
+                        ...InventoryReport::getNavigationItems(),
+                    ]),
+                    NavigationGroup::make()->items([
+                        ...UserResource::getNavigationItems(),
+                        ...GameResource::getNavigationItems(),
+                    ]),
+                ]);
+            })
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
