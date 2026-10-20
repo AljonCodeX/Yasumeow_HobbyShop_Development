@@ -38,7 +38,7 @@ class AdminPanelProvider extends PanelProvider
                 . '</div>'
             ))
             ->favicon(asset('images/logo.png'))
-            ->navigationGroups(['Users', 'Games', 'Shop', 'Events', 'Reports'])
+            ->navigationGroups(['Shop', 'Events', 'Reports'])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
