@@ -10,6 +10,8 @@ use Filament\Widgets\TableWidget;
 
 class LatestReservations extends TableWidget
 {
+    protected static bool $isDiscovered = false;
+
     protected static ?int $sort = 2;
 
     protected static ?string $heading = 'Latest reservations';

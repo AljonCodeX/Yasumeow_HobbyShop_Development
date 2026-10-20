@@ -17,4 +17,9 @@ class Dashboard extends BaseDashboard
     {
         return null;
     }
+
+    public function getWidgets(): array
+    {
+        return [];
+    }
 }

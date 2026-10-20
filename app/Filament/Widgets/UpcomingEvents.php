@@ -10,6 +10,8 @@ use Filament\Widgets\TableWidget;
 
 class UpcomingEvents extends TableWidget
 {
+    protected static bool $isDiscovered = false;
+
     protected static ?int $sort = 3;
 
     protected static ?string $heading = 'Upcoming events';
