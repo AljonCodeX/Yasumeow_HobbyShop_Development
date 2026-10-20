@@ -42,21 +42,27 @@ class Reservation extends Model
     // Unpaid online reservation: cancel and return stock
     public function cancelAndRestock(): void
     {
-        $this->release('awaiting_payment', 'cancelled');
+        $this->release(['awaiting_payment'], 'cancelled');
     }
 
     // Pay-in-store reservation not picked up in time: expire and return stock
     public function expireAndRestock(): void
     {
-        $this->release('pending', 'expired');
+        $this->release(['pending'], 'expired');
     }
 
-    private function release(string $from, string $to): void
+    // Staff cancels from the admin panel
+    public function staffCancel(): void
+    {
+        $this->release(['awaiting_payment', 'pending', 'ready'], 'cancelled');
+    }
+
+    private function release(array $from, string $to): void
     {
         DB::transaction(function () use ($from, $to) {
             $reservation = self::lockForUpdate()->find($this->id);
 
-            if (! $reservation || $reservation->status !== $from) {
+            if (! $reservation || ! in_array($reservation->status, $from, true)) {
                 return;
             }
 

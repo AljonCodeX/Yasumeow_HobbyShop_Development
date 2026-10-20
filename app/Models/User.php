@@ -21,14 +21,14 @@ use Filament\Panel;
      *
      * @var list<string>
      */
-    protected $fillable = [
-    'name',
-    'email',
-    'phone',
-    'password',
-    'profile_photo',
-    'is_admin',
-    'has_password' => 'boolean',
+        protected $fillable = [
+        'name',
+        'email',
+        'phone',
+        'password',
+        'profile_photo',
+        'is_admin',
+        'has_password',
     ];
 
     /**
