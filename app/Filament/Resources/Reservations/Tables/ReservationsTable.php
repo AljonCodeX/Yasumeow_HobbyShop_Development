@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Reservations\Tables;
 
 use App\Models\Reservation;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -53,35 +54,42 @@ class ReservationsTable
                 ]),
             ])
             ->recordActions([
-                Action::make('ready')
-                    ->label('Ready')
-                    ->icon('heroicon-o-archive-box')
-                    ->color('info')
-                    ->visible(fn (Reservation $r) => $r->status === 'pending')
-                    ->action(fn (Reservation $r) => $r->update(['status' => 'ready'])),
+                ActionGroup::make([
+                    Action::make('ready')
+                        ->label('Ready')
+                        ->icon('heroicon-o-archive-box')
+                        ->color('info')
+                        ->visible(fn (Reservation $r) => $r->status === 'pending')
+                        ->action(fn (Reservation $r) => $r->update(['status' => 'ready'])),
 
-                Action::make('picked_up')
-                    ->label('Picked up')
-                    ->icon('heroicon-o-check-circle')
-                    ->color('success')
-                    ->requiresConfirmation()
-                    ->modalDescription('Use this after the customer has taken the items and paid.')
-                    ->visible(fn (Reservation $r) => in_array($r->status, ['pending', 'ready'], true))
-                    ->action(fn (Reservation $r) => $r->update([
-                        'status'      => 'picked_up',
-                        'amount_paid' => $r->amount_total, // store payments are collected at the counter
-                    ])),
+                    Action::make('picked_up')
+                        ->label('Picked up')
+                        ->icon('heroicon-o-check-circle')
+                        ->color('success')
+                        ->requiresConfirmation()
+                        ->modalDescription('Use this after the customer has taken the items and paid.')
+                        ->visible(fn (Reservation $r) => in_array($r->status, ['pending', 'ready'], true))
+                        ->action(fn (Reservation $r) => $r->update([
+                            'status'      => 'picked_up',
+                            'amount_paid' => $r->amount_total,
+                        ])),
 
-                Action::make('cancel')
-                    ->label('Cancel')
-                    ->icon('heroicon-o-x-circle')
-                    ->color('danger')
-                    ->requiresConfirmation()
-                    ->modalDescription('The items go back to stock.')
-                    ->visible(fn (Reservation $r) => in_array($r->status, ['awaiting_payment', 'pending', 'ready'], true))
-                    ->action(fn (Reservation $r) => $r->staffCancel()),
+                    Action::make('cancel')
+                        ->label('Cancel')
+                        ->icon('heroicon-o-x-circle')
+                        ->color('danger')
+                        ->requiresConfirmation()
+                        ->modalDescription('The items go back to stock.')
+                        ->visible(fn (Reservation $r) => in_array($r->status, ['awaiting_payment', 'pending', 'ready'], true))
+                        ->action(fn (Reservation $r) => $r->staffCancel()),
 
-                EditAction::make()->label('View'),
+                    EditAction::make()->label('View'),
+                ])
+                    ->label('Actions')
+                    ->icon('heroicon-m-chevron-down')
+                    ->iconPosition('after')
+                    ->button()
+                    ->color('gray'),
             ]);
     }
 }
