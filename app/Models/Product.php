@@ -39,4 +39,9 @@ class Product extends Model
             default => 'in',
         };
     }
+
+    public function reservationItems()
+    {
+        return $this->hasMany(ReservationItem::class);
+    }
 }
