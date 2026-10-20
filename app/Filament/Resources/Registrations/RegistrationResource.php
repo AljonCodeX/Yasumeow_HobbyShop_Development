@@ -19,7 +19,11 @@ class RegistrationResource extends Resource
 {
     protected static ?string $model = Registration::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUserPlus;
+
+    protected static string|UnitEnum|null $navigationGroup = 'Events';
+
+    protected static ?int $navigationSort = 2;
 
     public static function form(Schema $schema): Schema
     {

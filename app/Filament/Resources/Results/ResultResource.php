@@ -19,7 +19,11 @@ class ResultResource extends Resource
 {
     protected static ?string $model = Result::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTrophy;
+
+    protected static string|UnitEnum|null $navigationGroup = 'Events';
+    
+    protected static ?int $navigationSort = 3;
 
     public static function form(Schema $schema): Schema
     {

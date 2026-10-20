@@ -19,14 +19,16 @@ class ReservationResource extends Resource
 {
     protected static string|UnitEnum|null $navigationGroup = 'Shop';
 
+    protected static ?int $navigationSort = 3;
+
     public static function canCreate(): bool
     {
         return false; // reservations come from the website
     }
-    
+
     protected static ?string $model = Reservation::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocumentCheck;
 
     public static function form(Schema $schema): Schema
     {
