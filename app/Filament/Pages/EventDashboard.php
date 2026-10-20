@@ -8,6 +8,8 @@ use App\Filament\Widgets\UpcomingEvents;
 use BackedEnum;
 use Filament\Pages\Dashboard as BaseDashboard;
 use Filament\Support\Icons\Heroicon;
+use App\Filament\Widgets\RegistrationsByGame;
+use App\Filament\Widgets\RegistrationsPerMonth;
 
 class EventDashboard extends BaseDashboard
 {
@@ -23,6 +25,6 @@ class EventDashboard extends BaseDashboard
 
     public function getWidgets(): array
     {
-        return [EventStats::class, UpcomingEvents::class, RecentRegistrations::class];
+        return [EventStats::class, RegistrationsPerMonth::class, RegistrationsByGame::class, UpcomingEvents::class, RecentRegistrations::class];
     }
 }

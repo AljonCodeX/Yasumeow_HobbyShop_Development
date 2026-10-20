@@ -7,12 +7,15 @@ use App\Models\Reservation;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget;
+use Filament\Widgets\Concerns\InteractsWithPageFilters;
 
 class LatestReservations extends TableWidget
 {
+    use InteractsWithPageFilters;
+
     protected static bool $isDiscovered = false;
 
-    protected static ?int $sort = 2;
+    protected static ?int $sort = 5;
 
     protected static ?string $heading = 'Latest reservations';
 
@@ -21,7 +24,7 @@ class LatestReservations extends TableWidget
     public function table(Table $table): Table
     {
         return $table
-            ->query(fn () => Reservation::query()->with('items.product')->latest('reserved_at')->limit(5))
+            ->query(fn () => Reservation::query()->dashboardFilters($this->pageFilters)->with('items.product')->latest('reserved_at')->limit(5))
             ->columns([
                 TextColumn::make('id')->label('#'),
                 TextColumn::make('contact_name')->label('Customer'),

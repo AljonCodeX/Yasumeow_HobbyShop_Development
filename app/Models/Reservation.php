@@ -73,4 +73,13 @@ class Reservation extends Model
             $reservation->update(['status' => $to]);
         });
     }
+
+    public function scopeDashboardFilters($query, ?array $f): void
+    {
+        $query
+            ->when($f['startDate'] ?? null, fn ($q, $d) => $q->whereDate('reserved_at', '>=', $d))
+            ->when($f['endDate'] ?? null, fn ($q, $d) => $q->whereDate('reserved_at', '<=', $d))
+            ->when($f['status'] ?? null, fn ($q, $s) => $q->whereIn('status', $s === 'cancelled' ? ['cancelled', 'expired'] : [$s]))
+            ->when($f['category'] ?? null, fn ($q, $c) => $q->whereHas('items.product', fn ($p) => $p->where('category_id', $c)));
+    }
 }

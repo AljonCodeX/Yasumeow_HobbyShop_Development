@@ -11,7 +11,7 @@ class RecentRegistrations extends TableWidget
 {
     protected static bool $isDiscovered = false;
 
-    protected static ?int $sort = 3;
+    protected static ?int $sort = 5;
 
     protected static ?string $heading = 'Latest registrations';
 
