@@ -59,6 +59,11 @@ class PayMongoWebhookController extends Controller
 
     private function validSignature(Request $request): bool
     {
+        $secret = (string) config('services.paymongo.webhook_secret');
+
+        if ($secret === '') {
+            return false;
+        }
         $header = $request->header('Paymongo-Signature');
 
         if (! $header) {
@@ -83,7 +88,7 @@ class PayMongoWebhookController extends Controller
         $expected = hash_hmac(
             'sha256',
             $timestamp . '.' . $request->getContent(),
-            (string) config('services.paymongo.webhook_secret')
+            $secret
         );
 
         return hash_equals($expected, $received);

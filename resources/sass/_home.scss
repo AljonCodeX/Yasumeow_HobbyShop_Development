@@ -423,3 +423,36 @@
 .load-more-link:hover {
     text-decoration: underline !important;
 }
+
+// Rate us popup: clickable stars
+.rate-stars {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: center;
+    gap: .35rem;
+
+    input {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    label {
+        font-size: 2.25rem;
+        line-height: 1;
+        color: var(--ym-muted);
+        cursor: pointer;
+        transition: color .15s ease;
+    }
+
+    label:hover,
+    label:hover ~ label,
+    input:checked ~ label {
+        color: #f59e0b;
+    }
+
+    input:focus-visible + label {
+        outline: 2px solid $brand-cyan;
+        outline-offset: 2px;
+    }
+}

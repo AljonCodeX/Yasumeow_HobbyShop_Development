@@ -10,6 +10,7 @@ use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\SearchController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\RatingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -86,6 +87,8 @@ Route::middleware('auth')->group(function () {
     // After checkout
     Route::get('/reservations/{reservation}/thanks', [ReservationController::class, 'thanks'])->name('reservations.thanks');
     Route::get('/reservations/{reservation}/cancelled', [ReservationController::class, 'cancelled'])->name('reservations.cancelled');
+    Route::post('/reservations/{reservation}/rating', [RatingController::class, 'store'])->name('reservations.rate');
+    Route::post('/events/{event}/rating', [RatingController::class, 'storeEvent'])->name('events.rate');
 });
 
 /*

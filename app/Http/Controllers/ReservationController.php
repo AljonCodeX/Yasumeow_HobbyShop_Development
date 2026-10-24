@@ -261,10 +261,8 @@ class ReservationController extends Controller
     {
         abort_unless($reservation->user_id === Auth::id(), 403);
 
-        $reservation->cancelAndRestock();
-
         return redirect()->route('shop')
-            ->with('error', 'Payment cancelled. Your items were released.');
+            ->with('error', 'Payment not completed. Your items are held for 30 minutes, then released automatically.');
     }
 
     // What checkout uses: the single Reserve item if there is one, otherwise the whole bag
