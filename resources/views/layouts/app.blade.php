@@ -151,6 +151,12 @@
                                                 @if ($link['route'] === 'account.favourites' && $favouriteMenuCount > 0)
                                                     <span class="menu-badge">{{ $favouriteMenuCount }}</span>
                                                 @endif
+                                                @if ($link['route'] === 'account.reservations' && $reservationMenuCount > 0)
+                                                    <span class="menu-badge">{{ $reservationMenuCount }}</span>
+                                                @endif
+                                                @if ($link['route'] === 'account.events' && $eventMenuCount > 0)
+                                                    <span class="menu-badge">{{ $eventMenuCount }}</span>
+                                                @endif
                                             </a>
                                         </li>
                                     @endforeach

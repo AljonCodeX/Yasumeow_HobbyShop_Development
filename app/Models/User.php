@@ -59,6 +59,8 @@ use Filament\Panel;
             'has_password' => 'boolean',
             'fav_avatar_seen_at' => 'datetime',
             'fav_menu_seen_at' => 'datetime',
+            'res_menu_seen_at' => 'datetime',
+            'event_menu_seen_at' => 'datetime',
         ];
     }
 
@@ -82,6 +84,24 @@ use Filament\Panel;
     {
         return $this->favourites()
             ->when($this->{$seenColumn}, fn ($q, $seen) => $q->where('favourites.created_at', '>', $seen))
+            ->count();
+    }
+
+    // Reservations whose status changed since the given "seen" column
+    public function newReservationChangesCount(string $seenColumn): int
+    {
+        return Reservation::where('user_id', $this->id)
+            ->whereNotNull('status_changed_at')
+            ->when($this->{$seenColumn}, fn ($q, $seen) => $q->where('status_changed_at', '>', $seen))
+            ->count();
+    }
+
+    // Events the user is still registered for whose status changed since the given "seen" column
+    public function newEventChangesCount(string $seenColumn): int
+    {
+        return Event::whereNotNull('status_changed_at')
+            ->when($this->{$seenColumn}, fn ($q, $seen) => $q->where('status_changed_at', '>', $seen))
+            ->whereHas('registrations', fn ($r) => $r->where('user_id', $this->id)->where('status', 'registered'))
             ->count();
     }
 }

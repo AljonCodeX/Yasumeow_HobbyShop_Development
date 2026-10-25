@@ -22,6 +22,15 @@ class Event extends Model
         ];
     }
 
+    protected static function booted(): void
+    {
+        static::saving(function (Event $event) {
+            if ($event->exists && $event->isDirty('status')) {
+                $event->status_changed_at = now();
+            }
+        });
+    }
+
     public function game(): BelongsTo
     {
         return $this->belongsTo(Game::class);

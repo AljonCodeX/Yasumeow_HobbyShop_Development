@@ -124,7 +124,7 @@ class EventController extends Controller
             return redirect()->route('events.show', $event)->with('error', 'You are not registered for this event.');
         }
 
-        if ($event->event_date->isPast()) {
+        if ($event->event_date->isPast() || $event->status === 'completed') {
             return redirect()->route('events.show', $event)->with('error', 'This event has already started.');
         }
 

@@ -57,12 +57,20 @@ class AppServiceProvider extends ServiceProvider
                 'subtotal' => (float) $p->price * $cart[$p->id],
             ]);
 
+            $user = Auth::check() ? $this->currentUser() : null;
+
             $view->with([
-                'reserveItems'   => $items,
-                'reserveCount'   => $items->sum('qty'),
-                'reserveTotal'   => $items->sum('subtotal'),
-                'favouriteCount'     => Auth::check() ? $this->currentUser()->newFavouritesCount('fav_avatar_seen_at') : 0,
-                'favouriteMenuCount' => Auth::check() ? $this->currentUser()->newFavouritesCount('fav_menu_seen_at') : 0,
+                'reserveItems'         => $items,
+                'reserveCount'         => $items->sum('qty'),
+                'reserveTotal'         => $items->sum('subtotal'),
+                'notifyCount'          => $user
+                    ? $user->newFavouritesCount('fav_avatar_seen_at')
+                        + $user->newReservationChangesCount('fav_avatar_seen_at')
+                        + $user->newEventChangesCount('fav_avatar_seen_at')
+                    : 0,
+                'favouriteMenuCount'   => $user ? $user->newFavouritesCount('fav_menu_seen_at') : 0,
+                'reservationMenuCount' => $user ? $user->newReservationChangesCount('res_menu_seen_at') : 0,
+                'eventMenuCount'       => $user ? $user->newEventChangesCount('event_menu_seen_at') : 0,
             ]);
         });
     }

@@ -3,7 +3,7 @@
 @section('content')
 @php
     $left    = $event->slotsLeft();
-    $isPast  = $event->event_date->isPast();
+    $isPast  = $event->event_date->isPast() || $event->status === 'completed';
     $isOpen  = $event->status === 'open' && ! $isPast;
     $taken   = (int) $event->taken_count;
     $percent = $event->max_slots > 0 ? min(100, (int) round($taken / $event->max_slots * 100)) : 0;

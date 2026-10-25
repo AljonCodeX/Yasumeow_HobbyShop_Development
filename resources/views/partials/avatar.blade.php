@@ -5,7 +5,7 @@
         <span class="avatar-circle avatar-icon" aria-hidden="true"><i class="bi bi-person"></i></span>
     @endif
 
-    @if (($favouriteCount ?? 0) > 0)
-        <span class="avatar-badge" title="Favourites">{{ $favouriteCount }}</span>
+    @if (($notifyCount ?? 0) > 0)
+        <span class="avatar-badge" title="New updates">{{ $notifyCount }}</span>
     @endif
 </span>

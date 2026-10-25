@@ -30,6 +30,16 @@ class Reservation extends Model
         ];
     }
 
+    protected static function booted(): void
+    {
+        // Remember when the status last changed (not on creation)
+        static::saving(function (Reservation $reservation) {
+            if ($reservation->exists && $reservation->isDirty('status')) {
+                $reservation->status_changed_at = now();
+            }
+        });
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

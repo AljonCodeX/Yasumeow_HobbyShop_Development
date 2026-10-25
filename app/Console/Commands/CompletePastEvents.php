@@ -15,7 +15,7 @@ class CompletePastEvents extends Command
     {
         $count = Event::whereIn('status', ['open', 'closed'])
             ->where('event_date', '<', now()->subHours(6))
-            ->update(['status' => 'completed']);
+            ->update(['status' => 'completed', 'status_changed_at' => now()]);
 
         $this->info($count . ' events completed.');
 

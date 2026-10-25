@@ -4,6 +4,8 @@
 @php
     $user = Auth::user();
     $favMenuCount = $user->newFavouritesCount('fav_menu_seen_at');
+    $resMenuCount = $user->newReservationChangesCount('res_menu_seen_at');
+    $evtMenuCount = $user->newEventChangesCount('event_menu_seen_at');
     $menu = [
         ['route' => 'account.dashboard',    'icon' => 'bi-grid',      'label' => 'Dashboard'],
         ['route' => 'account.info',         'icon' => 'bi-person',    'label' => 'Account Info'],
@@ -27,6 +29,12 @@
                             <i class="bi {{ $item['icon'] }}"></i>{{ $item['label'] }}
                             @if ($item['route'] === 'account.favourites' && $favMenuCount > 0)
                                 <span class="menu-badge">{{ $favMenuCount }}</span>
+                            @endif
+                            @if ($item['route'] === 'account.reservations' && $resMenuCount > 0)
+                                <span class="menu-badge">{{ $resMenuCount }}</span>
+                            @endif
+                            @if ($item['route'] === 'account.events' && $evtMenuCount > 0)
+                                <span class="menu-badge">{{ $evtMenuCount }}</span>
                             @endif
                         </a>
                     @endforeach

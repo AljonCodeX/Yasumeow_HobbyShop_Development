@@ -19,6 +19,14 @@ class MarkFavouritesSeen
                 $data['fav_menu_seen_at'] = now();
             }
 
+            if ($request->routeIs('account.reservations')) {
+                $data['res_menu_seen_at'] = now();
+            }
+
+            if ($request->routeIs('account.events')) {
+                $data['event_menu_seen_at'] = now();
+            }
+
             $user->forceFill($data)->save();
         }
 
