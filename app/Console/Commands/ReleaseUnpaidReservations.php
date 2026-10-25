@@ -31,7 +31,7 @@ class ReleaseUnpaidReservations extends Command
             }
         }
 
-        $late = Reservation::where('status', 'pending')
+        $late = Reservation::whereIn('status', ['pending', 'ready'])
             ->where('payment_method', 'store')
             ->whereNotNull('pickup_by')
             ->where('pickup_by', '<', now())

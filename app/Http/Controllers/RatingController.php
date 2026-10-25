@@ -29,7 +29,7 @@ class RatingController extends Controller
             ->where('user_id', $request->user()->id)
             ->exists();
 
-        if (! $finished) {
+        if (! $finished || $event->status !== 'completed') {
             return back()->with('error', 'This event cannot be rated.');
         }
 

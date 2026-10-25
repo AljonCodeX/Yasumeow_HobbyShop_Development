@@ -61,7 +61,6 @@ Route::middleware('auth')->group(function () {
     Route::prefix('account')->name('account.')->group(function () {
         Route::get('/', [AccountController::class, 'dashboard'])->name('dashboard');
         Route::get('/reservations', [AccountController::class, 'reservations'])->name('reservations');
-        Route::get('/bag', [ReservationController::class, 'bag'])->name('bag');
         Route::get('/info', [AccountController::class, 'info'])->name('info');
         Route::put('/info', [AccountController::class, 'updateInfo'])->name('info.update');
         Route::post('/photo', [AccountController::class, 'updatePhoto'])->name('photo.update');

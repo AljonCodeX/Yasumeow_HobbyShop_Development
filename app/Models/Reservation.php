@@ -54,7 +54,7 @@ class Reservation extends Model
     // Pay-in-store reservation not picked up in time: expire and return stock
     public function expireAndRestock(): void
     {
-        $this->release(['pending'], 'expired');
+        $this->release(['pending', 'ready'], 'expired');
     }
 
     // Staff cancels from the admin panel

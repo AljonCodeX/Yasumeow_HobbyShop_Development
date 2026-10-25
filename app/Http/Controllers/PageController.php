@@ -76,7 +76,8 @@ class PageController extends Controller
                 ->first();
 
             if (! $toRate) {
-                $toRateEvent = Event::whereHas('results', fn ($q) => $q->where('user_id', $userId))
+                $toRateEvent = Event::where('status', 'completed')
+                    ->whereHas('results', fn ($q) => $q->where('user_id', $userId))
                     ->whereNotIn('id', Rating::where('user_id', $userId)
                         ->whereNotNull('event_id')
                         ->select('event_id'))

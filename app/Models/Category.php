@@ -14,6 +14,11 @@ class Category extends Model
         return $this->hasMany(Product::class);
     }
 
+    public function games()
+    {
+        return $this->hasMany(Game::class);
+    }
+
     public function getIconAttribute(): string
     {
         return match ($this->name) {

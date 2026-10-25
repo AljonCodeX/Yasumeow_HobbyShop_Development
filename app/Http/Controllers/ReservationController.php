@@ -88,7 +88,7 @@ class ReservationController extends Controller
         // Coming to the bag means checking out the whole bag, not a single Reserve item
         session()->forget('reserve_now');
 
-        $cart = session('reserve', []);
+        $cart = $this->pruneCart('reserve');
 
         $products = Product::with('category')->whereIn('id', array_keys($cart))->get();
 
@@ -264,10 +264,31 @@ class ReservationController extends Controller
             ->with('error', 'Payment not completed. Your items are held for 30 minutes, then released automatically.');
     }
 
+    // Drops products that no longer exist from a session cart
+    private function pruneCart(string $key): array
+    {
+        $cart = session($key, []);
+
+        if (empty($cart)) {
+            return [];
+        }
+
+        $existing = Product::whereIn('id', array_keys($cart))->pluck('id')->all();
+        $clean = array_intersect_key($cart, array_flip($existing));
+
+        if (count($clean) !== count($cart)) {
+            session([$key => $clean]);
+        }
+
+        return $clean;
+    }
+
     // What checkout uses: the single Reserve item if there is one, otherwise the whole bag
     private function checkoutCart(): array
     {
-        return session('reserve_now', session('reserve', []));
+        return session()->has('reserve_now')
+        ? $this->pruneCart('reserve_now')
+        : $this->pruneCart('reserve');
     }
 
     // After a successful checkout, clear only what was checked out
@@ -286,19 +307,26 @@ class ReservationController extends Controller
             'quantity' => $item->quantity,
         ])->all();
 
-        $response = Http::withBasicAuth(config('services.paymongo.secret_key'), '')
-            ->post('https://api.paymongo.com/v2/checkout_sessions', [
-                'data' => [
-                    'attributes' => [
-                        'line_items'           => $lineItems,
-                        'payment_method_types' => ['qrph'],
-                        'success_url'          => route('reservations.thanks', $reservation),
-                        'cancel_url'           => route('reservations.cancelled', $reservation),
-                        'reference_number'     => 'RES-' . $reservation->id,
-                        'description'          => 'Yasumeow Hobby Shop reservation #' . $reservation->id,
+        try {
+            $response = Http::timeout(15)
+                ->withBasicAuth(config('services.paymongo.secret_key'), '')
+                ->post('https://api.paymongo.com/v2/checkout_sessions', [
+                    'data' => [
+                        'attributes' => [
+                            'line_items'           => $lineItems,
+                            'payment_method_types' => ['qrph'],
+                            'success_url'          => route('reservations.thanks', $reservation),
+                            'cancel_url'           => route('reservations.cancelled', $reservation),
+                            'reference_number'     => 'RES-' . $reservation->id,
+                            'description'          => 'Yasumeow Hobby Shop reservation #' . $reservation->id,
+                        ],
                     ],
-                ],
-            ]);
+                ]);
+        } catch (\Throwable $e) {
+            Log::error('PayMongo request failed', ['message' => $e->getMessage()]);
+
+            return null;
+        }
 
         if (! $response->successful()) {
             Log::error('PayMongo checkout failed', ['body' => $response->body()]);
