@@ -151,8 +151,12 @@
                     <div class="col">
                         <a href="{{ url('/games/' . $game->slug) }}" class="game-card card h-100 border-0 shadow-sm overflow-hidden text-decoration-none">
                             <div class="game-card-cover">
-                                <span class="game-card-badge">{{ $game->type }}</span>
-                                <i class="bi {{ $game->icon }}"></i>
+                                <span class="game-card-badge">{{ $game->category?->name }}</span>
+                                @if ($game->image)
+                                    <img src="{{ asset('storage/' . $game->image) }}" alt="{{ $game->name }}">
+                                @else
+                                    <i class="bi {{ $game->category?->icon ?? 'bi-controller' }}"></i>
+                                @endif
                             </div>
                             <div class="card-body">
                                 <h3 class="h6 fw-bold text-body mb-2">{{ $game->name }}</h3>

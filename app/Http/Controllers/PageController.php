@@ -46,8 +46,8 @@ class PageController extends Controller
             ->take(4)
             ->get();
 
-        $games = Game::where('is_active', true)
-            ->orderBy('sort_order')
+        $games = Game::with('category')
+            ->where('is_active', true)
             ->orderBy('name')
             ->take(4)
             ->get();
@@ -88,34 +88,49 @@ class PageController extends Controller
         return view('home', compact('events', 'games', 'categories', 'products', 'toRate', 'toRateEvent'));
     }
 
+    // Display info for a category section on the Games pages
+    private function sectionFor(string $name, ?Category $category = null): array
+    {
+        $meta = [
+            'title' => $name,
+            'icon'  => $category?->icon ?? 'bi-tag-fill',
+        ];
+
+        if ($name === 'PS5') {
+            $meta['note'] = [
+                'icon'  => 'bi-clock-history',
+                'title' => 'PS5 Rental',
+                'text'  => '₱50 per hour for up to 2 players. Pick a game below and play on the shop PS5.',
+            ];
+        }
+
+        return $meta;
+    }
+
     public function games()
     {
-        $games = Game::where('is_active', true)
-            ->orderBy('sort_order')
+        $games = Game::with('category')
+            ->where('is_active', true)
             ->orderBy('name')
-            ->get()
-            ->groupBy('section');
+            ->get();
 
-        $sections = [];
-        foreach ($this->sectionMeta() as $key => $meta) {
-            if ($games->has($key)) {
-                $sections[] = $meta + ['games' => $games[$key]];
-            }
-        }
+        $sections = $games
+            ->groupBy(fn ($g) => $g->category?->name ?? 'Others')
+            ->sortKeys()
+            ->map(fn ($items, $name) => $this->sectionFor($name, $items->first()->category) + ['games' => $items])
+            ->values();
 
         return view('games', ['sections' => $sections]);
     }
 
     public function gameDetails(string $slug)
     {
-        $game = Game::where('slug', $slug)
+        $game = Game::with('category')
+            ->where('slug', $slug)
             ->where('is_active', true)
             ->firstOrFail();
 
-        $section = $this->sectionMeta()[$game->section] ?? [
-            'title' => $game->section,
-            'icon'  => 'bi-controller',
-        ];
+        $section = $this->sectionFor($game->category?->name ?? 'Others', $game->category);
 
         return view('game-details', [
             'game'    => $game,

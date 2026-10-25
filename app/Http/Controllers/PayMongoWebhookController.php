@@ -6,11 +6,13 @@ use App\Models\Reservation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Support\AdminAlert;
+use Illuminate\Support\Facades\Log;
 
 class PayMongoWebhookController extends Controller
 {
     public function handle(Request $request)
     {
+        Log::info('PayMongo webhook', $request->all()); // TEMPORARY, remove after
         // Anyone could post to this URL, so check that PayMongo really sent it
         if (! $this->validSignature($request)) {
             return response()->json(['message' => 'Invalid signature'], 400);

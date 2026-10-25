@@ -19,7 +19,7 @@
                 @if ($event->image)
                     <img src="{{ asset('storage/' . $event->image) }}" alt="{{ $event->title }}" class="w-100 h-100 object-fit-cover">
                 @else
-                    <i class="bi {{ $event->game?->icon ?? 'bi-calendar-event' }}"></i>
+                    <i class="bi {{ $event->game?->category?->icon ?? 'bi-calendar-event' }}"></i>
                 @endif
             </div>
 

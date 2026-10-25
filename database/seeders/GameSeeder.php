@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Category;
 use App\Models\Game;
 use Illuminate\Database\Seeder;
 
@@ -10,10 +11,9 @@ class GameSeeder extends Seeder
     public function run(): void
     {
         $games = [
-            // ---------- Board Games ----------
+            // ---------- Card Games ----------
             [
-                'slug' => 'pokemon-tcg', 'name' => 'Pokemon TCG', 'section' => 'Board Games',
-                'icon' => 'bi-suit-spade-fill', 'type' => 'Card Game',
+                'slug' => 'pokemon-tcg', 'name' => 'Pokemon TCG', 'category' => 'Card Games',
                 'description' => 'Casual play and friendly matches for all levels, from new trainers to veterans.',
                 'about' => 'Pokemon TCG is a collectible card game where two trainers battle using decks of 60 cards. Players build a strategy around Pokemon, Trainer and Energy cards. Join our casual play sessions to learn, trade and meet other players.',
                 'guide' => [
@@ -25,9 +25,9 @@ class GameSeeder extends Seeder
                     'Ask the shop staff or other players if you are unsure about a rule. Beginners are welcome.',
                 ],
             ],
+            // ---------- Board Games ----------
             [
-                'slug' => 'unmatched', 'name' => 'Unmatched', 'section' => 'Board Games',
-                'icon' => 'bi-shield-fill', 'type' => 'Board Game',
+                'slug' => 'unmatched', 'name' => 'Unmatched', 'category' => 'Board Games',
                 'description' => 'Fast one-on-one battles between legendary heroes on a tactical board.',
                 'about' => 'Unmatched is a tactical board game where each player controls a hero with their own deck of cards. Heroes move across a map, play cards to attack, defend and use special abilities. Matches are quick and easy to learn.',
                 'guide' => [
@@ -39,10 +39,9 @@ class GameSeeder extends Seeder
                     "Win by reducing your opponent's hero to zero health.",
                 ],
             ],
-            // ---------- Physical Toy Games ----------
+            // ---------- Beyblade ----------
             [
-                'slug' => 'beyblade', 'name' => 'Beyblade', 'section' => 'Physical Toy Games',
-                'icon' => 'bi-tornado', 'type' => 'Tournament',
+                'slug' => 'beyblade', 'name' => 'Beyblade', 'category' => 'Beyblade',
                 'description' => 'Battle it out in weekly bey tournaments. Bring your own deck or use the shop arena.',
                 'about' => 'Beyblade is a battle game where spinning tops are launched into a stadium to outlast and knock out each other. Join our tournaments or just battle with friends in the shop arena.',
                 'guide' => [
@@ -54,9 +53,9 @@ class GameSeeder extends Seeder
                     'Ask the staff about the tournament rules before joining your first event.',
                 ],
             ],
+            // ---------- Tamiya ----------
             [
-                'slug' => 'tamiya-mini-4wd', 'name' => 'Tamiya Mini 4WD', 'section' => 'Physical Toy Games',
-                'icon' => 'bi-car-front-fill', 'type' => 'Racing',
+                'slug' => 'tamiya-mini-4wd', 'name' => 'Tamiya Mini 4WD', 'category' => 'Tamiya',
                 'description' => 'Build, tune and race your Mini 4WD on our track. Beginners are welcome.',
                 'about' => 'Tamiya Mini 4WD is a model racing hobby. You build a small motorized car from a kit, tune it for speed and race it on a track. It is as much about building and tuning as it is about racing.',
                 'guide' => [
@@ -68,10 +67,9 @@ class GameSeeder extends Seeder
                     'Ask the staff or experienced racers for tuning tips and the race rules.',
                 ],
             ],
-            // ---------- PS5 Games ----------
+            // ---------- PS5 ----------
             [
-                'slug' => 'marvels-spider-man-2', 'name' => "Marvel's Spider-Man 2", 'section' => 'PS5 Games',
-                'icon' => 'bi-controller', 'type' => 'Action Adventure',
+                'slug' => 'marvels-spider-man-2', 'name' => "Marvel's Spider-Man 2", 'category' => 'PS5',
                 'description' => 'Swing through the city in this single-player story game.',
                 'about' => 'A single-player action adventure game. Swing across the city, fight villains and follow the story. With 2 people sharing the rental, you can take turns playing.',
                 'guide' => [
@@ -82,8 +80,7 @@ class GameSeeder extends Seeder
                 ],
             ],
             [
-                'slug' => 'tekken-8', 'name' => 'Tekken 8', 'section' => 'PS5 Games',
-                'icon' => 'bi-controller', 'type' => 'Fighting',
+                'slug' => 'tekken-8', 'name' => 'Tekken 8', 'category' => 'PS5',
                 'description' => 'Face a friend in a one-on-one fighting game.',
                 'about' => 'A one-on-one fighting game, so it is perfect for 2 players sharing the rental. Pick a fighter and learn their moves.',
                 'guide' => [
@@ -94,10 +91,13 @@ class GameSeeder extends Seeder
             ],
         ];
 
-        foreach ($games as $i => $game) {
+        foreach ($games as $game) {
+            $category = Category::firstOrCreate(['name' => $game['category']]);
+            unset($game['category']);
+
             Game::updateOrCreate(
                 ['slug' => $game['slug']],
-                $game + ['is_active' => true, 'sort_order' => $i]
+                $game + ['category_id' => $category->id, 'is_active' => true]
             );
         }
     }

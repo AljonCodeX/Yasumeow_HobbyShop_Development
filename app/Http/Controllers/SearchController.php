@@ -49,11 +49,12 @@ class SearchController extends Controller
             ->take($limit)
             ->get();
 
-        $games = Game::where('is_active', true)
+        $games = Game::with('category')
+            ->where('is_active', true)
             ->where(function ($w) use ($like) {
                 $w->where('name', 'like', $like)
-                  ->orWhere('type', 'like', $like)
-                  ->orWhere('description', 'like', $like);
+                ->orWhere('description', 'like', $like)
+                ->orWhereHas('category', fn ($c) => $c->where('name', 'like', $like));
             })
             ->orderByRaw('CASE WHEN name LIKE ? THEN 0 WHEN name LIKE ? THEN 1 ELSE 2 END', [$start, $like])
             ->orderBy('name')
@@ -84,7 +85,7 @@ class SearchController extends Controller
             'fee'   => $e->price > 0 ? ['text' => '₱' . number_format((float) $e->price)] : ['text' => 'FREE'],
             'url'   => route('events.show', $e),
             'image' => $e->image ? asset('storage/' . $e->image) : null,
-            'icon'  => $e->game?->icon ?? 'bi-calendar-event',
+            'icon'  => $e->game?->category?->icon ?? 'bi-calendar-event',
         ];
     }
 
@@ -104,16 +105,16 @@ class SearchController extends Controller
                   's'        => mb_strtolower($p->name . ' ' . ($p->category?->name ?? '') . ' ' . $p->description),
               ])->all(),
 
-              'games' => Game::where('is_active', true)->get()->map(fn ($g) => [
-                  'name'  => $g->name,
-                  'type'  => $g->type ?? $g->section,
-                  'url'   => url('/games/' . $g->slug),
-                  'image' => null,
-                  'icon'  => $g->icon ?? 'bi-controller',
-                  's'     => mb_strtolower($g->name . ' ' . $g->type . ' ' . $g->description),
-              ])->all(),
+              'games' => Game::with('category')->where('is_active', true)->get()->map(fn ($g) => [
+                'name'  => $g->name,
+                'type'  => $g->category?->name ?? 'Game',
+                'url'   => url('/games/' . $g->slug),
+                'image' => $g->image ? asset('storage/' . $g->image) : null,
+                'icon'  => $g->category?->icon ?? 'bi-controller',
+                's'     => mb_strtolower($g->name . ' ' . ($g->category?->name ?? '') . ' ' . $g->description),
+            ])->all(),
 
-              'events' => Event::with('game')->upcoming()->get()->map(fn ($e) => $this->eventJson($e) + [
+              'events' => Event::with('game.category')->upcoming()->get()->map(fn ($e) => $this->eventJson($e) + [
                   's' => mb_strtolower($e->title . ' ' . ($e->game?->name ?? '')),
               ])->all(),
           ];

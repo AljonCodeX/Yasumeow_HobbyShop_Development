@@ -6,7 +6,7 @@
             @if ($event->image)
                 <img src="{{ asset('storage/' . $event->image) }}" alt="{{ $event->title }}">
             @else
-                <i class="bi {{ $event->game?->icon ?? 'bi-calendar-event' }}"></i>
+                <i class="bi {{ $event->game?->category?->icon ?? 'bi-calendar-event' }}"></i>
             @endif
             <div class="event-date">
                 <small class="d-block fw-bold text-uppercase">{{ $event->event_date->format('M') }}</small>

@@ -10,11 +10,15 @@
 
     <div class="row g-4">
         <div class="col-lg-8">
-            <div class="game-detail-hero mb-4">
-                <i class="bi {{ $game['icon'] }}"></i>
+            <div class="game-detail-hero overflow-hidden mb-4">
+                @if ($game->image)
+                    <img src="{{ asset('storage/' . $game->image) }}" alt="{{ $game->name }}" class="w-100 h-100 object-fit-cover">
+                @else
+                    <i class="bi {{ $section['icon'] }}"></i>
+                @endif
             </div>
 
-            <span class="badge text-bg-dark mb-2">{{ $game['type'] }}</span>
+            <span class="badge text-bg-dark mb-2">{{ $section['title'] }}</span>
             <h1 class="h3 fw-bold">{{ $game['name'] }}</h1>
             <p>{{ $game['about'] }}</p>
 
