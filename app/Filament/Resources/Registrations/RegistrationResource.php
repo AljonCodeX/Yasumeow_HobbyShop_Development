@@ -50,4 +50,23 @@ class RegistrationResource extends Resource
             'edit' => EditRegistration::route('/{record}/edit'),
         ];
     }
+
+    public static function getNavigationBadge(): ?string
+    {
+        $count = Registration::where('status', 'registered')
+            ->where('registered_at', '>=', now()->subDays(7))
+            ->count();
+
+        return $count > 0 ? (string) $count : null;
+    }
+
+    public static function getNavigationBadgeColor(): string|array|null
+    {
+        return 'success';
+    }
+
+    public static function getNavigationBadgeTooltip(): ?string
+    {
+        return 'Registered in the last 7 days';
+    }
 }

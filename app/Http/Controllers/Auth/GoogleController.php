@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
+use App\Support\AdminAlert;
 
 class GoogleController extends Controller
 {
@@ -42,6 +43,10 @@ class GoogleController extends Controller
 
             $user->google_id = $google->getId();
             $user->save();
+
+            if ($user->wasRecentlyCreated) {
+                AdminAlert::send('New user', $user->name . ' signed up with Google', 'heroicon-o-users', 'info');
+            }
         }
 
         Auth::login($user, true);

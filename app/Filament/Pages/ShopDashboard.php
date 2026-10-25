@@ -20,7 +20,7 @@ class ShopDashboard extends BaseDashboard
 {
     use HasFiltersForm;
 
-    protected static string $routePath = 'shop-dashboard';
+    protected static string $routePath = '/';
 
     protected static ?string $title = 'Shop Dashboard';
 

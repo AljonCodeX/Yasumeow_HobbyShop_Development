@@ -55,4 +55,21 @@ class ReservationResource extends Resource
             'edit' => EditReservation::route('/{record}/edit'),
         ];
     }
+
+    public static function getNavigationBadge(): ?string
+    {
+        $count = Reservation::whereIn('status', ['awaiting_payment', 'pending', 'ready'])->count();
+
+        return $count > 0 ? (string) $count : null;
+    }
+
+    public static function getNavigationBadgeColor(): string|array|null
+    {
+        return 'warning';
+    }
+
+    public static function getNavigationBadgeTooltip(): ?string
+    {
+        return 'Open reservations';
+    }
 }

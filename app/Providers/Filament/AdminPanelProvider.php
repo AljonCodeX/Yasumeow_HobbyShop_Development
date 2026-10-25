@@ -19,7 +19,6 @@ use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Illuminate\Support\HtmlString;
 
-use App\Filament\Pages\Dashboard;
 use App\Filament\Pages\EventDashboard;
 use App\Filament\Pages\InventoryReport;
 use App\Filament\Pages\ShopDashboard;
@@ -43,6 +42,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->topbar(false)
             ->colors([
                 'primary' => Color::Amber,
             ])
@@ -58,7 +58,6 @@ class AdminPanelProvider extends PanelProvider
             ->navigation(function (NavigationBuilder $builder): NavigationBuilder {
                 return $builder->groups([
                     NavigationGroup::make()->items([
-                        ...Dashboard::getNavigationItems(),
                         ...ShopDashboard::getNavigationItems(),
                         ...EventDashboard::getNavigationItems(),
                     ]),

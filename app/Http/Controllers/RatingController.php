@@ -8,6 +8,7 @@ use App\Models\Reservation;
 use App\Models\Result;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\Request;
+use App\Support\AdminAlert;
 
 class RatingController extends Controller
 {
@@ -42,10 +43,19 @@ class RatingController extends Controller
         ]);
 
         try {
-            Rating::firstOrCreate(
+            $rating = Rating::firstOrCreate(
                 ['user_id' => $request->user()->id] + $target,
                 ['stars' => $data['stars']]
             );
+
+            if ($rating->wasRecentlyCreated) {
+                AdminAlert::send(
+                    'New rating',
+                    $request->user()->name . ' gave ' . $data['stars'] . ' ' . ($data['stars'] == 1 ? 'star' : 'stars'),
+                    'heroicon-o-star',
+                    'warning'
+                );
+            }
         } catch (UniqueConstraintViolationException $e) {
             // Double click: already saved
         }

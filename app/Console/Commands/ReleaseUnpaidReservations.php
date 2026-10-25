@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\Reservation;
 use Illuminate\Console\Command;
+use App\Support\AdminAlert;
 
 class ReleaseUnpaidReservations extends Command
 {
@@ -19,6 +20,15 @@ class ReleaseUnpaidReservations extends Command
 
         foreach ($unpaid as $reservation) {
             $reservation->cancelAndRestock();
+
+            if ($reservation->refresh()->status === 'cancelled') {
+                AdminAlert::send(
+                    'Reservation auto-cancelled',
+                    'Reservation #' . $reservation->id . ' was not paid in 30 minutes. Stock returned.',
+                    'heroicon-o-x-circle',
+                    'danger'
+                );
+            }
         }
 
         $late = Reservation::where('status', 'pending')
@@ -29,6 +39,15 @@ class ReleaseUnpaidReservations extends Command
 
         foreach ($late as $reservation) {
             $reservation->expireAndRestock();
+
+            if ($reservation->refresh()->status === 'expired') {
+                AdminAlert::send(
+                    'Reservation expired',
+                    'Reservation #' . $reservation->id . ' was not picked up in time. Stock returned.',
+                    'heroicon-o-calendar-x-mark',
+                    'warning'
+                );
+            }
         }
 
         $this->info($unpaid->count() . ' unpaid cancelled, ' . $late->count() . ' expired.');

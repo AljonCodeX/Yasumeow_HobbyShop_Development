@@ -53,4 +53,21 @@ class EventResource extends Resource
             'edit' => EditEvent::route('/{record}/edit'),
         ];
     }
+
+    public static function getNavigationBadge(): ?string
+    {
+        $count = Event::upcoming()->where('status', 'open')->count();
+
+        return $count > 0 ? (string) $count : null;
+    }
+
+    public static function getNavigationBadgeColor(): string|array|null
+    {
+        return 'info';
+    }
+
+    public static function getNavigationBadgeTooltip(): ?string
+    {
+        return 'Upcoming open events';
+    }
 }

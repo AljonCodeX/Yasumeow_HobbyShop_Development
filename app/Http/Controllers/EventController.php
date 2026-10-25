@@ -97,6 +97,15 @@ class EventController extends Controller
             );
         }
 
+            if ($type === 'success' && $event->slotsLeft() === 0) {
+            AdminAlert::send(
+                'Event full',
+                $event->title . ' has no slots left.',
+                'heroicon-o-ticket',
+                'danger'
+            );
+        }
+
         return redirect()->route('events.show', $event)->with($type, $message);
     }
 
