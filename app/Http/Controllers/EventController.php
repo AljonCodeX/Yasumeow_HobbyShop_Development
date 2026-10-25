@@ -13,19 +13,23 @@ class EventController extends Controller
 {
     public function index(Request $request)
     {
-        $all = Event::with('game')
+        $all = Event::with('game.category')
             ->withCount(['registrations as taken_count' => function ($q) {
                 $q->where('status', 'registered');
             }])
             ->upcoming()
             ->get();
 
-        // Filter chips: only games that have an upcoming event
-        $games = $all->pluck('game')->filter()->unique('id')->sortBy('name')->values();
+        // Filter chips: only categories that have an upcoming event
+        $categories = $all->map(fn ($e) => $e->game?->category)
+            ->filter()
+            ->unique('id')
+            ->sortBy('name')
+            ->values();
 
-        $selected = $request->query('game');
+        $selected = $request->query('category');
         $events = $selected
-            ? $all->filter(fn ($e) => $e->game?->slug === $selected)->values()
+            ? $all->filter(fn ($e) => \Illuminate\Support\Str::slug($e->game?->category?->name ?? '') === $selected)->values()
             : $all;
 
         $past = Event::with('game')
@@ -35,7 +39,7 @@ class EventController extends Controller
             ->take(6)
             ->get();
 
-        return view('events', compact('events', 'games', 'selected', 'past'));
+        return view('events', compact('events', 'categories', 'selected', 'past'));
     }
 
     public function show(Event $event)

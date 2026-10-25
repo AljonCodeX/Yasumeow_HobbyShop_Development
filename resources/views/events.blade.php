@@ -11,12 +11,13 @@
             </div>
         </header>
 
-        @if ($games->count() > 1)
-            <nav class="shop-chips" aria-label="Filter events by game">
+        @if ($categories->count() > 1)
+            <nav class="shop-chips" aria-label="Filter events by category">
                 <a href="{{ route('events') }}" class="shop-chip {{ $selected ? '' : 'active' }}">All</a>
-                @foreach ($games as $game)
-                    <a href="{{ route('events', ['game' => $game->slug]) }}"
-                       class="shop-chip {{ $selected === $game->slug ? 'active' : '' }}">{{ $game->name }}</a>
+                @foreach ($categories as $category)
+                    @php $slug = \Illuminate\Support\Str::slug($category->name); @endphp
+                    <a href="{{ route('events', ['category' => $slug]) }}"
+                       class="shop-chip {{ $selected === $slug ? 'active' : '' }}">{{ $category->name }}</a>
                 @endforeach
             </nav>
         @endif
