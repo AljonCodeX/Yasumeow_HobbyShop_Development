@@ -11,6 +11,7 @@
         </div>
     </header>
 
+    @if ($categories->count() > 1)
         <nav class="shop-chips" aria-label="Filter products by category">
             <a href="{{ route('shop', request()->only('q')) }}"
                class="shop-chip {{ $activeCategory ? '' : 'active' }}">All</a>
@@ -19,6 +20,7 @@
                    class="shop-chip {{ $activeCategory === $category->id ? 'active' : '' }}">{{ $category->name }}</a>
             @endforeach
         </nav>
+    @endif
 
         <p class="shop-count">{{ $products->total() }} {{ $products->total() === 1 ? 'product' : 'products' }}</p>
 

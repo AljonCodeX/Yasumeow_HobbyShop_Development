@@ -10,7 +10,7 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        $categories = Category::orderBy('name')->get();
+        $categories = Category::whereHas('products')->orderBy('name')->get();
         $activeCategory = $request->integer('category') ?: null;
 
         $products = Product::with('category')->withSold()
