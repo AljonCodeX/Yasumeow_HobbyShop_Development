@@ -42,9 +42,10 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->font('Poppins')
             ->topbar(false)
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => Color::Blue,
             ])
             ->databaseNotifications()
             ->databaseNotificationsPolling('30s')
@@ -63,7 +64,6 @@ class AdminPanelProvider extends PanelProvider
                     ]),
                     NavigationGroup::make('Shop')->items([
                         ...ProductResource::getNavigationItems(),
-                        ...CategoryResource::getNavigationItems(),
                         ...ReservationResource::getNavigationItems(),
                     ]),
                     NavigationGroup::make('Events')->items([
@@ -76,6 +76,7 @@ class AdminPanelProvider extends PanelProvider
                     ]),
                     NavigationGroup::make()->items([
                         ...UserResource::getNavigationItems(),
+                        ...CategoryResource::getNavigationItems(),
                         ...GameResource::getNavigationItems(),
                     ]),
                 ]);

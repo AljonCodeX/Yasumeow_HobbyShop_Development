@@ -62,7 +62,7 @@ class ProductResource extends Resource
 
     public static function getNavigationBadgeColor(): string|array|null
     {
-        return 'danger';
+        return 'info';
     }
 
     public static function getNavigationBadgeTooltip(): ?string
