@@ -20,15 +20,29 @@ class GoogleController extends Controller
     {
         $google = Socialite::driver('google')->user();
 
-        // Matches by email: an existing account with the same email is logged in
-        $user = User::firstOrCreate(
-        ['email' => $google->getEmail()],
-        [
-            'name'         => $google->getName(),
-            'password'     => Hash::make(Str::random(32)),
-            'has_password' => false,
-        ]
-    );
+        // Returning Google user
+        $user = User::where('google_id', $google->getId())->first();
+
+        if (! $user) {
+            $user = User::where('email', $google->getEmail())->first();
+
+            // Email belongs to a password sign-up: do not log in
+            if ($user && $user->has_password) {
+                return redirect()->route('login')
+                    ->withErrors(['email' => 'The email has already been taken.']);
+            }
+
+            // New Google user, or an older Google-created account without google_id
+            $user ??= new User([
+                'name'         => $google->getName(),
+                'email'        => $google->getEmail(),
+                'password'     => Hash::make(Str::random(32)),
+                'has_password' => false,
+            ]);
+
+            $user->google_id = $google->getId();
+            $user->save();
+        }
 
         Auth::login($user, true);
 
