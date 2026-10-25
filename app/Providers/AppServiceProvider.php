@@ -6,6 +6,9 @@ use App\Models\Product;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -22,6 +25,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        RateLimiter::for('register', fn (Request $r) => Limit::perMinute(10)->by($r->ip()));
+        RateLimiter::for('bag', fn (Request $r) => Limit::perMinute(60)->by($r->user()?->id ?: $r->ip()));
+        RateLimiter::for('checkout', fn (Request $r) => Limit::perMinute(5)->by($r->user()?->id ?: $r->ip()));
+        
         Paginator::useBootstrapFive();
 
         // Gives the layout the reservation list, so the navbar badge and drawer work on every page

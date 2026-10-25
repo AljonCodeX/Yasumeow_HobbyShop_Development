@@ -78,11 +78,16 @@ Route::middleware('auth')->group(function () {
     // Reservation bag and checkout
     Route::get('/reserve/checkout', [ReservationController::class, 'checkout'])->name('reserve.checkout');
     Route::get('/bag', [ReservationController::class, 'bag'])->name('bag');
-    Route::post('/reserve/confirm', [ReservationController::class, 'confirm'])->name('reserve.confirm');
+    Route::post('/reserve/confirm', [ReservationController::class, 'confirm'])
+    ->middleware('throttle:checkout')
+    ->name('reserve.confirm');
+
+    Route::middleware('throttle:bag')->group(function () {
     Route::post('/reserve/{product}', [ReservationController::class, 'add'])->name('reserve.add');
     Route::patch('/reserve/{product}/increase', [ReservationController::class, 'increase'])->name('reserve.increase');
     Route::patch('/reserve/{product}/decrease', [ReservationController::class, 'decrease'])->name('reserve.decrease');
     Route::delete('/reserve/{product}', [ReservationController::class, 'remove'])->name('reserve.remove');
+});
 
     // After checkout
     Route::get('/reservations/{reservation}/thanks', [ReservationController::class, 'thanks'])->name('reservations.thanks');

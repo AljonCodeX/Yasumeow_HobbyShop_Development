@@ -27,7 +27,6 @@ use Filament\Panel;
         'phone',
         'password',
         'profile_photo',
-        'is_admin',
         'has_password',
     ];
 
