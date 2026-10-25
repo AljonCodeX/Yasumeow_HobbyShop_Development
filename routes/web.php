@@ -41,7 +41,7 @@ Route::get('/events/{event}', [EventController::class, 'show'])->name('events.sh
 Route::get('/shop', [ProductController::class, 'index'])->name('shop');
 Route::get('/shop/{product}', [ProductController::class, 'show'])->name('products.show');
 
-Route::view('/about', 'about')->name('about');
+Route::get('/about', [PageController::class, 'about'])->name('about');
 
 Route::get('/search', [SearchController::class, 'index'])->name('search');
 Route::get('/search/suggestions', [SearchController::class, 'data'])

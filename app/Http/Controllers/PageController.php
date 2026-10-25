@@ -9,6 +9,7 @@ use App\Models\Product;
 use App\Models\Reservation;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Rating;
+use App\Models\Registration;
 
 class PageController extends Controller
 {
@@ -153,5 +154,17 @@ class PageController extends Controller
             : collect();
 
         return view('game-details', compact('game', 'section', 'events', 'products'));
+    }
+
+    public function about()
+    {
+        // Numbers that are 0 are hidden
+        $stats = collect([
+            ['icon' => 'bi-controller',   'value' => Game::where('is_active', true)->count(),                            'label' => 'Games to play'],
+            ['icon' => 'bi-trophy-fill',  'value' => Event::where('status', 'completed')->count(),                       'label' => 'Events held'],
+            ['icon' => 'bi-people-fill',  'value' => Registration::where('status', 'registered')->distinct()->count('user_id'), 'label' => 'Players joined'],
+        ])->filter(fn ($s) => $s['value'] > 0);
+
+        return view('about', compact('stats'));
     }
 }

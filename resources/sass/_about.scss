@@ -1,0 +1,143 @@
+// About page
+.about-hero {
+    margin-bottom: 2rem;
+}
+
+.about-tagline {
+    margin: 0;
+    font-size: 1.1rem;
+    color: var(--ym-muted);
+}
+
+.about-section {
+    margin-bottom: 2.25rem;
+
+    p {
+        color: var(--ym-text);
+    }
+}
+
+.about-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: .75rem;
+    margin: 1rem 0;
+}
+
+.about-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .1rem;
+    padding: 1rem;
+    border: 1px solid var(--ym-line);
+    border-radius: .85rem;
+    text-align: center;
+    background: var(--ym-surface);
+
+    > i {
+        font-size: 1.5rem;
+        color: var(--ym-accent);
+    }
+
+    > strong {
+        font-size: 1.6rem;
+        line-height: 1.2;
+        color: var(--ym-text);
+    }
+
+    > span {
+        font-size: .8rem;
+        color: var(--ym-muted);
+    }
+}
+
+.about-place {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+
+    > img,
+    > iframe {
+        width: 100%;
+        height: 300px;
+        border: 1px solid var(--ym-line);
+        border-radius: .85rem;
+    }
+
+    > img {
+        object-fit: cover;
+    }
+}
+
+// Building photo at the top, slides up and fades in
+
+@keyframes about-rise {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+// People who turned on "reduce motion" see no animation
+@media (prefers-reduced-motion: reduce) {
+    .about-building {
+        animation: show;
+    }
+}
+
+// Hero banner: dark band, building stands on a glowing ground line
+.about-banner {
+    position: relative;
+    margin-bottom: 2.25rem;
+    padding: 2.5rem 1.5rem 0;
+    overflow: hidden;
+    border-radius: 1rem;
+    text-align: center;
+    background:
+        radial-gradient(ellipse at 50% 100%, rgba($brand-cyan, .28), transparent 60%),
+        linear-gradient(135deg, #1b1446, $hero-bg);
+
+    // Ground line under the building
+    &::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 3px;
+        background: linear-gradient(90deg, transparent, $brand-cyan, transparent);
+    }
+
+    .shop-title {
+        color: #fff;
+        font-size: 2.25rem;
+    }
+
+    .about-tagline {
+        max-width: 520px;
+        margin: .25rem auto 0;
+        color: rgba(#fff, .75);
+    }
+}
+
+.about-banner-img {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin-top: 1rem;
+    margin-bottom: -5%; // pulls the building down onto the line, adjust if needed
+    animation: about-rise .8s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .about-banner-img {
+        animation: none;
+    }
+}

@@ -1,20 +1,8 @@
 @extends('layouts.app')
 
 @php
-    // EDIT THESE: shown in the "Visit us" strip at the bottom
-    $shop = [
-        'hours'     => '8:00 AM – 6:00 PM',
-        'location'  => 'View on Google Maps',
-        'map'       => 'https://maps.app.goo.gl/5JJaqa135g6njbxC8',
-        'messenger' => '#',
-    ];
-
-    $offers = [
-        ['icon' => 'bi-bag-fill',    'title' => 'Shop',    'text' => 'Cards, beys, kits, figures and more.', 'url' => '/shop'],
-        ['icon' => 'bi-controller',  'title' => 'Play',    'text' => 'Try board games, toy games and PS5.',  'url' => '/games'],
-        ['icon' => 'bi-trophy-fill', 'title' => 'Compete', 'text' => 'Join tournaments and races.',          'url' => '/events'],
-    ];
-
+    $shop   = config('shop');
+    $offers = $shop['offers'];
     // Promo banners: any image in public/images/banners becomes a slide (sorted by file name)
     $banners = collect(glob(public_path('images/banners/*.*')) ?: [])
         ->filter(fn ($path) => preg_match('/\.(jpe?g|png|webp)$/i', $path))
