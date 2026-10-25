@@ -146,7 +146,10 @@
                                         <li class="nav-item">
                                             <a class="nav-link {{ request()->routeIs($link['route']) ? 'active' : '' }}"
                                             href="{{ route($link['route']) }}">
-                                                <i class="bi {{ $link['icon'] }} me-2"></i>{{ $link['label'] }}
+                                            <i class="bi {{ $link['icon'] }} me-2"></i>{{ $link['label'] }}
+                                                @if ($link['route'] === 'account.favourites' && $favouriteMenuCount > 0)
+                                                    <span class="menu-badge">{{ $favouriteMenuCount }}</span>
+                                                @endif
                                             </a>
                                         </li>
                                     @endforeach

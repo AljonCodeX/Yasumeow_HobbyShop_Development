@@ -58,7 +58,7 @@ Route::middleware('auth')->group(function () {
      // My Account
     Route::redirect('/settings', '/account/appearance')->name('settings');
 
-    Route::prefix('account')->name('account.')->group(function () {
+        Route::prefix('account')->name('account.')->middleware(\App\Http\Middleware\MarkFavouritesSeen::class)->group(function () {
         Route::get('/', [AccountController::class, 'dashboard'])->name('dashboard');
         Route::get('/reservations', [AccountController::class, 'reservations'])->name('reservations');
         Route::get('/info', [AccountController::class, 'info'])->name('info');

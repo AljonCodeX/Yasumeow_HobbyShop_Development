@@ -56,9 +56,11 @@ class AppServiceProvider extends ServiceProvider
             ]);
 
             $view->with([
-                'reserveItems' => $items,
-                'reserveCount' => $items->sum('qty'),
-                'reserveTotal' => $items->sum('subtotal'),
+                'reserveItems'   => $items,
+                'reserveCount'   => $items->sum('qty'),
+                'reserveTotal'   => $items->sum('subtotal'),
+                'favouriteCount'     => auth()->check() ? auth()->user()->newFavouritesCount('fav_avatar_seen_at') : 0,
+                'favouriteMenuCount' => auth()->check() ? auth()->user()->newFavouritesCount('fav_menu_seen_at') : 0,
             ]);
         });
     }

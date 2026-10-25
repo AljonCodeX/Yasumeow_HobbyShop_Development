@@ -57,6 +57,8 @@ use Filament\Panel;
             'password' => 'hashed',
             'is_admin' => 'boolean',
             'has_password' => 'boolean',
+            'fav_avatar_seen_at' => 'datetime',
+            'fav_menu_seen_at' => 'datetime',
         ];
     }
 
@@ -73,5 +75,13 @@ use Filament\Panel;
     public function favourites(): BelongsToMany
     {
         return $this->belongsToMany(Product::class, 'favourites')->withTimestamps();
+    }
+
+    // Favourites added since the given "seen" column was last updated
+    public function newFavouritesCount(string $seenColumn): int
+    {
+        return $this->favourites()
+            ->when($this->{$seenColumn}, fn ($q, $seen) => $q->where('favourites.created_at', '>', $seen))
+            ->count();
     }
 }

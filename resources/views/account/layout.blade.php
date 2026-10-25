@@ -3,6 +3,7 @@
 @section('content')
 @php
     $user = Auth::user();
+    $favMenuCount = $user->newFavouritesCount('fav_menu_seen_at');
     $menu = [
         ['route' => 'account.dashboard',    'icon' => 'bi-grid',      'label' => 'Dashboard'],
         ['route' => 'account.info',         'icon' => 'bi-person',    'label' => 'Account Info'],
@@ -23,6 +24,9 @@
                         <a href="{{ route($item['route']) }}"
                            class="account-link {{ request()->routeIs($item['route']) ? 'active' : '' }}">
                             <i class="bi {{ $item['icon'] }}"></i>{{ $item['label'] }}
+                            @if ($item['route'] === 'account.favourites' && $favMenuCount > 0)
+                                <span class="menu-badge">{{ $favMenuCount }}</span>
+                            @endif
                         </a>
                     @endforeach
 
