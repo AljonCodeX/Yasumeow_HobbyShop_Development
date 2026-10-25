@@ -11,7 +11,7 @@ class RegistrationsPerMonth extends ChartWidget
 
     protected static ?int $sort = 2;
 
-    protected ?string $heading = 'Sign-ups per month';
+    protected ?string $heading = 'Total Participants per month';
 
     protected function getType(): string
     {

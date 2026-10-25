@@ -26,12 +26,16 @@ class EventStats extends StatsOverviewWidget
         $rated = $ratings->count();
         $satisfaction = $rated ? round((float) $ratings->avg('stars') / 5 * 100) : null;
 
-        // Players registered in 2 or more events
+        // Players registered in 2 or more events, as a share of all players who ever registered
+        $players = Registration::where('status', 'registered')->distinct()->count('user_id');
+
         $repeat = Registration::where('status', 'registered')
             ->groupBy('user_id')
             ->havingRaw('COUNT(*) >= 2')
             ->pluck('user_id')
             ->count();
+
+        $repeatRate = $players ? round($repeat / $players * 100) : null;
 
         return [
             Stat::make('Upcoming Events', $upcoming)
@@ -46,8 +50,8 @@ class EventStats extends StatsOverviewWidget
                 ->description($rated ? "$rated rating" . ($rated > 1 ? 's' : '') : 'No ratings yet')
                 ->descriptionIcon(Heroicon::OutlinedStar, IconPosition::After)
                 ->color('warning'),
-            Stat::make('Repeat Players', $repeat)
-                ->description('In 2+ events')
+            Stat::make('Repeat Players Rate', $repeatRate === null ? '—' : $repeatRate . '%')
+                ->description($players ? "$repeat of $players players" : 'No players yet')
                 ->descriptionIcon(Heroicon::OutlinedUserGroup, IconPosition::After)
                 ->color('danger'),
         ];

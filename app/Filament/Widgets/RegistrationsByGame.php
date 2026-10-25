@@ -11,7 +11,7 @@ class RegistrationsByGame extends ChartWidget
 
     protected static ?int $sort = 2;
 
-    protected ?string $heading = 'Sign-ups by game';
+    protected ?string $heading = 'Most sign-ups by game';
 
     protected function getType(): string
     {
