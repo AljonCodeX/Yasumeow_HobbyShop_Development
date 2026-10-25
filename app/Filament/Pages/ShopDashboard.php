@@ -2,9 +2,9 @@
 
 namespace App\Filament\Pages;
 
-use App\Filament\Widgets\CustomerGrowth;
+use App\Filament\Widgets\MonthlyReservations;
+use App\Filament\Widgets\MonthlyRevenue;
 use App\Filament\Widgets\LatestReservations;
-use App\Filament\Widgets\ReservationsYoY;
 use App\Filament\Widgets\ShopKpis;
 use App\Models\Category;
 use BackedEnum;
@@ -37,18 +37,20 @@ class ShopDashboard extends BaseDashboard
                 ->columnSpanFull()
                 ->extraAttributes(['class' => 'w-full'])
                 ->schema([
-                    DatePicker::make('startDate')
-                        ->label('Start date')
-                        ->native(false)
-                        ->displayFormat('Y-m-d')
-                        ->suffixIcon(Heroicon::OutlinedCalendarDays)
-                        ->maxDate(fn ($get) => $get('endDate')),
-                    DatePicker::make('endDate')
-                        ->label('End date')
-                        ->native(false)
-                        ->displayFormat('Y-m-d')
-                        ->suffixIcon(Heroicon::OutlinedCalendarDays)
-                        ->minDate(fn ($get) => $get('startDate')),
+            DatePicker::make('startDate')
+                ->label('Start date')
+                ->native(false)
+                ->displayFormat('d/m/Y')
+                ->placeholder('dd/mm/yyyy')
+                ->suffixIcon(Heroicon::OutlinedCalendarDays)
+                ->maxDate(fn ($get) => $get('endDate')),
+            DatePicker::make('endDate')
+                ->label('End date')
+                ->native(false)
+                ->displayFormat('d/m/Y')
+                ->placeholder('dd/mm/yyyy')
+                ->suffixIcon(Heroicon::OutlinedCalendarDays)
+                ->minDate(fn ($get) => $get('startDate')),
                     Select::make('status')
                         ->label('Status')
                         ->placeholder('All statuses')
@@ -70,6 +72,6 @@ class ShopDashboard extends BaseDashboard
 
     public function getWidgets(): array
     {
-        return [ShopKpis::class, ReservationsYoY::class, CustomerGrowth::class, LatestReservations::class];
+        return [ShopKpis::class, MonthlyRevenue::class, MonthlyReservations::class, LatestReservations::class];
     }
 }

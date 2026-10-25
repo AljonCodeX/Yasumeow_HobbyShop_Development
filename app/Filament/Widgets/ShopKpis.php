@@ -30,7 +30,7 @@ class ShopKpis extends StatsOverviewWidget
 
         $ratings = Rating::whereHas('reservation', fn ($q) => $q->dashboardFilters($this->pageFilters));
         $rated = $ratings->count();
-        $avg = $rated ? round((float) $ratings->avg('stars'), 1) : null;
+        $satisfaction = $rated ? round((float) $ratings->avg('stars') / 5 * 100) : null;
 
         // Trend lines: last 12 months, same status/category filters, date filter ignored
         $months = collect(range(11, 0))->map(fn ($i) => now()->startOfMonth()->subMonths($i));
@@ -54,10 +54,10 @@ class ShopKpis extends StatsOverviewWidget
                 ->descriptionIcon(Heroicon::OutlinedShoppingCart, IconPosition::After)
                 ->chart($trend(fn ($rows) => $rows->reject(fn ($r) => in_array($r->status, $dead))->count()))
                 ->color('info'),
-            Stat::make('Customer Satisfaction', $avg === null ? '—' : "$avg / 5")
+            Stat::make('Customer Satisfaction', $satisfaction === null ? '—' : $satisfaction . '%')
                 ->description($rated ? "$rated rating" . ($rated > 1 ? 's' : '') : 'No ratings yet')
                 ->descriptionIcon(Heroicon::OutlinedStar, IconPosition::After)
-                ->chart($trend(fn ($rows) => round((float) $rows->pluck('rating.stars')->filter()->avg(), 1)))
+                ->chart($trend(fn ($rows) => round((float) $rows->pluck('rating.stars')->filter()->avg() / 5 * 100)))
                 ->color('warning'),
             Stat::make('Pending Reservations', $pending)
                 ->description('Waiting for payment or pickup')

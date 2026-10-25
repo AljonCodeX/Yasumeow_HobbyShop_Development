@@ -17,8 +17,8 @@ class EditUser extends EditRecord
         return [
             // Hidden for yourself and for anyone with reservations (keeps sales history)
             DeleteAction::make()
-                ->hidden(fn (Model $record) => $record->id === auth()->id()
-                    || Reservation::where('user_id', $record->id)->exists()),
+            ->hidden(fn (Model $record) => $record->id === \Illuminate\Support\Facades\Auth::id()
+                || Reservation::where('user_id', $record->id)->exists()),
         ];
     }
 
