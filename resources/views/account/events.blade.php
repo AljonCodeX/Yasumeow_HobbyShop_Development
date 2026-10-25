@@ -4,15 +4,40 @@
 @php
     $chips = ['all' => 'All', 'upcoming' => 'Upcoming', 'past' => 'Past', 'cancelled' => 'Cancelled'];
     $current = $filter ?? 'all';
+
+    // Search and game stay selected when you click a chip
+    $keep = array_filter(['q' => $q, 'game' => $gameId]);
+    $hasFilter = $filter || $q !== '' || $gameId;
 @endphp
 
 <h2 class="history-title">My Events</h2>
 
+<form method="GET" action="{{ route('account.events') }}" class="history-filters">
+    @if ($filter)
+        <input type="hidden" name="filter" value="{{ $filter }}">
+    @endif
+
+    <div class="history-row">
+        <select name="game" class="form-select" aria-label="Game" onchange="this.form.submit()">
+            <option value="">All games</option>
+            @foreach ($games as $id => $name)
+                <option value="{{ $id }}" @selected($gameId === $id)>{{ $name }}</option>
+            @endforeach
+        </select>
+
+        <input type="search" name="q" value="{{ $q }}" class="form-control" placeholder="Search events" aria-label="Search events">
+    </div>
+</form>
+
 <nav class="shop-chips" aria-label="Filter events">
     @foreach ($chips as $key => $label)
-        <a href="{{ route('account.events', $key === 'all' ? [] : ['filter' => $key]) }}"
+        <a href="{{ route('account.events', $key === 'all' ? $keep : $keep + ['filter' => $key]) }}"
            class="shop-chip {{ $current === $key ? 'active' : '' }}">{{ $label }}</a>
     @endforeach
+
+    @if ($q !== '' || $gameId)
+        <a href="{{ route('account.events', array_filter(['filter' => $filter])) }}" class="shop-chip">Clear search</a>
+    @endif
 </nav>
 
 @forelse ($registrations as $registration)
@@ -60,7 +85,7 @@
 @empty
     <div class="shop-empty">
         <i class="bi bi-calendar-x"></i>
-        <p class="mb-2">{{ $filter ? 'No events match this filter.' : 'You have not registered for any events yet.' }}</p>
+        <p class="mb-2">{{ $hasFilter ? 'No events match your filters.' : 'You have not registered for any events yet.' }}</p>
         <a href="{{ route('events') }}" class="fw-bold">Browse events</a>
     </div>
 @endforelse
