@@ -8,10 +8,10 @@ return [
     'photo' => 'images/shop-building.webp', // file in public/images
     'embed' => 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15411.075638920842!2d120.8985975173828!3d15.060892900000002!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x33970387f7ed710d%3A0x37c9dbcf2b36aa7a!2sYasumeow\'s%20Internet%20Cafe%20%26%20Hobby%20Shop%20In%20Another%20World!5e0!3m2!1sen!2sph!4v1792941154392!5m2!1sen!2sph',
     'gallery' => [
-        'public/images/about-1.webp',
-        'public/images/about-1.webp',
-        'public/images/about-1.webp',
-        'public/images/about-1.webp',
+        'images/about-1.webp',
+        'images/about-2.webp',
+        'images/about-3.webp',
+        'images/about-4.webp',
     ],
 
     'offers' => [

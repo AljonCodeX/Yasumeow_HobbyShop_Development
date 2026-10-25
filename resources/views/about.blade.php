@@ -12,39 +12,41 @@
             $gallery  = collect($shop['gallery'] ?? [])->filter(fn ($p) => file_exists(public_path($p)))->values();
             $total    = 1 + $gallery->count();
         @endphp
-        <section id="aboutCarousel" class="carousel slide carousel-fade about-carousel"
+
+        <section class="about-banner">
+            <div class="about-banner-text">
+                <h1 class="shop-title">About Us</h1>
+                <p class="about-tagline">Your local hub for hobbies, collectibles and gaming events.</p>
+            </div>
+
+            <div id="aboutCarousel" class="carousel slide carousel-fade about-carousel"
                  @if ($total > 1) data-bs-ride="carousel" data-bs-interval="5000" @endif>
 
-            @if ($total > 1)
-                <div class="carousel-indicators">
-                    @for ($i = 0; $i < $total; $i++)
-                        <button type="button" data-bs-target="#aboutCarousel" data-bs-slide-to="{{ $i }}"
-                                class="{{ $i === 0 ? 'active' : '' }}" @if ($i === 0) aria-current="true" @endif
-                                aria-label="Slide {{ $i + 1 }}"></button>
-                    @endfor
-                </div>
-            @endif
+                @if ($total > 1)
+                    <div class="carousel-indicators">
+                        @for ($i = 0; $i < $total; $i++)
+                            <button type="button" data-bs-target="#aboutCarousel" data-bs-slide-to="{{ $i }}"
+                                    class="{{ $i === 0 ? 'active' : '' }}" @if ($i === 0) aria-current="true" @endif
+                                    aria-label="Slide {{ $i + 1 }}"></button>
+                        @endfor
+                    </div>
+                @endif
 
-            <div class="carousel-inner">
-                <div class="carousel-item active">
-                    <div class="about-banner">
-                        <div class="about-banner-text">
-                            <h1 class="shop-title">About Us</h1>
-                            <p class="about-tagline">Your local hub for hobbies, collectibles and gaming events.</p>
-                        </div>
-
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
                         @if ($hasPhoto)
                             <img src="{{ asset($shop['photo']) }}" alt="Yasumeow Hobby Shop building"
-                                 class="about-banner-img" fetchpriority="high">
+                                 class="about-slide-img about-slide-building" fetchpriority="high">
                         @endif
                     </div>
-                </div>
 
-                @foreach ($gallery as $photo)
-                    <div class="carousel-item">
-                        <img src="{{ asset($photo) }}" alt="Yasumeow Hobby Shop community" class="about-photo" loading="lazy">
-                    </div>
-                @endforeach
+                    @foreach ($gallery as $photo)
+                        <div class="carousel-item">
+                            <img src="{{ asset($photo) }}" alt="Yasumeow Hobby Shop community"
+                                 class="about-slide-img about-slide-photo" loading="lazy">
+                        </div>
+                    @endforeach
+                </div>
             </div>
         </section>
 
