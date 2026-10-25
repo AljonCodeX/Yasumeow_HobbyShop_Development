@@ -6,18 +6,46 @@
 <div class="shop-page">
     <div class="container" style="max-width: 900px;">
 
-        {{-- Hero banner: title on top, building standing at the bottom --}}
-        @php $hasPhoto = ! empty($shop['photo']) && file_exists(public_path($shop['photo'])); @endphp
-        <section class="about-banner">
-            <div class="about-banner-text">
-                <h1 class="shop-title">About Us</h1>
-                <p class="about-tagline">Your local hub for hobbies, collectibles and gaming events.</p>
-            </div>
+        {{-- Banner slideshow: slide 1 is the building, the rest are community photos --}}
+        @php
+            $hasPhoto = ! empty($shop['photo']) && file_exists(public_path($shop['photo']));
+            $gallery  = collect($shop['gallery'] ?? [])->filter(fn ($p) => file_exists(public_path($p)))->values();
+            $total    = 1 + $gallery->count();
+        @endphp
+        <section id="aboutCarousel" class="carousel slide carousel-fade about-carousel"
+                 @if ($total > 1) data-bs-ride="carousel" data-bs-interval="5000" @endif>
 
-            @if ($hasPhoto)
-                <img src="{{ asset($shop['photo']) }}" alt="Yasumeow Hobby Shop building"
-                     class="about-banner-img" fetchpriority="high">
+            @if ($total > 1)
+                <div class="carousel-indicators">
+                    @for ($i = 0; $i < $total; $i++)
+                        <button type="button" data-bs-target="#aboutCarousel" data-bs-slide-to="{{ $i }}"
+                                class="{{ $i === 0 ? 'active' : '' }}" @if ($i === 0) aria-current="true" @endif
+                                aria-label="Slide {{ $i + 1 }}"></button>
+                    @endfor
+                </div>
             @endif
+
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <div class="about-banner">
+                        <div class="about-banner-text">
+                            <h1 class="shop-title">About Us</h1>
+                            <p class="about-tagline">Your local hub for hobbies, collectibles and gaming events.</p>
+                        </div>
+
+                        @if ($hasPhoto)
+                            <img src="{{ asset($shop['photo']) }}" alt="Yasumeow Hobby Shop building"
+                                 class="about-banner-img" fetchpriority="high">
+                        @endif
+                    </div>
+                </div>
+
+                @foreach ($gallery as $photo)
+                    <div class="carousel-item">
+                        <img src="{{ asset($photo) }}" alt="Yasumeow Hobby Shop community" class="about-photo" loading="lazy">
+                    </div>
+                @endforeach
+            </div>
         </section>
 
         {{-- Our story --}}
@@ -57,19 +85,7 @@
             <h2 class="checkout-section-title">Yasumeow Community League</h2>
             <p>The Yasumeow Community League is our weekly tournament where hobby enthusiasts from nearby areas come together to play, compete, and have fun. It's a chance to meet fellow players, test your skills, and build friendships through friendly competition. Whether you're a beginner or an experienced player, everyone is welcome to join the community!</p>
 
-            @if ($stats->isNotEmpty())
-                <div class="about-stats">
-                    @foreach ($stats as $stat)
-                        <div class="about-stat">
-                            <i class="bi {{ $stat['icon'] }}"></i>
-                            <strong>{{ number_format($stat['value']) }}</strong>
-                            <span>{{ $stat['label'] }}</span>
-                        </div>
-                    @endforeach
-                </div>
-            @endif
-
-            <a href="{{ route('events') }}" class="fw-bold text-body">Join This Week's Tournament <i class="bi bi-arrow-right"></i></a>
+            <a href="{{ route('events') }}" class="fw-bold text-body d-inline-block mt-2">Join This Week's Tournament <i class="bi bi-arrow-right"></i></a>
         </section>
 
         {{-- Map --}}
@@ -106,7 +122,7 @@
                         <a href="{{ $shop['map'] }}" target="_blank" rel="noopener" class="text-white">{{ $shop['location'] }}</a>
                     </div>
                 </div>
-                <a href="{{ $shop['messenger'] }}" class="btn btn-info">
+                <a href="{{ $shop['messenger'] }}" target="_blank" rel="noopener" class="btn btn-info">
                     <i class="bi bi-chat-dots me-2"></i>Message us on Messenger
                 </a>
             </div>

@@ -127,17 +127,88 @@
     }
 }
 
-.about-banner-img {
-    display: block;
-    width: 100%;
-    height: auto;
-    margin-top: 1rem;
-    margin-bottom: -5%; // pulls the building down onto the line, adjust if needed
-    animation: about-rise .8s ease-out both;
-}
+    .about-banner-img {
+        position: absolute;
+        top: 20%;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        object-fit: contain;
+        object-position: center top;
+    }
 
 @media (prefers-reduced-motion: reduce) {
     .about-banner-img {
         animation: none;
     }
+}
+
+// Banner slideshow
+.about-carousel {
+    margin-bottom: 2.25rem;
+    overflow: hidden;
+    border-radius: 1rem;
+
+// Every slide has the same shape (4:3, like the photos)
+.about-banner {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    aspect-ratio: 4 / 3;
+    margin-bottom: 0;
+    padding: 0;
+    border-radius: 0;
+}
+
+    .about-banner-text {
+        position: absolute;
+        top: 2rem;
+        left: 0;
+        right: 0;
+        z-index: 1;
+    }
+
+    .about-banner-img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        object-fit: contain;
+        object-position: center bottom;
+    }
+
+    // Dots sit in a small dark pill so they show on white walls too
+    .carousel-indicators {
+        right: auto;
+        left: 50%;
+        margin: 0 0 .75rem;
+        padding: .35rem .7rem;
+        transform: translateX(-50%);
+        border-radius: 2rem;
+        background: rgba($hero-bg, .6);
+
+        [data-bs-target] {
+            width: 8px;
+            height: 8px;
+            margin: 0 3px;
+            border: 0;
+            border-radius: 50%;
+            background: #fff;
+            opacity: .5;
+        }
+
+        .active {
+            background: $brand-cyan;
+            opacity: 1;
+        }
+    }
+}
+
+.about-photo {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
 }

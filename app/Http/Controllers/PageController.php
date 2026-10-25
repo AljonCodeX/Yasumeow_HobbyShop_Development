@@ -165,6 +165,6 @@ class PageController extends Controller
             ['icon' => 'bi-people-fill',  'value' => Registration::where('status', 'registered')->distinct()->count('user_id'), 'label' => 'Players joined'],
         ])->filter(fn ($s) => $s['value'] > 0);
 
-        return view('about', compact('stats'));
+        return view('about', ['stats' => collect()]);
     }
 }

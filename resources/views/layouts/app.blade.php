@@ -224,7 +224,7 @@
 
                         <h5 class="mt-4">Contact Us</h5>
                         <div class="footer-contact">
-                            <a href="#" class="btn btn-outline-dark rounded-3 flex-fill">
+                            <a href="{{ config('shop.messenger') }}" target="_blank" rel="noopener" class="btn btn-outline-dark rounded-3 flex-fill">
                                 <i class="bi bi-chat-dots me-1"></i> Messenger
                             </a>
                             <a href="#" class="btn btn-outline-dark rounded-3 flex-fill">

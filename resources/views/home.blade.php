@@ -209,7 +209,7 @@
                     <a href="{{ $shop['map'] }}" target="_blank" rel="noopener" class="text-white">{{ $shop['location'] }}</a>
                 </div>
             </div>
-            <a href="{{ $shop['messenger'] }}" class="btn btn-info">
+            <a href="{{ $shop['messenger'] }}" target="_blank" rel="noopener" class="btn btn-info">
                 <i class="bi bi-chat-dots me-2"></i>Message us on Messenger
             </a>
         </div>
