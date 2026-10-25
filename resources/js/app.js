@@ -6,3 +6,4 @@ import './theme';
 import './search';
 import './history';
 import './account';
+import './password';

@@ -38,7 +38,6 @@
             <div class="col-md-7">
                 <div class="p-4 p-md-5">
                     <h1 class="h2 fw-bold text-center mb-4">Create your account</h1>
-                    <h2 class="h5 fw-bold mb-3">Register</h2>
 
                     <form method="POST" action="{{ route('register') }}">
                         @csrf
@@ -47,7 +46,7 @@
                             <label for="name" class="form-label fw-bold small">{{ __('Name') }}</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="bi bi-person"></i></span>
-                                <input id="name" type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}" required autocomplete="name" autofocus>
+                                <input id="name" type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}" placeholder="Your name" required autocomplete="name" autofocus>
 
                                 @error('name')
                                     <span class="invalid-feedback" role="alert">
@@ -61,7 +60,7 @@
                             <label for="email" class="form-label fw-bold small">{{ __('Email Address') }}</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="bi bi-envelope"></i></span>
-                                <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email">
+                                <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" placeholder="you@email.com" required autocomplete="email">
 
                                 @error('email')
                                     <span class="invalid-feedback" role="alert">
@@ -75,7 +74,8 @@
                             <label for="password" class="form-label fw-bold small">{{ __('Password') }}</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="bi bi-lock"></i></span>
-                                <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="new-password">
+                                <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" placeholder="At least 8 characters" required autocomplete="new-password">
+                                <button type="button" class="input-group-text password-toggle" aria-label="Show password"><i class="bi bi-eye"></i></button>
 
                                 @error('password')
                                     <span class="invalid-feedback" role="alert">
@@ -90,7 +90,8 @@
                             <label for="password-confirm" class="form-label fw-bold small">{{ __('Confirm Password') }}</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="bi bi-shield-lock"></i></span>
-                                <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required autocomplete="new-password">
+                                <input id="password-confirm" type="password" class="form-control" name="password_confirmation" placeholder="Repeat your password" required autocomplete="new-password">
+                                <button type="button" class="input-group-text password-toggle" aria-label="Show password"><i class="bi bi-eye"></i></button>
                             </div>
                         </div>
 

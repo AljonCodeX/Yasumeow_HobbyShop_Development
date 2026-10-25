@@ -44,3 +44,22 @@
     padding: 2rem;
     background: linear-gradient(180deg, rgba($hero-bg, .1) 0%, rgba($hero-bg, .4) 45%, rgba($hero-bg, .95) 100%);
 }
+
+// Links match the brand color (not the default blue)
+.auth-card a:not(.btn) {
+    color: var(--ym-accent);
+
+    &:hover {
+        text-decoration: underline !important;
+    }
+}
+
+// Eye button on password fields
+.password-toggle {
+    cursor: pointer;
+    color: inherit;
+
+    &:hover {
+        color: var(--ym-accent);
+    }
+}

@@ -38,8 +38,6 @@
             <div class="col-md-7">
                 <div class="p-4 p-md-5">
                     <h1 class="h2 fw-bold text-center mb-4">Welcome back!</h1>
-                    <h2 class="h5 fw-bold mb-3">Log in</h2>
-
                     <form method="POST" action="{{ route('login') }}">
                         @csrf
 
@@ -47,7 +45,7 @@
                             <label for="email" class="form-label fw-bold small">{{ __('Email Address') }}</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="bi bi-envelope"></i></span>
-                                <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus>
+                                <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" placeholder="you@email.com" required autocomplete="email" autofocus>
 
                                 @error('email')
                                     <span class="invalid-feedback" role="alert">
@@ -61,7 +59,8 @@
                             <label for="password" class="form-label fw-bold small">{{ __('Password') }}</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="bi bi-lock"></i></span>
-                                <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password">
+                                <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" placeholder="Your password" required autocomplete="current-password">
+                                <button type="button" class="input-group-text password-toggle" aria-label="Show password"><i class="bi bi-eye"></i></button>
 
                                 @error('password')
                                     <span class="invalid-feedback" role="alert">

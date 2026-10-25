@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
 use App\Support\AdminAlert;
+use Illuminate\Support\Facades\Log;
 
 class GoogleController extends Controller
 {
@@ -19,7 +20,14 @@ class GoogleController extends Controller
 
     public function callback()
     {
-        $google = Socialite::driver('google')->user();
+        try {
+            $google = Socialite::driver('google')->user();
+        } catch (\Throwable $e) {
+            Log::warning('Google login failed', ['message' => $e->getMessage()]);
+
+            return redirect()->route('login')
+                ->with('error', 'Google sign-in did not finish. Please try again.');
+        }
 
         // Returning Google user
         $user = User::where('google_id', $google->getId())->first();
