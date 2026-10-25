@@ -9,6 +9,8 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -36,8 +38,8 @@ class AppServiceProvider extends ServiceProvider
             static $ids = null;
 
             if ($ids === null) {
-                $ids = auth()->check()
-                    ? auth()->user()->favourites()->pluck('products.id')->all()
+                $ids = Auth::check()
+                ? $this->currentUser()->favourites()->pluck('products.id')->all()
                     : [];
             }
 
@@ -59,9 +61,17 @@ class AppServiceProvider extends ServiceProvider
                 'reserveItems'   => $items,
                 'reserveCount'   => $items->sum('qty'),
                 'reserveTotal'   => $items->sum('subtotal'),
-                'favouriteCount'     => auth()->check() ? auth()->user()->newFavouritesCount('fav_avatar_seen_at') : 0,
-                'favouriteMenuCount' => auth()->check() ? auth()->user()->newFavouritesCount('fav_menu_seen_at') : 0,
+                'favouriteCount'     => Auth::check() ? $this->currentUser()->newFavouritesCount('fav_avatar_seen_at') : 0,
+                'favouriteMenuCount' => Auth::check() ? $this->currentUser()->newFavouritesCount('fav_menu_seen_at') : 0,
             ]);
         });
+    }
+
+        private function currentUser(): User
+    {
+        /** @var User $user */
+        $user = Auth::user();
+
+        return $user;
     }
 }
