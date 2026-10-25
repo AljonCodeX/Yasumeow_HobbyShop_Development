@@ -10,6 +10,9 @@ use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use App\Models\Event;
+use Filament\Notifications\Notification;
+use Illuminate\Database\Eloquent\Collection;
 
 class GamesTable
 {
@@ -31,7 +34,18 @@ class GamesTable
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                DeleteBulkAction::make()
+                    ->before(function (DeleteBulkAction $action, Collection $records) {
+                        if (Event::whereIn('game_id', $records->modelKeys())->exists()) {
+                            Notification::make()
+                                ->title("Can't delete")
+                                ->body('One or more selected games have events.')
+                                ->danger()
+                                ->send();
+
+                            $action->cancel();
+                        }
+                    }),
                 ]),
             ]);
     }

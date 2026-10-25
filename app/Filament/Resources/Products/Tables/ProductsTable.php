@@ -9,6 +9,9 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use App\Models\ReservationItem;
+use Filament\Notifications\Notification;
+use Illuminate\Database\Eloquent\Collection;
 
 class ProductsTable
 {
@@ -47,7 +50,18 @@ class ProductsTable
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                DeleteBulkAction::make()
+                    ->before(function (DeleteBulkAction $action, Collection $records) {
+                        if (ReservationItem::whereIn('product_id', $records->modelKeys())->exists()) {
+                            Notification::make()
+                                ->title("Can't delete")
+                                ->body('One or more selected products are part of existing reservations.')
+                                ->danger()
+                                ->send();
+
+                            $action->cancel();
+                        }
+                    }),
                 ]),
             ]);
     }

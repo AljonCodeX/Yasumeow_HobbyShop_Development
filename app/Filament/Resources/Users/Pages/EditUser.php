@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Users\Pages;
 
 use App\Filament\Resources\Users\UserResource;
+use App\Models\Reservation;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
@@ -14,7 +15,10 @@ class EditUser extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            DeleteAction::make(),
+            // Hidden for yourself and for anyone with reservations (keeps sales history)
+            DeleteAction::make()
+                ->hidden(fn (Model $record) => $record->id === auth()->id()
+                    || Reservation::where('user_id', $record->id)->exists()),
         ];
     }
 
