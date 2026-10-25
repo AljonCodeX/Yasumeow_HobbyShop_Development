@@ -15,15 +15,15 @@ class ProductForm
     {
         return $schema
             ->components([
+                TextInput::make('name')
+                    ->required()
+                    ->maxLength(255),
                 Select::make('category_id')
                     ->label('Category')
                     ->relationship('category', 'name')
                     ->searchable()
                     ->preload()
                     ->required(),
-                TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
                 Textarea::make('description')
                     ->default(null)
                     ->columnSpanFull(),

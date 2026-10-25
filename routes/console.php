@@ -9,3 +9,4 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 Schedule::command('reservations:release-unpaid')->everyFiveMinutes();
+Schedule::command('events:complete-past')->hourly();
