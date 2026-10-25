@@ -33,8 +33,8 @@ class EventController extends Controller
             : $all;
 
         $past = Event::with('game')
-            ->where('event_date', '<', now())
             ->where('status', '!=', 'cancelled')
+            ->where(fn ($q) => $q->where('event_date', '<', now())->orWhere('status', 'completed'))
             ->orderByDesc('event_date')
             ->take(6)
             ->get();

@@ -65,7 +65,7 @@ class SearchController extends Controller
         $events = Event::with('game')
             ->withCount(['registrations as taken_count' => fn ($r) => $r->where('status', 'registered')])
             ->where('event_date', '>=', now())
-            ->where('status', '!=', 'cancelled')
+            ->whereNotIn('status', ['cancelled', 'completed'])
             ->where(function ($w) use ($like) {
                 $w->where('title', 'like', $like)
                   ->orWhereHas('game', fn ($g) => $g->where('name', 'like', $like));

@@ -41,7 +41,7 @@ class Event extends Model
     public function scopeUpcoming(Builder $query): Builder
     {
         return $query->where('event_date', '>=', now())
-            ->where('status', '!=', 'cancelled')
+            ->whereNotIn('status', ['cancelled', 'completed'])
             ->orderBy('event_date');
     }
 
