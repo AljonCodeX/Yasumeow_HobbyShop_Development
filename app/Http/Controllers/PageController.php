@@ -55,10 +55,10 @@ class PageController extends Controller
         $categories = Category::orderBy('name')->get();
 
         // Featured products first, then newest
-        $products = Product::with('category')
+        $products = Product::with('category')->withSold()
             ->orderByDesc('is_featured')
             ->latest()
-            ->take(5)
+            ->take(8)
             ->get();
 
         // Popup: newest picked-up order with no rating, else newest finished event with no rating

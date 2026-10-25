@@ -10,10 +10,9 @@
     ];
 
     $offers = [
-        ['icon' => 'bi-bag-fill',       'title' => 'Shop',       'text' => 'Cards, beys, kits, figures and more.', 'url' => '/shop'],
-        ['icon' => 'bi-controller',     'title' => 'Play',       'text' => 'Try board games, toy games and PS5.',  'url' => '/games'],
-        ['icon' => 'bi-trophy-fill',    'title' => 'Compete',    'text' => 'Join tournaments and races.',          'url' => '/events'],
-        ['icon' => 'bi-clock-history',  'title' => 'Play PS5',   'text' => 'Pick a game and play on the shop PS5.', 'url' => '/games'],
+        ['icon' => 'bi-bag-fill',    'title' => 'Shop',    'text' => 'Cards, beys, kits, figures and more.', 'url' => '/shop'],
+        ['icon' => 'bi-controller',  'title' => 'Play',    'text' => 'Try board games, toy games and PS5.',  'url' => '/games'],
+        ['icon' => 'bi-trophy-fill', 'title' => 'Compete', 'text' => 'Join tournaments and races.',          'url' => '/events'],
     ];
 
     // Promo banners: any image in public/images/banners becomes a slide (sorted by file name)
@@ -22,14 +21,12 @@
         ->map(fn ($path) => basename($path))
         ->sort()
         ->values();
-
-        $ticker = ['WEEKLY TOURNAMENTS', 'PLAY PS5', 'BEGINNERS WELCOME', 'NEW ARRIVALS'];
 @endphp
 
 @section('content')
 <div class="container">
 
-        {{-- HERO CAROUSEL --}}
+    {{-- HERO CAROUSEL --}}
     <div id="homeCarousel" class="carousel slide home-hero"
          @if ($banners->isNotEmpty()) data-bs-ride="carousel" data-bs-interval="5000" @endif>
 
@@ -78,21 +75,9 @@
         </div>
     </div>
 
-    {{-- TICKER --}}
-    <div class="home-ticker" aria-label="Shop highlights">
-        <div class="home-ticker-track">
-            @foreach (range(1, 2) as $copy)
-                <div class="home-ticker-group" @if ($copy === 2) aria-hidden="true" @endif>
-                    @foreach ($ticker as $text)
-                        <span>{{ $text }}</span>
-                    @endforeach
-                </div>
-            @endforeach
-        </div>
-    </div>
     {{-- WHAT WE OFFER --}}
     <section class="pt-4">
-        <div class="row row-cols-2 row-cols-lg-4 g-3">
+        <div class="row row-cols-1 row-cols-md-3 g-3">
             @foreach ($offers as $offer)
                 <div class="col">
                     <a href="{{ url($offer['url']) }}" class="offer-tile h-100">
@@ -107,70 +92,30 @@
         </div>
     </section>
 
-    {{-- UPCOMING EVENTS --}}
+    {{-- FEATURED PRODUCTS --}}
     <section class="pt-5">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h2 class="h5 fw-bold text-uppercase mb-0">
-                <i class="bi bi-calendar-event me-2"></i>Upcoming Events
+                <i class="bi bi-star me-2"></i>Featured Products
             </h2>
-            <a href="{{ url('/events') }}" class="small fw-bold text-body text-decoration-none">
-                View All Events <i class="bi bi-arrow-right"></i>
+            <a href="{{ url('/shop') }}" class="small fw-bold text-body text-decoration-none">
+                View All Products <i class="bi bi-arrow-right"></i>
             </a>
         </div>
 
-        <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-3" data-load-more data-step="4" data-step-mobile="2">
-            @forelse ($events as $event)
-                <div class="col">
-                    @include('partials.event-card', ['event' => $event])
-                </div>
+        <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3" data-load-more data-step="4" data-step-mobile="2">
+            @forelse ($products as $product)
+                @include('partials.product-card', ['product' => $product])
             @empty
                 <div class="col-12">
                     <div class="home-empty">
-                        <i class="bi bi-calendar-x"></i>
-                        <p class="mb-0">No upcoming events yet. Check back soon!</p>
+                        <i class="bi bi-box-seam"></i>
+                        <p class="mb-0">No products yet. Check back soon!</p>
                     </div>
                 </div>
             @endforelse
         </div>
     </section>
-
-    {{-- GAMES --}}
-    @if ($games->isNotEmpty())
-        <section class="pt-5">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h2 class="h5 fw-bold text-uppercase mb-0">
-                    <i class="bi bi-controller me-2"></i>Games You Can Play
-                </h2>
-                <a href="{{ url('/games') }}" class="small fw-bold text-body text-decoration-none">
-                    View All Games <i class="bi bi-arrow-right"></i>
-                </a>
-            </div>
-
-            <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-3" data-load-more data-step="4" data-step-mobile="2">
-                @foreach ($games as $game)
-                    <div class="col">
-                        <a href="{{ url('/games/' . $game->slug) }}" class="game-card card h-100 border-0 shadow-sm overflow-hidden text-decoration-none">
-                            <div class="game-card-cover">
-                                <span class="game-card-badge">{{ $game->category?->name }}</span>
-                                @if ($game->image)
-                                    <img src="{{ asset('storage/' . $game->image) }}" alt="{{ $game->name }}">
-                                @else
-                                    <i class="bi {{ $game->category?->icon ?? 'bi-controller' }}"></i>
-                                @endif
-                            </div>
-                            <div class="card-body">
-                                <h3 class="h6 fw-bold text-body mb-2">{{ $game->name }}</h3>
-                                <p class="small text-muted mb-0 game-card-desc">{{ $game->description }}</p>
-                            </div>
-                            <div class="card-footer bg-transparent border-0 pt-0 pb-3">
-                                <span class="game-card-link">View Game Details <i class="bi bi-arrow-right ms-1"></i></span>
-                            </div>
-                        </a>
-                    </div>
-                @endforeach
-            </div>
-        </section>
-    @endif
 
     {{-- SHOP BY CATEGORY --}}
     @if ($categories->isNotEmpty())
@@ -205,57 +150,59 @@
         </section>
     @endif
 
-{{-- FEATURED PRODUCTS --}}
+    {{-- UPCOMING EVENTS --}}
     <section class="pt-5">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h2 class="h5 fw-bold text-uppercase mb-0">
-                <i class="bi bi-star me-2"></i>Featured Products
+                <i class="bi bi-calendar-event me-2"></i>Upcoming Events
             </h2>
-            <a href="{{ url('/shop') }}" class="small fw-bold text-body text-decoration-none">
-                View All Products <i class="bi bi-arrow-right"></i>
+            <a href="{{ url('/events') }}" class="small fw-bold text-body text-decoration-none">
+                View All Events <i class="bi bi-arrow-right"></i>
             </a>
         </div>
 
-        <div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-3">
-            @forelse ($products as $product)
-                @php $stock = $product->stockStatus(); @endphp
-                <div class="col">
-                    <div class="card h-100 border-0 shadow-sm p-2">
-                        <div class="product-card-img">
-                            @if ($product->image)
-                                <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}">
-                            @else
-                                <i class="bi {{ $product->category?->icon ?? 'bi-box-seam' }}"></i>
-                            @endif
-                        </div>
-                        <div class="card-body px-1 pb-2">
-                            <h3 class="h6 fw-bold">{{ $product->name }}</h3>
-                            <p class="fw-bold mb-1">₱{{ number_format((float) $product->price) }}</p>
-                            @if ($stock === 'in')
-                                <small class="text-success fw-bold">In Stock</small>
-                            @elseif ($stock === 'low')
-                                <small class="text-warning fw-bold">Low Stock ({{ $product->stock_qty }} left)</small>
-                            @else
-                                <small class="text-danger fw-bold">Sold Out</small>
-                            @endif
-                        </div>
-                        @if ($stock === 'out')
-                            <a class="btn btn-secondary btn-sm w-100 disabled">Sold Out</a>
-                        @else
-                            <a href="{{ route('products.show', $product) }}" class="btn btn-dark btn-sm w-100">View Details</a>
-                        @endif
-                    </div>
-                </div>
+        <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3" data-load-more data-step="4" data-step-mobile="2">
+            @forelse ($events as $event)
+                @include('partials.event-item', ['event' => $event])
             @empty
                 <div class="col-12">
                     <div class="home-empty">
-                        <i class="bi bi-box-seam"></i>
-                        <p class="mb-0">No products yet. Check back soon!</p>
+                        <i class="bi bi-calendar-x"></i>
+                        <p class="mb-0">No upcoming events yet. Check back soon!</p>
                     </div>
                 </div>
             @endforelse
         </div>
     </section>
+
+    {{-- GAMES --}}
+    @if ($games->isNotEmpty())
+        <section class="pt-5">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="h5 fw-bold text-uppercase mb-0">
+                    <i class="bi bi-controller me-2"></i>Games You Can Play
+                </h2>
+                <a href="{{ url('/games') }}" class="small fw-bold text-body text-decoration-none">
+                    View All Games <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+
+            {{-- PS5 rental info --}}
+            <div class="games-note d-flex align-items-center gap-3 mb-3">
+                <i class="bi bi-clock-history"></i>
+                <div>
+                    <strong>PS5 Rental</strong>
+                    <span class="d-block small">₱50 per hour for up to 2 players. Pick a game and play on the shop PS5.</span>
+                </div>
+            </div>
+
+            <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3" data-load-more data-step="4" data-step-mobile="2">
+                @foreach ($games as $game)
+                    @include('partials.game-item', ['game' => $game, 'sectionSlug' => ''])
+                @endforeach
+            </div>
+        </section>
+    @endif
 
     {{-- VISIT US --}}
     <section class="pt-5 pb-4">
