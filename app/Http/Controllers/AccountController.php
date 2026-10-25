@@ -6,6 +6,9 @@ use App\Models\Product;
 use App\Models\Reservation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Event;
+use App\Models\Registration;
+use App\Models\Result;
 
 class AccountController extends Controller
 {
@@ -63,6 +66,35 @@ class AccountController extends Controller
             ->withQueryString();
 
         return view('account.reservations', compact('reservations'));
+    }
+
+    // Events the user registered for, with status filter chips
+    public function events(Request $request)
+    {
+        $userId = $request->user()->id;
+
+        $filter = $request->query('filter');
+        if (! in_array($filter, ['upcoming', 'past', 'cancelled'], true)) {
+            $filter = null;
+        }
+
+        $registrations = Registration::with('event.game')
+            ->where('user_id', $userId)
+            ->when($filter === 'upcoming', fn ($q) => $q->where('status', 'registered')
+                ->whereHas('event', fn ($e) => $e->where('event_date', '>=', now())
+                    ->whereNotIn('status', ['cancelled', 'completed'])))
+            ->when($filter === 'past', fn ($q) => $q->where('status', 'registered')
+                ->whereHas('event', fn ($e) => $e->where('status', '!=', 'cancelled')
+                    ->where(fn ($w) => $w->where('event_date', '<', now())->orWhere('status', 'completed'))))
+            ->when($filter === 'cancelled', fn ($q) => $q->where(fn ($w) => $w->where('status', 'cancelled')
+                ->orWhereHas('event', fn ($e) => $e->where('status', 'cancelled'))))
+            ->orderByDesc(Event::select('event_date')->whereColumn('events.id', 'registrations.event_id'))
+            ->paginate(8)
+            ->withQueryString();
+
+        $results = Result::where('user_id', $userId)->get()->keyBy('event_id');
+
+        return view('account.events', compact('registrations', 'results', 'filter'));
     }
 
     public function info()

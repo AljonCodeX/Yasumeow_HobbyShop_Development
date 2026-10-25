@@ -9,6 +9,7 @@
         ['route' => 'account.info',         'icon' => 'bi-person',    'label' => 'Account Info'],
         ['route' => 'account.favourites',   'icon' => 'bi-heart',     'label' => 'Favourites'],
         ['route' => 'account.reservations', 'icon' => 'bi-bag-check', 'label' => 'Reservations'],
+        ['route' => 'account.events',       'icon' => 'bi-calendar-event', 'label' => 'My Events'],
         ['route' => 'account.appearance',   'icon' => 'bi-palette',   'label' => 'Appearance'],
     ];
 @endphp

@@ -61,6 +61,7 @@ Route::middleware('auth')->group(function () {
         Route::prefix('account')->name('account.')->middleware(\App\Http\Middleware\MarkFavouritesSeen::class)->group(function () {
         Route::get('/', [AccountController::class, 'dashboard'])->name('dashboard');
         Route::get('/reservations', [AccountController::class, 'reservations'])->name('reservations');
+        Route::get('/events', [AccountController::class, 'events'])->name('events');
         Route::get('/info', [AccountController::class, 'info'])->name('info');
         Route::put('/info', [AccountController::class, 'updateInfo'])->name('info.update');
         Route::post('/photo', [AccountController::class, 'updatePhoto'])->name('photo.update');
