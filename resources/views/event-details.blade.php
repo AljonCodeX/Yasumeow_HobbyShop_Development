@@ -2,111 +2,170 @@
 
 @section('content')
 @php
-    $left = $event->slotsLeft();
-    $isPast = $event->event_date->isPast();
-    $isOpen = $event->status === 'open' && ! $isPast;
+    $left    = $event->slotsLeft();
+    $isPast  = $event->event_date->isPast();
+    $isOpen  = $event->status === 'open' && ! $isPast;
+    $taken   = (int) $event->taken_count;
+    $percent = $event->max_slots > 0 ? min(100, (int) round($taken / $event->max_slots * 100)) : 0;
+    $meter   = $left === 0 ? 'is-full' : ($percent >= 70 ? 'is-warn' : '');
+    $podium  = $results->take(3)->values();
+    $rest    = $results->slice(3);
+    $medals  = ['is-gold', 'is-silver', 'is-bronze'];
 @endphp
-<div class="container pb-5">
-    <nav class="pt-4 pb-3">
-        <a href="{{ route('events') }}" class="small fw-bold text-body text-decoration-none">
+
+<div class="shop-page">
+    <div class="container" style="max-width: 1100px;">
+
+        <a href="{{ route('events') }}" class="product-back">
             <i class="bi bi-arrow-left me-1"></i>Back to Events
         </a>
-    </nav>
 
-    <div class="row g-4">
-        <div class="col-lg-8">
-            <div class="game-detail-hero overflow-hidden mb-4">
-                @if ($event->image)
-                    <img src="{{ asset('storage/' . $event->image) }}" alt="{{ $event->title }}" class="w-100 h-100 object-fit-cover">
-                @else
-                    <i class="bi {{ $event->game?->category?->icon ?? 'bi-calendar-event' }}"></i>
-                @endif
-            </div>
+        <div class="event-layout">
 
-            @if ($event->game)
-                <span class="badge text-bg-dark mb-2">{{ $event->game->name }}</span>
-            @endif
-            <h1 class="h3 fw-bold">{{ $event->title }}</h1>
-            <p>{{ $event->description }}</p>
-
-            <h2 class="h5 fw-bold text-uppercase mt-4 mb-3">
-                <i class="bi bi-trophy me-2"></i>Results
-            </h2>
-            @if ($results->isEmpty())
-                <div class="home-empty">
-                    <i class="bi bi-trophy"></i>
-                    <p class="mb-0">{{ $isPast ? 'Results have not been posted yet.' : 'Results will appear here after the event.' }}</p>
-                </div>
-            @else
-                <div class="table-responsive shadow-sm">
-                    <table class="table table-hover align-middle mb-0">
-                        <thead class="table-dark">
-                            <tr>
-                                <th scope="col">Place</th>
-                                <th scope="col">Player</th>
-                                <th scope="col" class="text-end">Points</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($results as $result)
-                                <tr>
-                                    <td class="fw-bold">#{{ $result->placement }}</td>
-                                    <td>{{ $result->user?->name }}</td>
-                                    <td class="text-end">{{ $result->points }}</td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            @endif
-        </div>
-
-        <div class="col-lg-4">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body">
-                    <p class="small text-muted mb-1">Date and time</p>
-                    <p class="fw-bold mb-3">
-                        <i class="bi bi-calendar-event me-1"></i>{{ $event->event_date->format('F j, Y') }}
-                        <span class="d-block fw-normal"><i class="bi bi-clock me-1"></i>{{ $event->event_date->format('g:i A') }}</span>
-                    </p>
-
-                    <p class="small text-muted mb-1">Location</p>
-                    <p class="fw-bold mb-3"><i class="bi bi-geo-alt me-1"></i>Yasumeow Hobby Shop</p>
-
-                    <p class="small text-muted mb-1">Entry fee</p>
-                    <p class="fw-bold mb-3">{{ $event->price > 0 ? '₱' . number_format((float) $event->price) : 'FREE' }}</p>
-
-                    <p class="small text-muted mb-1">Slots</p>
-                    <p class="fw-bold mb-3">{{ $event->taken_count }} / {{ $event->max_slots }} taken</p>
-
-                    @if ($isRegistered)
-                        <div class="alert alert-success py-2 small mb-2">
-                            <i class="bi bi-check-circle me-1"></i>You are registered.
-                        </div>
-                        @unless ($isPast)
-                            <form method="POST" action="{{ route('events.cancel', $event) }}"
-                                  onsubmit="return confirm('Cancel your registration?')">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-outline-danger btn-sm w-100">Cancel Registration</button>
-                            </form>
-                        @endunless
-                    @elseif (! $isOpen)
-                        <button class="btn btn-secondary btn-sm w-100" disabled>
-                            {{ $isPast ? 'Event Ended' : 'Registration ' . $event->status }}
-                        </button>
-                    @elseif ($left === 0)
-                        <button class="btn btn-secondary btn-sm w-100" disabled>Event Full</button>
-                    @elseif (auth()->check())
-                        <form method="POST" action="{{ route('events.register', $event) }}">
-                            @csrf
-                            <button type="submit" class="btn btn-dark btn-sm w-100">Register</button>
-                        </form>
+            {{-- Hero + about --}}
+            <div class="event-main">
+                <div class="event-hero">
+                    @if ($event->image)
+                        <img src="{{ asset('storage/' . $event->image) }}" alt="{{ $event->title }}">
                     @else
-                        <a href="{{ route('login') }}" class="btn btn-dark btn-sm w-100">Log in to Register</a>
+                        <span class="event-hero-icon">
+                            <i class="bi {{ $event->game?->category?->icon ?? 'bi-calendar-event' }}"></i>
+                        </span>
                     @endif
                 </div>
+
+                <div class="event-heading">
+                    @if ($event->game)
+                        <span class="event-hero-tag">{{ $event->game->name }}</span>
+                    @endif
+                    <h1 class="event-hero-title">{{ $event->title }}</h1>
+                </div>
+
+                <h2 class="checkout-section-title mt-4">About this event</h2>
+                <p class="event-about">{{ $event->description ?: 'Join us at Yasumeow Hobby Shop.' }}</p>
             </div>
+
+            {{-- Details + register --}}
+            <aside class="event-side">
+                <div class="event-card">
+                    <div class="event-fact">
+                        <span class="event-fact-icon"><i class="bi bi-calendar-event"></i></span>
+                        <div>
+                            <span class="event-fact-label">Date and time</span>
+                            <span class="event-fact-value">{{ $event->event_date->format('F j, Y') }}</span>
+                            <span class="event-fact-sub">{{ $event->event_date->format('g:i A') }}</span>
+                        </div>
+                    </div>
+
+                    <div class="event-fact">
+                        <span class="event-fact-icon"><i class="bi bi-geo-alt"></i></span>
+                        <div>
+                            <span class="event-fact-label">Location</span>
+                            <span class="event-fact-value">Yasumeow Hobby Shop</span>
+                        </div>
+                    </div>
+
+                    <div class="event-fact">
+                        <span class="event-fact-icon"><i class="bi bi-ticket-perforated"></i></span>
+                        <div>
+                            <span class="event-fact-label">Entry fee</span>
+                            <span class="event-fact-value is-fee">
+                                {{ $event->price > 0 ? '₱' . number_format((float) $event->price) : 'FREE' }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="event-fact">
+                        <span class="event-fact-icon"><i class="bi bi-people"></i></span>
+                        <div class="flex-grow-1">
+                            <span class="event-fact-label">Slots</span>
+                            <span class="event-fact-value">{{ $taken }} / {{ $event->max_slots }} taken</span>
+                            <div class="event-meter {{ $meter }}"><span @style(['width: ' . $percent . '%'])></span></div>
+                            <span class="event-fact-sub">
+                                {{ $left === 0 ? 'No slots left' : $left . ($left === 1 ? ' slot left' : ' slots left') }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="event-action">
+                        @if ($isRegistered)
+                            <div class="alert alert-success py-2 small mb-2">
+                                <i class="bi bi-check-circle me-1"></i>You are registered.
+                            </div>
+                            @unless ($isPast)
+                                <form method="POST" action="{{ route('events.cancel', $event) }}"
+                                      onsubmit="return confirm('Cancel your registration?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-outline-danger btn-sm w-100">Cancel Registration</button>
+                                </form>
+                            @endunless
+                        @elseif (! $isOpen)
+                            <button class="btn btn-secondary w-100" disabled>
+                                {{ $isPast ? 'Event Ended' : 'Registration ' . $event->status }}
+                            </button>
+                        @elseif ($left === 0)
+                            <button class="btn btn-secondary w-100" disabled>Event Full</button>
+                        @elseif (auth()->check())
+                            <form method="POST" action="{{ route('events.register', $event) }}">
+                                @csrf
+                                <button type="submit" class="btn btn-info fw-bold w-100">Register</button>
+                            </form>
+                        @else
+                            <a href="{{ route('login') }}" class="btn btn-info fw-bold w-100">Log in to Register</a>
+                        @endif
+                    </div>
+                </div>
+            </aside>
+
+            {{-- Results --}}
+            <section class="event-results">
+                <h2 class="checkout-section-title">Results</h2>
+
+                @if ($results->isEmpty())
+                    <div class="event-empty">
+                        <i class="bi bi-trophy"></i>
+                        <span>{{ $isPast ? 'Results have not been posted yet.' : 'Results will appear here after the event.' }}</span>
+                    </div>
+                @else
+                    <div class="event-podium">
+                        @foreach ($podium as $result)
+                            <div class="event-podium-item {{ $medals[$loop->index] }}">
+                                <i class="bi bi-trophy-fill"></i>
+                                <span class="event-podium-place">#{{ $result->placement }}</span>
+                                <span class="event-podium-name">{{ $result->user?->name }}</span>
+                                <span class="event-podium-points">{{ $result->points }} pts</span>
+                            </div>
+                        @endforeach
+                    </div>
+
+                    @if ($rest->isNotEmpty())
+                        <div class="event-card p-0 mt-3 overflow-hidden">
+                            <div class="table-responsive">
+                                <table class="table align-middle mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Place</th>
+                                            <th scope="col">Player</th>
+                                            <th scope="col" class="text-end">Points</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($rest as $result)
+                                            <tr>
+                                                <td class="fw-bold">#{{ $result->placement }}</td>
+                                                <td>{{ $result->user?->name }}</td>
+                                                <td class="text-end">{{ $result->points }}</td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    @endif
+                @endif
+            </section>
+
         </div>
     </div>
 </div>

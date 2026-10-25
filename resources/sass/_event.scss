@@ -1,0 +1,254 @@
+// Event details page (uses the theme variables, so it works in light and dark mode)
+
+// Mobile order: hero, register card, results. Desktop: results sit under the hero.
+.event-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "main" "side" "results";
+    gap: 1.5rem;
+
+    @media (min-width: 992px) {
+        grid-template-columns: minmax(0, 1fr) 340px;
+        grid-template-areas: "main side" "results side";
+        align-items: start;
+    }
+}
+
+.event-main    { grid-area: main; }
+.event-side    { grid-area: side; }
+.event-results { grid-area: results; }
+
+// Sidebar scrolls normally with the page
+.event-side {
+    position: static;
+}
+
+// ---------- Hero ----------
+.event-hero {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    min-height: 280px;
+    overflow: hidden;
+    border-radius: 1rem;
+    color: #fff;
+    background: linear-gradient(135deg, #1b1446, $hero-bg);
+
+    > img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    // Dark fade so the text stays readable on any image
+    &::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, rgba($hero-bg, 0) 30%, rgba($hero-bg, .92) 100%);
+    }
+}
+
+// ---------- Hero ----------
+.event-hero {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 240px;
+    overflow: hidden;
+    border-radius: 1rem;
+    background: linear-gradient(135deg, #1b1446, $hero-bg);
+
+    > img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+}
+
+.event-hero-icon {
+    font-size: 5rem;
+    color: $brand-cyan;
+}
+
+.event-heading {
+    margin-top: 1.25rem;
+}
+
+.event-hero-tag {
+    display: inline-block;
+    margin-bottom: .5rem;
+    padding: .15rem .7rem;
+    border-radius: 2rem;
+    font-size: .72rem;
+    font-weight: 700;
+    color: var(--ym-text);
+    background: var(--ym-tint);
+}
+
+.event-hero-title {
+    margin: 0;
+    font-size: 1.75rem;
+    line-height: 1.1;
+    color: var(--ym-text);
+
+    @media (min-width: 768px) {
+        font-size: 2.25rem;
+    }
+}
+
+.event-about {
+    margin: 0;
+    color: var(--ym-text);
+}
+
+// ---------- Details card ----------
+.event-card {
+    padding: 1.25rem;
+    border: 1px solid var(--ym-line);
+    border-radius: .85rem;
+    background: var(--ym-surface);
+}
+
+.event-fact {
+    display: flex;
+    gap: .85rem;
+    padding: .85rem 0;
+    border-bottom: 1px solid var(--ym-line);
+
+    &:first-child {
+        padding-top: 0;
+    }
+}
+
+.event-fact-icon {
+    flex: 0 0 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: .65rem;
+    font-size: 1.15rem;
+    color: var(--ym-accent);
+    background: var(--ym-tint);
+}
+
+.event-fact-label {
+    display: block;
+    font-size: .75rem;
+    color: var(--ym-muted);
+}
+
+.event-fact-value {
+    display: block;
+    font-weight: 700;
+    color: var(--ym-text);
+
+    &.is-fee {
+        font-size: 1.4rem;
+        line-height: 1.2;
+        color: var(--ym-accent);
+    }
+}
+
+.event-fact-sub {
+    display: block;
+    font-size: .85rem;
+    color: var(--ym-muted);
+}
+
+// Slots bar
+.event-meter {
+    height: .45rem;
+    margin: .4rem 0 .3rem;
+    overflow: hidden;
+    border-radius: 1rem;
+    background: var(--ym-tint);
+
+    > span {
+        display: block;
+        height: 100%;
+        border-radius: 1rem;
+        background: var(--ym-accent);
+    }
+
+    &.is-warn > span { background: var(--ym-warn); }
+    &.is-full > span { background: var(--ym-bad); }
+}
+
+.event-action {
+    padding-top: 1.1rem;
+}
+
+// ---------- Results ----------
+.event-empty {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    padding: 1rem 1.25rem;
+    border: 1px dashed var(--ym-line);
+    border-radius: .75rem;
+    color: var(--ym-muted);
+
+    > i {
+        font-size: 1.4rem;
+    }
+}
+
+.event-podium {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: .75rem;
+
+    @media (min-width: 576px) {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.event-podium-item {
+    --medal: var(--ym-muted);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .15rem;
+    padding: 1rem .75rem;
+    border: 1px solid var(--ym-line);
+    border-top: 4px solid var(--medal);
+    border-radius: .85rem;
+    text-align: center;
+    background: var(--ym-surface);
+
+    > i {
+        font-size: 1.6rem;
+        color: var(--medal);
+    }
+
+    &.is-gold   { --medal: #f59e0b; }
+    &.is-silver { --medal: #94a3b8; }
+    &.is-bronze { --medal: #c2763a; }
+}
+
+.event-podium-place {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--ym-text);
+}
+
+.event-podium-name {
+    max-width: 100%;
+    overflow: hidden;
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--ym-text);
+}
+
+.event-podium-points {
+    font-size: .85rem;
+    color: var(--ym-muted);
+}
