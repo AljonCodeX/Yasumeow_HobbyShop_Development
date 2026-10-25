@@ -3,7 +3,10 @@
 namespace App\Filament\Widgets;
 
 use App\Models\Event;
+use App\Models\Rating;
 use App\Models\Registration;
+use Filament\Support\Enums\IconPosition;
+use Filament\Support\Icons\Heroicon;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 
@@ -15,26 +18,38 @@ class EventStats extends StatsOverviewWidget
 
     protected function getStats(): array
     {
-        $upcoming = Event::where('event_date', '>=', now())
-            ->where('status', '!=', 'cancelled')
-            ->withCount(['registrations as taken_count' => fn ($q) => $q->where('status', 'registered')])
-            ->get();
+        $upcoming = Event::upcoming()->count();
 
-        $full = $upcoming->filter(fn (Event $e) => $e->taken_count >= $e->max_slots)->count();
-        $expectedFees = $upcoming->sum(fn (Event $e) => (float) $e->price * $e->taken_count);
+        $completed = Event::where('status', 'completed')->count();
+
+        $ratings = Rating::whereNotNull('event_id');
+        $rated = $ratings->count();
+        $satisfaction = $rated ? round((float) $ratings->avg('stars') / 5 * 100) : null;
+
+        // Players registered in 2 or more events
+        $repeat = Registration::where('status', 'registered')
+            ->groupBy('user_id')
+            ->havingRaw('COUNT(*) >= 2')
+            ->pluck('user_id')
+            ->count();
 
         return [
-            Stat::make('Upcoming events', $upcoming->count())
+            Stat::make('Upcoming Events', $upcoming)
+                ->description('Coming up')
+                ->descriptionIcon(Heroicon::OutlinedCalendarDays, IconPosition::After)
                 ->color('info'),
-            Stat::make('Registered players', $upcoming->sum('taken_count'))
-                ->description('In upcoming events')
+            Stat::make('Events Completed', $completed)
+                ->description('Finished events')
+                ->descriptionIcon(Heroicon::OutlinedCheckCircle, IconPosition::After)
                 ->color('success'),
-            Stat::make('Full events', $full)
-                ->color($full > 0 ? 'danger' : 'gray'),
-            Stat::make('Expected entry fees', '₱' . number_format($expectedFees, 2))
-                ->description('Paid on the day'),
-            Stat::make('New sign-ups (7 days)', Registration::where('status', 'registered')
-                ->where('registered_at', '>=', now()->subDays(7))->count()),
+            Stat::make('Event Satisfaction', $satisfaction === null ? '—' : $satisfaction . '%')
+                ->description($rated ? "$rated rating" . ($rated > 1 ? 's' : '') : 'No ratings yet')
+                ->descriptionIcon(Heroicon::OutlinedStar, IconPosition::After)
+                ->color('warning'),
+            Stat::make('Repeat Players', $repeat)
+                ->description('In 2+ events')
+                ->descriptionIcon(Heroicon::OutlinedUserGroup, IconPosition::After)
+                ->color('danger'),
         ];
     }
 }
