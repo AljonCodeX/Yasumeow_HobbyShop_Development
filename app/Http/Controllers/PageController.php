@@ -114,13 +114,17 @@ class PageController extends Controller
             ->orderBy('name')
             ->get();
 
-        $sections = $games
-            ->groupBy(fn ($g) => $g->category?->name ?? 'Others')
-            ->sortKeys()
-            ->map(fn ($items, $name) => $this->sectionFor($name, $items->first()->category) + ['games' => $items])
+        // Filter chips: only categories that have a game
+        $chips = $games
+            ->map(fn ($g) => $g->category?->name ?? 'Others')
+            ->unique()
+            ->sort()
             ->values();
 
-        return view('games', ['sections' => $sections]);
+        // Shown only while that category chip is selected
+        $notes = ['ps5' => $this->sectionFor('PS5')['note']];
+
+        return view('games', compact('games', 'chips', 'notes'));
     }
 
     public function gameDetails(string $slug)
