@@ -23,6 +23,7 @@ class Category extends Model
             'PS5'                    => 'bi-controller',
             'Figures & Collectibles' => 'bi-trophy',
             'Accessories'            => 'bi-headset',
+            'Board Games'            => 'bi-dice-5-fill',
             default                  => 'bi-tag-fill',
         };
     }

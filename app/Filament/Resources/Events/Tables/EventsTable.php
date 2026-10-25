@@ -8,12 +8,16 @@ use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use App\Models\Event;
 
 class EventsTable
 {
     public static function configure(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn ($query) => $query->withCount([
+    'registrations as taken_count' => fn ($r) => $r->where('status', 'registered'),
+    ]))
             ->columns([
                 TextColumn::make('title')
                     ->searchable(),
@@ -24,9 +28,9 @@ class EventsTable
                     ->label('Date and time')
                     ->dateTime('M d, Y g:i A')
                     ->sortable(),
-                TextColumn::make('max_slots')
+                TextColumn::make('slots')
                     ->label('Slots')
-                    ->numeric(),
+                    ->state(fn (Event $e) => $e->taken_count . ' / ' . $e->max_slots),
                 TextColumn::make('price')
                     ->label('Fee')
                     ->money('PHP')
