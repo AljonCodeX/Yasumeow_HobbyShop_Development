@@ -19,7 +19,7 @@ class CategoryResource extends Resource
 {
     protected static ?string $model = Category::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedShoppingBag;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTag;
     
     protected static ?int $navigationSort = 1;
 
