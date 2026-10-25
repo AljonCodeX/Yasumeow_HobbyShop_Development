@@ -1,67 +1,134 @@
 @extends('layouts.app')
 
 @section('content')
+@php
+    $statuses = [
+        'pending'          => ['Reserved', 'is-ok'],
+        'awaiting_payment' => ['Awaiting payment', 'is-warn'],
+        'ready'            => ['Ready for pickup', 'is-ok'],
+        'picked_up'        => ['Picked up', 'is-ok'],
+        'cancelled'        => ['Cancelled', 'is-bad'],
+        'expired'          => ['Expired', 'is-bad'],
+    ];
+    [$statusLabel, $statusClass] = $statuses[$reservation->status] ?? [ucfirst($reservation->status), ''];
+
+    $banners = [
+        'awaiting_payment' => ['bi-hourglass-split', 'We are waiting for PayMongo to confirm your payment. Refresh this page in a few seconds.'],
+        'pending'          => ['bi-check-circle', 'Your reservation is confirmed. Pick it up at Yasumeow Hobby Shop.'],
+        'ready'            => ['bi-box-seam', 'Your items are ready. Pick them up at Yasumeow Hobby Shop.'],
+        'picked_up'        => ['bi-bag-check', 'You picked up this reservation. Thank you!'],
+        'cancelled'        => ['bi-x-circle', 'This reservation was cancelled.'],
+        'expired'          => ['bi-calendar-x', 'This reservation expired because it was not picked up in time. The items were released.'],
+    ];
+    [$bannerIcon, $bannerText] = $banners[$reservation->status] ?? ['bi-info-circle', ''];
+
+    $balance = max(0, (float) $reservation->amount_total - (float) $reservation->amount_paid);
+    $isOpen  = in_array($reservation->status, ['pending', 'ready'], true);
+@endphp
+
 <div class="shop-page">
     <div class="container" style="max-width: 720px;">
 
-        <h1 class="shop-title mb-3">Reservation #{{ $reservation->id }}</h1>
-
-        @if ($reservation->status === 'awaiting_payment')
-            <div class="shop-empty mb-4">
-                <i class="bi bi-hourglass-split"></i>
-                <p class="mb-0">We are waiting for PayMongo to confirm your payment. Refresh this page in a few seconds.</p>
+        <div class="order-head">
+            <div>
+                <h1 class="shop-title mb-1">Reservation #{{ $reservation->id }}</h1>
+                <p class="order-date">Reserved on {{ $reservation->reserved_at->format('M j, Y g:i A') }}</p>
             </div>
-        @elseif ($reservation->status === 'cancelled')
-                <div class="shop-empty mb-4">
-                    <i class="bi bi-x-circle"></i>
-                    <p class="mb-0">This reservation was cancelled.</p>
-                </div>
-            @elseif ($reservation->status === 'expired')
-                <div class="shop-empty mb-4">
-                    <i class="bi bi-calendar-x"></i>
-                    <p class="mb-0">This reservation expired because it was not picked up in time. The items were released.</p>
-                </div>
-            @else
-            <div class="shop-empty mb-4">
-                <i class="bi bi-check-circle"></i>
-                <p class="mb-0">
-                    Your reservation is confirmed. Pick it up at Yasumeow Hobby Shop.
-                    @if ($reservation->amount_paid > 0)
-                        You already paid ₱{{ number_format((float) $reservation->amount_paid, 2) }}.
-                    @endif
-                </p>
+            <span class="account-status {{ $statusClass }}">{{ $statusLabel }}</span>
+        </div>
+
+        @if ($bannerText)
+            <div class="order-banner">
+                <i class="bi {{ $bannerIcon }}"></i>
+                <p>{{ $bannerText }}</p>
             </div>
         @endif
 
+        {{-- Items --}}
+        <h2 class="checkout-section-title">Items</h2>
         <ul class="reserve-list mb-3">
             @foreach ($reservation->items as $item)
+                @php $p = $item->product; @endphp
                 <li class="reserve-row">
+                    <div class="reserve-thumb">
+                        @if ($p?->image)
+                            <img src="{{ asset('storage/' . $p->image) }}" alt="{{ $p->name }}">
+                        @else
+                            <i class="bi {{ $p?->category?->icon ?? 'bi-box-seam' }}"></i>
+                        @endif
+                    </div>
                     <div class="reserve-info">
-                        <span class="reserve-name">{{ $products[$item->product_id]->name ?? 'Product' }}</span>
-                        <span class="shop-item-cat">Qty {{ $item->quantity }}</span>
+                        @if ($p)
+                            <a href="{{ route('products.show', $p) }}" class="reserve-name">{{ $p->name }}</a>
+                        @else
+                            <span class="reserve-name">Product</span>
+                        @endif
+                        <span class="shop-item-cat">₱{{ number_format((float) $item->unit_price, 2) }} × {{ $item->quantity }}</span>
                     </div>
                     <span class="reserve-price">₱{{ number_format((float) $item->unit_price * $item->quantity, 2) }}</span>
                 </li>
             @endforeach
         </ul>
 
-        <div class="reserve-total">
-            <span>Total</span>
-            <span>₱{{ number_format((float) $reservation->amount_total, 2) }}</span>
-        </div>
+        {{-- Payment --}}
+        <div class="account-card">
+            <h2 class="checkout-section-title">Payment</h2>
 
-        @if ($reservation->status === 'pending')
-            <p class="reserve-note mt-2">
-                To pay in store: ₱{{ number_format((float) $reservation->amount_total - (float) $reservation->amount_paid, 2) }}
-            </p>
-            @if ($reservation->pickup_by)
-                <p class="reserve-note">
-                    <i class="bi bi-clock-history me-1"></i>Pick up by {{ $reservation->pickup_by->format('M j, Y g:i A') }}. After that the reservation expires and the items are released.
+            <div class="order-row">
+                <span>Payment method</span>
+                <span>{{ $reservation->payment_method === 'online' ? 'QR Ph' : 'Pay in store' }}</span>
+            </div>
+            <div class="order-row">
+                <span>Total</span>
+                <span>₱{{ number_format((float) $reservation->amount_total, 2) }}</span>
+            </div>
+            <div class="order-row">
+                <span>Paid</span>
+                <span>₱{{ number_format((float) $reservation->amount_paid, 2) }}</span>
+            </div>
+
+            @if ($isOpen)
+                <div class="order-row is-due">
+                    <span>To pay in store</span>
+                    <span>₱{{ number_format($balance, 2) }}</span>
+                </div>
+            @endif
+
+            @if ($reservation->status === 'pending' && $reservation->pickup_by)
+                <div class="order-row">
+                    <span>Pick up by</span>
+                    <span>{{ $reservation->pickup_by->format('M j, Y g:i A') }}</span>
+                </div>
+                <p class="reserve-note mt-2 mb-0">
+                    <i class="bi bi-clock-history me-1"></i>After that time the reservation expires and the items are released.
                 </p>
             @endif
-        @endif
+        </div>
 
-        <a href="{{ route('shop') }}" class="shop-item-btn mt-3">Back to shop</a>
+        {{-- Contact --}}
+        <div class="account-card">
+            <h2 class="checkout-section-title">Contact</h2>
+
+            <div class="order-row">
+                <span>Name</span>
+                <span>{{ $reservation->contact_name ?: '—' }}</span>
+            </div>
+            <div class="order-row">
+                <span>Phone</span>
+                <span>{{ $reservation->contact_phone ?: '—' }}</span>
+            </div>
+            @if ($reservation->note)
+                <div class="order-row">
+                    <span>Note</span>
+                    <span>{{ $reservation->note }}</span>
+                </div>
+            @endif
+        </div>
+
+        <div class="order-actions">
+            <a href="{{ route('account.reservations') }}" class="shop-item-btn">My reservations</a>
+            <a href="{{ route('shop') }}" class="shop-item-btn is-primary">Back to shop</a>
+        </div>
     </div>
 </div>
 @endsection

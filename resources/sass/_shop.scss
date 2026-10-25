@@ -254,3 +254,48 @@ button.shop-chip {
     font-size: .8rem;
     color: $shop-muted;
 }
+
+// Heart button on product cards
+.shop-item {
+    position: relative;
+}
+
+.shop-heart-form {
+    position: absolute;
+    top: .6rem;
+    right: .6rem;
+    z-index: 2;
+    margin: 0;
+}
+
+.shop-heart {
+    width: 2.1rem;
+    height: 2.1rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    font-size: 1rem;
+    color: #fff;
+    background: rgba(13, 11, 31, .55);
+    backdrop-filter: blur(4px);
+    cursor: pointer;
+    transition: color .15s ease, transform .15s ease;
+
+    &:hover {
+        color: #f87171;
+        transform: scale(1.08);
+    }
+
+    &.is-on {
+        color: #f87171;
+    }
+}
+
+.shop-item-sold {
+    font-size: .75rem;
+    font-weight: 600;
+    color: var(--ym-muted);
+}

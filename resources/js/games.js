@@ -2,7 +2,6 @@
 document.addEventListener('DOMContentLoaded', function () {
     const chips = document.querySelectorAll('.shop-chip[data-filter]');
     const cols  = document.querySelectorAll('.game-col');
-    const notes = document.querySelectorAll('[data-note]');
 
     // Not on the games page, nothing to do
     if (!chips.length) return;
@@ -11,10 +10,6 @@ document.addEventListener('DOMContentLoaded', function () {
         cols.forEach(function (col) {
             const visible = active === 'all' || col.dataset.section === active;
             col.classList.toggle('d-none', !visible);
-        });
-
-        notes.forEach(function (note) {
-            note.classList.toggle('d-none', note.dataset.note !== active);
         });
     }
 

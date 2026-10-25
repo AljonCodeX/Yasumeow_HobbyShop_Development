@@ -206,3 +206,75 @@
         color: var(--ym-accent);
     }
 }
+
+// Order summary page (reservation thanks / details)
+.order-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: .5rem 1rem;
+    margin-bottom: 1rem;
+}
+
+.order-date {
+    margin: 0;
+    font-size: .85rem;
+    color: $shop-muted;
+}
+
+.order-banner {
+    display: flex;
+    align-items: flex-start;
+    gap: .75rem;
+    margin-bottom: 1.5rem;
+    padding: .85rem 1rem;
+    border: 1px solid $shop-line;
+    border-radius: .75rem;
+    color: var(--ym-text);
+    background: $shop-surface;
+
+    > i {
+        font-size: 1.25rem;
+        line-height: 1.2;
+        color: var(--ym-accent);
+    }
+
+    p {
+        margin: 0;
+    }
+}
+
+.order-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: .4rem 0;
+    font-size: .9rem;
+
+    > span:first-child {
+        color: $shop-muted;
+    }
+
+    > span:last-child {
+        font-weight: 600;
+        text-align: right;
+        word-break: break-word;
+        color: var(--ym-text);
+    }
+
+    &.is-due > span:last-child {
+        color: var(--ym-accent);
+    }
+}
+
+.order-actions {
+    display: flex;
+    gap: .75rem;
+    margin-top: 1rem;
+
+    > a {
+        flex: 1 1 0;
+        margin-top: 0;
+    }
+}

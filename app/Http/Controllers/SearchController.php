@@ -37,7 +37,7 @@ class SearchController extends Controller
         $like  = '%' . $q . '%';
         $start = $q . '%';
 
-        $products = Product::with('category')
+        $products = Product::with('category')->withSold()
             ->where(function ($w) use ($like) {
                 $w->where('name', 'like', $like)
                   ->orWhere('description', 'like', $like)

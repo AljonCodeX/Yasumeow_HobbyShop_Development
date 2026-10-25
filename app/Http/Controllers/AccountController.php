@@ -141,7 +141,7 @@ class AccountController extends Controller
 
     public function favourites(Request $request)
     {
-        $products = $request->user()->favourites()->with('category')->latest('favourites.created_at')->get();
+        $products = $request->user()->favourites()->withSold()->with('category')->latest('favourites.created_at')->get();
 
         return view('account.favourites', compact('products'));
     }

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Builder;
 
 class Product extends Model
 {
@@ -43,5 +44,14 @@ class Product extends Model
     public function reservationItems()
     {
         return $this->hasMany(ReservationItem::class);
+    }
+
+    // Adds sold_count: units in picked-up reservations
+    public function scopeWithSold(Builder $query): Builder
+    {
+        return $query->withSum(['reservationItems as sold_count' => fn ($q) => $q->whereHas(
+            'reservation',
+            fn ($r) => $r->where('status', 'picked_up')
+        )], 'quantity');
     }
 }

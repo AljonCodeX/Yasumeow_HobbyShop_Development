@@ -13,7 +13,7 @@ class ProductController extends Controller
         $categories = Category::orderBy('name')->get();
         $activeCategory = $request->integer('category') ?: null;
 
-        $products = Product::with('category')
+        $products = Product::with('category')->withSold()
             ->when($activeCategory, fn ($q) => $q->where('category_id', $activeCategory))
             ->when($request->filled('q'), fn ($q) => $q->where('name', 'like', '%' . $request->q . '%'))
             ->latest()
@@ -27,7 +27,7 @@ class ProductController extends Controller
     {
         $product->load('category');
 
-        $related = Product::where('category_id', $product->category_id)
+        $related = Product::withSold()->where('category_id', $product->category_id)
             ->where('id', '!=', $product->id)
             ->take(4)
             ->get();

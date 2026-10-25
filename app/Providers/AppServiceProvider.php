@@ -31,6 +31,19 @@ class AppServiceProvider extends ServiceProvider
         
         Paginator::useBootstrapFive();
 
+        // Favourite product IDs for the heart icons, loaded once per page
+        View::composer('partials.product-card', function ($view) {
+            static $ids = null;
+
+            if ($ids === null) {
+                $ids = auth()->check()
+                    ? auth()->user()->favourites()->pluck('products.id')->all()
+                    : [];
+            }
+
+            $view->with('favouriteIds', $ids);
+        });
+
         // Gives the layout the reservation list, so the navbar badge and drawer work on every page
         View::composer('layouts.app', function ($view) {
             $cart = session('reserve', []);

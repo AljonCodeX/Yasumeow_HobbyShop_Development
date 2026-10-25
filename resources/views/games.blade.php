@@ -22,19 +22,6 @@
             @endforeach
         </nav>
 
-        {{-- Category notes (PS5 rental), shown only when that chip is selected --}}
-        @foreach ($notes as $slug => $note)
-            <div class="d-none" data-note="{{ $slug }}">
-                <div class="games-note d-flex align-items-center gap-3 mb-3">
-                    <i class="bi {{ $note['icon'] }}"></i>
-                    <div>
-                        <strong>{{ $note['title'] }}</strong>
-                        <span class="d-block small">{{ $note['text'] }}</span>
-                    </div>
-                </div>
-            </div>
-        @endforeach
-
         {{-- All games in one grid --}}
         <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3">
             @foreach ($games as $game)

@@ -250,10 +250,9 @@ class ReservationController extends Controller
     {
         abort_unless($reservation->user_id === Auth::id(), 403);
 
-        $reservation->load('items');
-        $products = Product::whereIn('id', $reservation->items->pluck('product_id'))->get()->keyBy('id');
+        $reservation->load('items.product.category');
 
-        return view('reservation-thanks', compact('reservation', 'products'));
+        return view('reservation-thanks', compact('reservation'));
     }
 
     // PayMongo sends the customer here when they back out of the payment page

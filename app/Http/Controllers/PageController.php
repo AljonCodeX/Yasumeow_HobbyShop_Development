@@ -121,10 +121,7 @@ class PageController extends Controller
             ->sort()
             ->values();
 
-        // Shown only while that category chip is selected
-        $notes = ['ps5' => $this->sectionFor('PS5')['note']];
-
-        return view('games', compact('games', 'chips', 'notes'));
+        return view('games', compact('games', 'chips'));
     }
 
     public function gameDetails(string $slug)

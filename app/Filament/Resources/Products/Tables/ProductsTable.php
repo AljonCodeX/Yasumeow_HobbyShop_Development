@@ -16,17 +16,18 @@ class ProductsTable
     {
         return $table
             ->columns([
-                TextColumn::make('category.name')
-                    ->searchable(),
                 TextColumn::make('name')
                     ->searchable(),
+                TextColumn::make('category.name')
+                    ->label('Category')
+                    ->searchable(),
                 TextColumn::make('price')
-                    ->money()
+                    ->money('PHP')
                     ->sortable(),
                 TextColumn::make('stock_qty')
                     ->numeric()
                     ->sortable(),
-                ImageColumn::make('image'),
+                ImageColumn::make('image')->disk('public'),
                 IconColumn::make('is_featured')
                     ->boolean(),
                 TextColumn::make('created_at')
