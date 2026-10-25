@@ -134,9 +134,24 @@ class PageController extends Controller
 
         $section = $this->sectionFor($game->category?->name ?? 'Others', $game->category);
 
-        return view('game-details', [
-            'game'    => $game,
-            'section' => $section,
-        ]);
+        // Next 3 upcoming events for this game
+        $events = $game->events()
+            ->withCount(['registrations as taken_count' => fn ($q) => $q->where('status', 'registered')])
+            ->upcoming()
+            ->take(3)
+            ->get();
+
+        // Products from the same category: in stock first, then featured, then newest
+        $products = $game->category_id
+            ? Product::with('category')->withSold()
+                ->where('category_id', $game->category_id)
+                ->orderByRaw('stock_qty <= 0')
+                ->orderByDesc('is_featured')
+                ->latest()
+                ->take(4)
+                ->get()
+            : collect();
+
+        return view('game-details', compact('game', 'section', 'events', 'products'));
     }
 }
