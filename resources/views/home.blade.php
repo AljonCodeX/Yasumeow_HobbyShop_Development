@@ -63,23 +63,6 @@
         </div>
     </div>
 
-    {{-- WHAT WE OFFER --}}
-    <section class="pt-4">
-        <div class="row row-cols-1 row-cols-md-3 g-3">
-            @foreach ($offers as $offer)
-                <div class="col">
-                    <a href="{{ url($offer['url']) }}" class="offer-tile h-100">
-                        <i class="bi {{ $offer['icon'] }}"></i>
-                        <div>
-                            <strong class="d-block">{{ $offer['title'] }}</strong>
-                            <span class="small">{{ $offer['text'] }}</span>
-                        </div>
-                    </a>
-                </div>
-            @endforeach
-        </div>
-    </section>
-
     {{-- FEATURED PRODUCTS --}}
     <section class="pt-5">
         <div class="d-flex justify-content-between align-items-center mb-3">
@@ -122,7 +105,11 @@
                 @foreach ($categories as $category)
                     <a href="{{ url('/shop') }}?category={{ $category->id }}"
                        class="category-tile {{ $loop->index >= $categoryLimit ? 'category-extra d-none' : '' }}">
-                        <i class="bi {{ $category->icon }}"></i>
+                        @if ($category->image)
+                            <img src="{{ asset('storage/' . $category->image) }}" alt="{{ $category->name }}" class="category-tile-img" loading="lazy">
+                        @else
+                            <i class="bi {{ $category->icon }}"></i>
+                        @endif
                         <span class="fw-bold small">{{ $category->name }}</span>
                     </a>
                 @endforeach

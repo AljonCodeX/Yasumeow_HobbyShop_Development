@@ -6,6 +6,7 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Table;
 use App\Models\Game;
 use App\Models\Product;
@@ -20,6 +21,9 @@ class CategoriesTable
             ->columns([
                 TextColumn::make('name')
                     ->searchable(),
+                ImageColumn::make('image')
+                    ->disk('public')
+                    ->square(),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

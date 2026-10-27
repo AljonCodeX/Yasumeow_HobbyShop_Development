@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Categories\Schemas;
 
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\FileUpload;
 use Filament\Schemas\Schema;
 
 class CategoryForm
@@ -12,7 +13,16 @@ class CategoryForm
         return $schema
             ->components([
                 TextInput::make('name')
-                    ->required(),
+                    ->required()
+                    ->columnSpanFull(),
+                FileUpload::make('image')
+                    ->image()
+                    ->disk('public')
+                    ->directory('categories')
+                    ->hintIcon('heroicon-o-photo')
+                    ->hint('Shown on the home category tile')
+                    ->imagePreviewHeight('160')
+                    ->columnSpanFull(),
             ]);
     }
 }

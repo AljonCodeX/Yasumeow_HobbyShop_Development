@@ -18,6 +18,8 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Illuminate\Support\HtmlString;
+use Filament\View\PanelsRenderHook;
+use Illuminate\Support\Facades\Blade;
 
 use App\Filament\Pages\EventDashboard;
 use App\Filament\Pages\InventoryReport;
@@ -56,6 +58,26 @@ class AdminPanelProvider extends PanelProvider
                 . '</div>'
             ))
             ->favicon(asset('images/logo.png'))
+            ->renderHook(PanelsRenderHook::HEAD_END, fn () => new HtmlString(<<<'HTML'
+                <style>
+                    .fi-fo-file-upload .filepond--drop-label { min-height: 7rem; }
+                    .fi-fo-file-upload .filepond--drop-label label {
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        gap: .5rem;
+                    }
+                    .fi-fo-file-upload .filepond--drop-label label::before {
+                        content: '';
+                        width: 2.5rem;
+                        height: 2.5rem;
+                        background: currentColor;
+                        opacity: .7;
+                        -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M13 20H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v6'/%3E%3Ccircle cx='8.5' cy='9' r='1.5'/%3E%3Cpath d='M3 16l4.5-4.5 3.5 3.5 2-2'/%3E%3Cpath d='M19 15v6M16 18h6'/%3E%3C/svg%3E") center / contain no-repeat;
+                        mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M13 20H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v6'/%3E%3Ccircle cx='8.5' cy='9' r='1.5'/%3E%3Cpath d='M3 16l4.5-4.5 3.5 3.5 2-2'/%3E%3Cpath d='M19 15v6M16 18h6'/%3E%3C/svg%3E") center / contain no-repeat;
+                    }
+                </style>
+                HTML))
             ->navigation(function (NavigationBuilder $builder): NavigationBuilder {
                 return $builder->groups([
                     NavigationGroup::make()->items([
