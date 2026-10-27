@@ -2,28 +2,47 @@
 
 namespace App\Filament\Resources\Results;
 
-use App\Filament\Resources\Results\Pages\CreateResult;
 use App\Filament\Resources\Results\Pages\EditResult;
 use App\Filament\Resources\Results\Pages\ListResults;
 use App\Filament\Resources\Results\Schemas\ResultForm;
 use App\Filament\Resources\Results\Tables\ResultsTable;
-use App\Models\Result;
+use App\Models\Event;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use UnitEnum;
 
 class ResultResource extends Resource
 {
-    protected static ?string $model = Result::class;
+    protected static ?string $model = Event::class;
+
+    protected static ?string $slug = 'results';
+
+    protected static ?string $navigationLabel = 'Results';
+
+    protected static ?string $modelLabel = 'result';
+
+    protected static ?string $pluralModelLabel = 'results';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTrophy;
 
     protected static string|UnitEnum|null $navigationGroup = 'Events';
-    
+
     protected static ?int $navigationSort = 3;
+
+    // Only completed events show up here
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->where('status', 'completed')
+            ->withCount([
+                'registrations as players_count' => fn (Builder $q) => $q->where('status', 'registered'),
+                'results',
+            ]);
+    }
 
     public static function form(Schema $schema): Schema
     {
@@ -37,17 +56,14 @@ class ResultResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array
     {
         return [
             'index' => ListResults::route('/'),
-            'create' => CreateResult::route('/create'),
-            'edit' => EditResult::route('/{record}/edit'),
+            'edit'  => EditResult::route('/{record}/edit'),
         ];
     }
 }

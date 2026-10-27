@@ -2,12 +2,11 @@
 
 namespace App\Filament\Resources\Results\Tables;
 
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class ResultsTable
 {
@@ -15,16 +14,23 @@ class ResultsTable
     {
         return $table
             ->columns([
-                TextColumn::make('event.title')->label('Event')->searchable()->sortable(),
-                TextColumn::make('placement')->label('Place')->prefix('#')->sortable(),
-                TextColumn::make('user.name')->label('Player')->searchable(),
-                TextColumn::make('points')->numeric()->sortable(),
+                TextColumn::make('title')->label('Event')->searchable()->sortable(),
+                TextColumn::make('game.name')->label('Game'),
+                TextColumn::make('event_date')->label('Date')->dateTime('M j, Y g:i A')->sortable(),
+                TextColumn::make('players_count')->label('Players'),
+                TextColumn::make('results_count')
+                    ->label('Results entered')
+                    ->badge()
+                    ->color(fn (int $state): string => $state > 0 ? 'success' : 'warning'),
             ])
-            ->defaultSort('event_id', 'desc')
+            ->defaultSort('event_date', 'desc')
             ->filters([
-                SelectFilter::make('event_id')->label('Event')->relationship('event', 'title'),
+                Filter::make('needs_results')
+                    ->label('Needs results')
+                    ->query(fn (Builder $query) => $query->doesntHave('results')),
             ])
-            ->recordActions([EditAction::make()])
-            ->toolbarActions([BulkActionGroup::make([DeleteBulkAction::make()])]);
+            ->recordActions([
+                EditAction::make()->label('Enter results'),
+            ]);
     }
 }
