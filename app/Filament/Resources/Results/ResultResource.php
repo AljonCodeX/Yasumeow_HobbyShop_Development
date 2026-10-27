@@ -6,6 +6,7 @@ use App\Filament\Resources\Results\Pages\EditResult;
 use App\Filament\Resources\Results\Pages\ListResults;
 use App\Filament\Resources\Results\Schemas\ResultForm;
 use App\Filament\Resources\Results\Tables\ResultsTable;
+use App\Filament\Resources\Results\RelationManagers\ResultsRelationManager;
 use App\Models\Event;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -56,7 +57,7 @@ class ResultResource extends Resource
 
     public static function getRelations(): array
     {
-        return [];
+        return [ResultsRelationManager::class];
     }
 
     public static function getPages(): array
