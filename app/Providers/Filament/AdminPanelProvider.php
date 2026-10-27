@@ -90,7 +90,6 @@ class AdminPanelProvider extends PanelProvider
                     ]),
                     NavigationGroup::make('Events')->items([
                         ...EventResource::getNavigationItems(),
-                        ...RegistrationResource::getNavigationItems(),
                         ...ResultResource::getNavigationItems(),
                     ]),
                     NavigationGroup::make('Reports')->items([
