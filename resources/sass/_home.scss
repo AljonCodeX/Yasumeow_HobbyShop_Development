@@ -207,15 +207,19 @@
     transition: transform .2s, border-color .2s;
 
     i {
-        font-size: 1.6rem;
+        font-size: 2.2rem;
         color: var(--ym-accent);
+        height: 4rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .category-tile-img {
-        width: 2.4rem;
-        height: 2.4rem;
+        width: 4rem;
+        height: 4rem;
         object-fit: cover;
-        border-radius: .5rem;
+        border-radius: .6rem;
     }
 
     &:hover {

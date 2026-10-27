@@ -11,7 +11,7 @@ class Event extends Model
 {
     protected $fillable = [
         'game_id', 'title', 'description', 'event_date',
-        'max_slots', 'price', 'image', 'status',
+        'max_slots', 'price', 'image', 'result_image', 'status',
     ];
 
     protected function casts(): array

@@ -58,6 +58,14 @@ class EventForm
                     ->disk('public')
                     ->directory('events')
                     ->columnSpanFull(),
+                FileUpload::make('result_image')
+                    ->label('Result photo')
+                    ->helperText('Winners poster or group photo, shown on the event page under Results.')
+                    ->image()
+                    ->disk('public')
+                    ->directory('event-results')
+                    ->imagePreviewHeight('160')
+                    ->columnSpanFull(),
             ]);
     }
 }

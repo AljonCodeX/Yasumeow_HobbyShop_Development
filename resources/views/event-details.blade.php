@@ -122,6 +122,14 @@
             <section class="event-results">
                 <h2 class="checkout-section-title">Results</h2>
 
+                @if ($event->result_image)
+                    <a href="{{ asset('storage/' . $event->result_image) }}" target="_blank" rel="noopener"
+                       class="event-result-photo" title="Open full size">
+                        <img src="{{ asset('storage/' . $event->result_image) }}"
+                             alt="{{ $event->title }} results" loading="lazy">
+                    </a>
+                @endif
+
                 @if ($results->isEmpty())
                     <div class="event-empty">
                         <i class="bi bi-trophy"></i>
