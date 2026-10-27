@@ -50,6 +50,29 @@
             </div>
         </section>
 
+        {{-- Visit us --}}
+        <section class="about-section">
+            <div class="shop-info">
+                <div class="shop-info-item">
+                    <i class="bi bi-clock"></i>
+                    <div>
+                        <strong class="d-block">Opening hours</strong>
+                        <span>{{ $shop['hours'] }}</span>
+                    </div>
+                </div>
+                <div class="shop-info-item">
+                    <i class="bi bi-geo-alt"></i>
+                    <div>
+                        <strong class="d-block">Find us</strong>
+                        <a href="{{ $shop['map'] }}" target="_blank" rel="noopener" class="text-white">{{ $shop['location'] }}</a>
+                    </div>
+                </div>
+                <a href="{{ $shop['messenger'] }}" target="_blank" rel="noopener" class="btn btn-info">
+                    <i class="bi bi-chat-dots me-2"></i>Message us on Messenger
+                </a>
+            </div>
+        </section>
+
         {{-- Our story --}}
         <section class="about-section">
             <h2 class="checkout-section-title">Our story</h2>
@@ -87,7 +110,7 @@
             <h2 class="checkout-section-title">Yasumeow Community League</h2>
             <p>The Yasumeow Community League is our weekly tournament where hobby enthusiasts from nearby areas come together to play, compete, and have fun. It's a chance to meet fellow players, test your skills, and build friendships through friendly competition. Whether you're a beginner or an experienced player, everyone is welcome to join the community!</p>
 
-            <a href="{{ route('events') }}" class="fw-bold text-body d-inline-block mt-2">Join This Week's Tournament <i class="bi bi-arrow-right"></i></a>
+            <a href="{{ route('events') }}" class="btn btn-info mt-2">Join This Week's Tournament <i class="bi bi-arrow-right ms-1"></i></a>
         </section>
 
         {{-- Map --}}
@@ -100,35 +123,8 @@
                             loading="lazy" allowfullscreen
                             referrerpolicy="no-referrer-when-downgrade"></iframe>
                 </div>
-
-                <a href="{{ $shop['map'] }}" target="_blank" rel="noopener" class="fw-bold text-body">
-                    Open in Google Maps <i class="bi bi-arrow-up-right"></i>
-                </a>
             </section>
         @endif
-
-        {{-- Visit us --}}
-        <section class="about-section">
-            <div class="shop-info">
-                <div class="shop-info-item">
-                    <i class="bi bi-clock"></i>
-                    <div>
-                        <strong class="d-block">Opening hours</strong>
-                        <span>{{ $shop['hours'] }}</span>
-                    </div>
-                </div>
-                <div class="shop-info-item">
-                    <i class="bi bi-geo-alt"></i>
-                    <div>
-                        <strong class="d-block">Find us</strong>
-                        <a href="{{ $shop['map'] }}" target="_blank" rel="noopener" class="text-white">{{ $shop['location'] }}</a>
-                    </div>
-                </div>
-                <a href="{{ $shop['messenger'] }}" target="_blank" rel="noopener" class="btn btn-info">
-                    <i class="bi bi-chat-dots me-2"></i>Message us on Messenger
-                </a>
-            </div>
-        </section>
     </div>
 </div>
 @endsection
