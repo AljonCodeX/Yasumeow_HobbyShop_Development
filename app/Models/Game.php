@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Cache;
 
 class Game extends Model
 {
@@ -38,6 +39,9 @@ class Game extends Model
                 $game->slug = $slug;
             }
         });
+
+        static::saved(fn () => Cache::forget('search-index'));
+        static::deleted(fn () => Cache::forget('search-index'));
     }
 
     public function category(): BelongsTo

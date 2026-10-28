@@ -9,6 +9,8 @@ use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use App\Support\AdminAlert;
+use Filament\Notifications\Notification;
 
 class ReservationsTable
 {
@@ -79,9 +81,31 @@ class ReservationsTable
                         ->icon('heroicon-o-x-circle')
                         ->color('danger')
                         ->requiresConfirmation()
-                        ->modalDescription('The items go back to stock.')
+                        ->modalDescription(fn (Reservation $r) => (float) $r->amount_paid > 0
+                            ? 'The items go back to stock. The customer already paid ₱' . number_format((float) $r->amount_paid, 2) . ' online. Refund them manually in PayMongo.'
+                            : 'The items go back to stock.')
                         ->visible(fn (Reservation $r) => in_array($r->status, ['awaiting_payment', 'pending', 'ready'], true))
-                        ->action(fn (Reservation $r) => $r->staffCancel()),
+                        ->action(function (Reservation $r) {
+                            $paid = (float) $r->amount_paid;
+
+                            $r->staffCancel();
+
+                            if ($paid > 0 && $r->refresh()->status === 'cancelled') {
+                                Notification::make()
+                                    ->title('Refund needed')
+                                    ->body('Reservation #' . $r->id . ' was paid ₱' . number_format($paid, 2) . '. Refund the customer in PayMongo.')
+                                    ->warning()
+                                    ->persistent()
+                                    ->send();
+
+                                AdminAlert::send(
+                                    'Refund needed, reservation #' . $r->id,
+                                    'Cancelled by staff after payment of ₱' . number_format($paid, 2) . '. Refund in PayMongo.',
+                                    'heroicon-o-banknotes',
+                                    'danger'
+                                );
+                            }
+                        }),
 
                     EditAction::make()->label('View'),
                 ])

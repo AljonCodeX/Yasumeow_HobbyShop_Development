@@ -20,7 +20,7 @@ class EditProduct extends EditRecord
                     if ($record->reservationItems()->exists()) {
                         Notification::make()
                             ->title("Can't delete this product")
-                            ->body('It is part of existing reservations. Set its stock to 0 instead.')
+                            ->body('It is part of existing reservations, so it cannot be deleted.')
                             ->danger()
                             ->send();
 

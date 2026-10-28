@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Cache;
 
 class Event extends Model
 {
@@ -29,6 +30,9 @@ class Event extends Model
                 $event->status_changed_at = now();
             }
         });
+
+        static::saved(fn () => Cache::forget('search-index'));
+        static::deleted(fn () => Cache::forget('search-index'));
     }
 
     public function game(): BelongsTo

@@ -18,7 +18,8 @@ class GameForm
             ->components([
                 TextInput::make('name')
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->unique(ignoreRecord: true),
                 Select::make('category_id')
                     ->label('Category')
                     ->relationship('category', 'name')

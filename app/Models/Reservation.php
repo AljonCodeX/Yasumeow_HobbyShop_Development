@@ -27,6 +27,7 @@ class Reservation extends Model
             'amount_total' => 'decimal:2',
             'amount_due'   => 'decimal:2',
             'amount_paid'  => 'decimal:2',
+            'picked_up_at' => 'datetime',
         ];
     }
 
@@ -34,10 +35,14 @@ class Reservation extends Model
     {
         // Remember when the status last changed (not on creation)
         static::saving(function (Reservation $reservation) {
-            if ($reservation->exists && $reservation->isDirty('status')) {
-                $reservation->status_changed_at = now();
+        if ($reservation->exists && $reservation->isDirty('status')) {
+            $reservation->status_changed_at = now();
+
+            if ($reservation->status === 'picked_up') {
+                $reservation->picked_up_at = now();
             }
-        });
+        }
+    });
     }
 
     public function user(): BelongsTo
@@ -73,6 +78,51 @@ class Reservation extends Model
         $this->release(['awaiting_payment', 'pending', 'ready'], 'cancelled');
     }
 
+    // Customer paid after the reservation was auto-cancelled.
+    // Returns 'recovered', 'refund', or null (nothing to do).
+    public function recoverLatePayment(): ?string
+    {
+        return DB::transaction(function () {
+            $reservation = self::lockForUpdate()->find($this->id);
+
+            // Only online reservations that were cancelled and never marked as paid
+            if (! $reservation
+                || $reservation->status !== 'cancelled'
+                || $reservation->payment_method !== 'online'
+                || (float) $reservation->amount_paid > 0) {
+                return null;
+            }
+
+            $items = $reservation->items;
+
+            $products = Product::whereIn('id', $items->pluck('product_id'))
+                ->lockForUpdate()
+                ->get()
+                ->keyBy('id');
+
+            $enough = $items->every(fn ($i) => $products->has($i->product_id)
+                && $products[$i->product_id]->stock_qty >= $i->quantity);
+
+            // Not enough stock: stay cancelled, but record the money that was taken
+            if (! $enough) {
+                $reservation->update(['amount_paid' => $reservation->amount_due]);
+
+                return 'refund';
+            }
+
+            foreach ($items as $item) {
+                $products[$item->product_id]->decrement('stock_qty', $item->quantity);
+            }
+
+            $reservation->update([
+                'status'      => 'pending',
+                'amount_paid' => $reservation->amount_due,
+            ]);
+
+            return 'recovered';
+        });
+    }
+
     private function release(array $from, string $to): void
     {
         DB::transaction(function () use ($from, $to) {
@@ -90,11 +140,11 @@ class Reservation extends Model
         });
     }
 
-    public function scopeDashboardFilters($query, ?array $f): void
+    public function scopeDashboardFilters($query, ?array $f, string $dateColumn = 'reserved_at'): void
     {
         $query
-            ->when($f['startDate'] ?? null, fn ($q, $d) => $q->whereDate('reserved_at', '>=', $d))
-            ->when($f['endDate'] ?? null, fn ($q, $d) => $q->whereDate('reserved_at', '<=', $d))
+            ->when($f['startDate'] ?? null, fn ($q, $d) => $q->whereDate($dateColumn, '>=', $d))
+            ->when($f['endDate'] ?? null, fn ($q, $d) => $q->whereDate($dateColumn, '<=', $d))
             ->when($f['status'] ?? null, fn ($q, $s) => $q->whereIn('status', $s === 'cancelled' ? ['cancelled', 'expired'] : [$s]))
             ->when($f['category'] ?? null, fn ($q, $c) => $q->whereHas('items.product', fn ($p) => $p->where('category_id', $c)));
     }

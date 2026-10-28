@@ -24,7 +24,9 @@ class ShopKpis extends StatsOverviewWidget
         $open = ['awaiting_payment', 'pending', 'ready']; // to count only 'pending', change this to ['pending']
         $base = fn () => Reservation::dashboardFilters($this->pageFilters);
 
-        $revenue = (float) $base()->where('status', 'picked_up')->sum('amount_total');
+        $revenue = (float) Reservation::dashboardFilters($this->pageFilters, 'picked_up_at')
+            ->where('status', 'picked_up')
+            ->sum('amount_total');
         $total = $base()->whereNotIn('status', $dead)->count();
         $pending = $base()->whereIn('status', $open)->count();
 
@@ -42,12 +44,18 @@ class ShopKpis extends StatsOverviewWidget
         $trend = fn (callable $f) => $months
             ->map(fn ($m) => $f($byMonth->get($m->format('Y-m'), collect())))
             ->all();
+        $revenueByMonth = Reservation::dashboardFilters(array_merge($this->pageFilters ?? [], ['startDate' => null, 'endDate' => null]))
+            ->where('status', 'picked_up')
+            ->where('picked_up_at', '>=', $months->first())
+            ->get(['picked_up_at', 'amount_total'])
+            ->groupBy(fn ($r) => $r->picked_up_at->format('Y-m'))
+            ->map(fn ($rows) => (float) $rows->sum('amount_total'));
 
         return [
             Stat::make('Total Revenue', '₱' . number_format($revenue, 2))
                 ->description('From picked up reservations')
                 ->descriptionIcon(Heroicon::OutlinedBanknotes, IconPosition::After)
-                ->chart($trend(fn ($rows) => (float) $rows->where('status', 'picked_up')->sum('amount_total')))
+                ->chart($months->map(fn ($m) => $revenueByMonth[$m->format('Y-m')] ?? 0)->all())
                 ->color('success'),
             Stat::make('Total Reservations', $total)
                 ->description('Excluding cancelled or expired')

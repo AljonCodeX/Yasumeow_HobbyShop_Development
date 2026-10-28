@@ -30,8 +30,9 @@ class EventForm
                 TextInput::make('max_slots')
                     ->label('Maximum slots')
                     ->numeric()
-                    ->minValue(1)
+                    ->minValue(fn ($record) => max(1, (int) ($record?->registrations()->where('status', 'registered')->count() ?? 1)))
                     ->default(16)
+                    ->helperText('Cannot be lower than the players already registered.')
                     ->required(),
                 TextInput::make('price')
                     ->label('Entry fee')

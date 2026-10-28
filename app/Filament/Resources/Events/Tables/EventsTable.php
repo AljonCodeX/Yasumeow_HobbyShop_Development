@@ -9,6 +9,10 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use App\Models\Event;
+use App\Models\Registration;
+use App\Models\Result;
+use Filament\Notifications\Notification;
+use Illuminate\Database\Eloquent\Collection;
 
 class EventsTable
 {
@@ -59,7 +63,25 @@ class EventsTable
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    DeleteBulkAction::make()
+                        ->before(function (DeleteBulkAction $action, Collection $records) {
+                            $ids = $records->modelKeys();
+
+                            $hasPlayers = Event::whereIn('id', $ids)
+                                ->where('status', '!=', 'cancelled')
+                                ->whereHas('registrations', fn ($q) => $q->where('status', 'registered'))
+                                ->exists();
+
+                            if ($hasPlayers || Result::whereIn('event_id', $ids)->exists()) {
+                                Notification::make()
+                                    ->title("Can't delete")
+                                    ->body('One or more selected events have registered players or results. Set them to Cancelled first.')
+                                    ->danger()
+                                    ->send();
+
+                                $action->cancel();
+                            }
+                        }),
                 ]),
             ]);
     }

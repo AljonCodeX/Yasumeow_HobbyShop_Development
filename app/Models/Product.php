@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Cache;
 
 class Product extends Model
 {
@@ -54,4 +55,12 @@ class Product extends Model
             fn ($r) => $r->where('status', 'picked_up')
         )], 'quantity');
     }
+
+    protected static function booted(): void
+{
+    $clear = fn () => Cache::forget('search-index');
+
+    static::saved($clear);
+    static::deleted($clear);
+}
 }

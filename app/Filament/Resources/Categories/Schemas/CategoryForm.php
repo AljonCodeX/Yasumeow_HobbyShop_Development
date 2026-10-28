@@ -14,6 +14,8 @@ class CategoryForm
             ->components([
                 TextInput::make('name')
                     ->required()
+                    ->maxLength(255)
+                    ->unique(ignoreRecord: true)
                     ->columnSpanFull(),
                 FileUpload::make('image')
                     ->image()

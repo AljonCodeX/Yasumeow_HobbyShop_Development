@@ -28,9 +28,9 @@ class MonthlyRevenue extends ChartWidget
         // Same status/category filters as the cards, date range ignored (always 12 months)
         $totals = Reservation::dashboardFilters(array_merge($this->pageFilters ?? [], ['startDate' => null, 'endDate' => null]))
             ->where('status', 'picked_up')
-            ->where('reserved_at', '>=', $months->first())
-            ->get(['reserved_at', 'amount_total'])
-            ->groupBy(fn ($r) => $r->reserved_at->format('Y-m'))
+            ->where('picked_up_at', '>=', $months->first())
+            ->get(['picked_up_at', 'amount_total'])
+            ->groupBy(fn ($r) => $r->picked_up_at->format('Y-m'))
             ->map(fn ($rows) => (float) $rows->sum('amount_total'));
 
         return [

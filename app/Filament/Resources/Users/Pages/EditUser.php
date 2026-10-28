@@ -26,6 +26,9 @@ class EditUser extends EditRecord
     {
         $isAdmin = $data['is_admin'] ?? null;
         unset($data['is_admin']);
+        if ($record->id === \Illuminate\Support\Facades\Auth::id()) {
+            $isAdmin = null; // never change your own admin flag
+        }
 
         $record->fill($data);
 

@@ -31,10 +31,10 @@ class InventoryStats extends StatsOverviewWidget
         $months = collect(range(11, 0))->map(fn ($i) => now()->startOfMonth()->subMonths($i));
 
         $byMonth = Reservation::where('status', 'picked_up')
-            ->where('reserved_at', '>=', $months->first())
+            ->where('picked_up_at', '>=', $months->first())
             ->with('items')
             ->get()
-            ->groupBy(fn ($r) => $r->reserved_at->format('Y-m'))
+            ->groupBy(fn ($r) => $r->picked_up_at->format('Y-m'))
             ->map(fn ($rows) => (int) $rows->sum(fn ($r) => $r->items->sum('quantity')));
 
         $soldThisMonth = $byMonth[now()->format('Y-m')] ?? 0;
@@ -49,7 +49,7 @@ class InventoryStats extends StatsOverviewWidget
             ->where('created_at', '<=', now()->subDays(30))
             ->whereDoesntHave('reservationItems', fn ($q) => $q->whereHas(
                 'reservation',
-                fn ($r) => $r->where('status', 'picked_up')->where('reserved_at', '>=', now()->subDays(30))
+                fn ($r) => $r->where('status', 'picked_up')->where('picked_up_at', '>=', now()->subDays(30))
             ))
             ->get(['id', 'price', 'stock_qty']);
         $slowValue = (float) $slow->sum(fn ($p) => (float) $p->price * $p->stock_qty);

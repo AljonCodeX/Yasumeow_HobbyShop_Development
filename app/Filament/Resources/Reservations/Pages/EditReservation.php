@@ -14,4 +14,9 @@ class EditReservation extends EditRecord
     {
         return [];
     }
+
+    protected function getFormActions(): array
+    {
+        return [];
+    }
 }

@@ -38,7 +38,12 @@ class ProductForm
                     ->numeric()
                     ->integer()
                     ->minValue(0)
-                    ->default(0),
+                    ->default(0)
+                    ->disabled(fn (string $operation) => $operation === 'edit')
+                    ->dehydrated(fn (string $operation) => $operation !== 'edit')
+                    ->helperText(fn (string $operation) => $operation === 'edit'
+                        ? 'To add stock, use Restock in Reports > Inventory.'
+                        : null),
                 FileUpload::make('image')
                     ->image()
                     ->disk('public')

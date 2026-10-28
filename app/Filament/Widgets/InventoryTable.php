@@ -12,6 +12,7 @@ use Filament\Tables\Table;
 use Filament\Widgets\TableWidget;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class InventoryTable extends TableWidget
 {
@@ -154,6 +155,35 @@ class InventoryTable extends TableWidget
                             ->success()
                             ->send();
                     }),
+                Action::make('adjust')
+                        ->label('Adjust')
+                        ->icon('heroicon-o-adjustments-horizontal')
+                        ->color('warning')
+                        ->modalHeading(fn (Product $record) => 'Adjust stock: ' . $record->name)
+                        ->modalDescription('Type the real number of units on the shelf. It replaces the current available stock.')
+                        ->fillForm(fn (Product $record) => ['quantity' => $record->stock_qty])
+                        ->schema([
+                            TextInput::make('quantity')
+                                ->label('Units on the shelf')
+                                ->numeric()
+                                ->integer()
+                                ->minValue(0)
+                                ->required(),
+                        ])
+                        ->action(function (Product $record, array $data) {
+                            DB::transaction(function () use ($record, $data) {
+                                $product = Product::lockForUpdate()->find($record->id);
+                                $product?->update(['stock_qty' => (int) $data['quantity']]);
+                            });
+
+                            Cache::forget('search-index');
+
+                            Notification::make()
+                                ->title($record->name . ' stock adjusted')
+                                ->body('Available now: ' . (int) $data['quantity'])
+                                ->success()
+                                ->send();
+                        }),
             ]);
     }
 }
