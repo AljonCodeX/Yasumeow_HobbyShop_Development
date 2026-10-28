@@ -19,7 +19,7 @@ class ReservationsTable
         return $table
             ->modifyQueryUsing(fn ($query) => $query->with('items.product'))
             ->columns([
-                TextColumn::make('id')->label('#')->sortable()->searchable(),
+                TextColumn::make('reference')->label('Reference')->sortable()->searchable(),
                 TextColumn::make('contact_name')->label('Customer')->searchable(),
                 TextColumn::make('contact_phone')->label('Phone')->searchable(),
                 TextColumn::make('items_list')
@@ -93,13 +93,13 @@ class ReservationsTable
                             if ($paid > 0 && $r->refresh()->status === 'cancelled') {
                                 Notification::make()
                                     ->title('Refund needed')
-                                    ->body('Reservation #' . $r->id . ' was paid ₱' . number_format($paid, 2) . '. Refund the customer in PayMongo.')
+                                    ->body('Reservation #' . $r->reference . ' was paid ₱' . number_format($paid, 2) . '. Refund the customer in PayMongo.')
                                     ->warning()
                                     ->persistent()
                                     ->send();
 
                                 AdminAlert::send(
-                                    'Refund needed, reservation #' . $r->id,
+                                    'Refund needed, reservation #' . $r->reference,
                                     'Cancelled by staff after payment of ₱' . number_format($paid, 2) . '. Refund in PayMongo.',
                                     'heroicon-o-banknotes',
                                     'danger'

@@ -6,7 +6,7 @@
 @if ($toRate || $toRateEvent)
     @php
         $rateAction = $toRate ? route('reservations.rate', $toRate) : route('events.rate', $toRateEvent);
-        $rateLabel  = $toRate ? 'your pickup of Reservation #' . $toRate->id : $toRateEvent->title;
+        $rateLabel  = $toRate ? 'your pickup of Reservation ' . $toRate->reference : $toRateEvent->title;
         $rateKey    = $toRate ? 'r' . $toRate->id : 'e' . $toRateEvent->id;
     @endphp
 

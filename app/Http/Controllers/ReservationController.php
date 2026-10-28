@@ -207,7 +207,7 @@ class ReservationController extends Controller
         // Pay in store is confirmed right away. Online reservations alert when the payment arrives.
         if ($option === 'store') {
             AdminAlert::send(
-                'New reservation #' . $reservation->id,
+                'New reservation ' . $reservation->reference,
                 $reservation->contact_name . ' reserved ₱' . number_format((float) $reservation->amount_total, 2) . ' (pay in store)',
                 'heroicon-o-clipboard-document-check',
                 'info'
@@ -317,8 +317,8 @@ class ReservationController extends Controller
                             'payment_method_types' => ['qrph'],
                             'success_url'          => route('reservations.thanks', $reservation),
                             'cancel_url'           => route('reservations.cancelled', $reservation),
-                            'reference_number'     => 'RES-' . $reservation->id,
-                            'description'          => 'Yasumeow Hobby Shop reservation #' . $reservation->id,
+                            'reference_number'     => 'RES-' . $reservation->reference,
+                            'description'          => 'Yasumeow Hobby Shop reservation ' . $reservation->reference,
                         ],
                     ],
                 ]);

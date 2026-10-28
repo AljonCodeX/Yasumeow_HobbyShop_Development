@@ -12,6 +12,7 @@ class ReservationForm
     {
         // Read-only details. Status changes use the buttons in the list, so stock is always handled.
         return $schema->components([
+            TextInput::make('reference')->label('Reference')->disabled()->dehydrated(false),
             TextInput::make('contact_name')->label('Customer')->disabled()->dehydrated(false),
             TextInput::make('contact_phone')->label('Phone')->disabled()->dehydrated(false),
             TextInput::make('status')->disabled()->dehydrated(false),

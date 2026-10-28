@@ -26,7 +26,7 @@ class LatestReservations extends TableWidget
         return $table
             ->query(fn () => Reservation::query()->dashboardFilters($this->pageFilters)->with('items.product')->latest('reserved_at')->limit(5))
             ->columns([
-                TextColumn::make('id')->label('#'),
+                TextColumn::make('reference')->label('Reference'),
                 TextColumn::make('contact_name')->label('Customer'),
                 TextColumn::make('items_list')
                     ->label('Items')

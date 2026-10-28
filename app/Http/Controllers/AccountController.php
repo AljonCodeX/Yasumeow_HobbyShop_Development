@@ -55,11 +55,8 @@ class AccountController extends Controller
                 $q->where(function ($w) use ($term) {
                     $w->whereHas('items.product', fn ($p) => $p->where('name', 'like', '%' . $term . '%'));
 
-                    // Typing a number (or #12) also finds that reservation
-                    $id = ltrim($term, '#');
-                    if (ctype_digit($id)) {
-                        $w->orWhere('id', $id);
-                    }
+                    // Typing a reference (or #reference) also finds that reservation
+                    $w->orWhere('reference', 'like', '%' . ltrim($term, '#') . '%');
                 });
             })
             ->latest('reserved_at')

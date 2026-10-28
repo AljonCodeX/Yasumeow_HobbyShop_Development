@@ -24,7 +24,7 @@ class ReleaseUnpaidReservations extends Command
             if ($reservation->refresh()->status === 'cancelled') {
                 AdminAlert::send(
                     'Reservation auto-cancelled',
-                    'Reservation #' . $reservation->id . ' was not paid in 30 minutes. Stock returned.',
+                    'Reservation ' . $reservation->reference . ' was not paid in 30 minutes. Stock returned.',
                     'heroicon-o-x-circle',
                     'danger'
                 );
@@ -43,7 +43,7 @@ class ReleaseUnpaidReservations extends Command
             if ($reservation->refresh()->status === 'expired') {
                 AdminAlert::send(
                     'Reservation expired',
-                    'Reservation #' . $reservation->id . ' was not picked up in time. Stock returned.',
+                    'Reservation ' . $reservation->reference . ' was not picked up in time. Stock returned.',
                     'heroicon-o-calendar-x-mark',
                     'warning'
                 );

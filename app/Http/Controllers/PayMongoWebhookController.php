@@ -49,7 +49,7 @@ class PayMongoWebhookController extends Controller
 
     if ($paid) {
         AdminAlert::send(
-            'Payment received, reservation #' . $paid->id,
+            'Payment received, reservation ' . $paid->reference,
             $paid->contact_name . ' paid ₱' . number_format((float) $paid->amount_paid, 2) . ' (QR Ph)',
             'heroicon-o-banknotes',
             'success'
@@ -64,14 +64,14 @@ class PayMongoWebhookController extends Controller
 
     if ($outcome === 'recovered') {
         AdminAlert::send(
-            'Late payment recovered, reservation #' . $late->id,
+           'Late payment recovered, reservation ' . $late->reference,
             $late->contact_name . ' paid after the 30-minute limit. Stock was available, so the reservation is active again.',
             'heroicon-o-banknotes',
             'success'
         );
     } elseif ($outcome === 'refund') {
         AdminAlert::send(
-            'Refund needed, reservation #' . $late->id,
+            'Refund needed, reservation ' . $late->reference,
             $late->contact_name . ' paid ₱' . number_format((float) $late->amount_due, 2) . ' after the 30-minute limit, but the items are no longer in stock. Refund in PayMongo.',
             'heroicon-o-banknotes',
             'danger'

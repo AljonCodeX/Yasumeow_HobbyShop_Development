@@ -31,7 +31,7 @@
 
         <div class="order-head">
             <div>
-                <h1 class="shop-title mb-1">Reservation #{{ $reservation->id }}</h1>
+                <h1 class="shop-title mb-1">Reservation {{ $reservation->reference }}</h1>
                 <p class="order-date">Reserved on {{ $reservation->reserved_at->format('M j, Y g:i A') }}</p>
             </div>
             <span class="account-status {{ $statusClass }}">{{ $statusLabel }}</span>

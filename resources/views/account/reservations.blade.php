@@ -67,7 +67,7 @@
     @php [$label, $class] = $statuses[$reservation->status] ?? [ucfirst($reservation->status), '']; @endphp
 
     <a href="{{ route('reservations.thanks', $reservation) }}" class="history-card">
-        <div class="history-card-title">Reservation #{{ $reservation->id }}</div>
+        <div class="history-card-title">Reservation {{ $reservation->reference }}</div>
 
         <div class="history-card-body">
             @foreach ($reservation->items as $item)

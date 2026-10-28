@@ -33,6 +33,22 @@ class Reservation extends Model
 
     protected static function booted(): void
     {
+        // Reference like 20261028-001: the date, then that day's number
+        static::creating(function (Reservation $reservation) {
+            $prefix = now()->format('Ymd');
+
+            // Lock works because checkout creates the reservation inside a transaction
+            $last = DB::table('reservations')
+                ->where('reference', 'like', $prefix . '-%')
+                ->lockForUpdate()
+                ->orderByDesc('reference')
+                ->value('reference');
+
+            $next = $last ? ((int) substr($last, 9)) + 1 : 1;
+
+            $reservation->reference = $prefix . '-' . str_pad($next, 3, '0', STR_PAD_LEFT);
+        });
+        
         // Remember when the status last changed (not on creation)
         static::saving(function (Reservation $reservation) {
         if ($reservation->exists && $reservation->isDirty('status')) {
