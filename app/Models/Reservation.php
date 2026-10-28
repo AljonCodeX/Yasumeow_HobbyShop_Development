@@ -156,6 +156,25 @@ class Reservation extends Model
         });
     }
 
+    // Pay in store: Reserved or Ready. QR Ph: only while still unpaid.
+    public function canCustomerCancel(): bool
+    {
+        if ($this->status === 'awaiting_payment') {
+            return true;
+        }
+
+        return in_array($this->status, ['pending', 'ready'], true)
+            && $this->payment_method === 'store';
+    }
+
+    // Customer cancels from the website: items go back to stock
+    public function customerCancel(): void
+    {
+        $from = $this->payment_method === 'store' ? ['pending', 'ready'] : ['awaiting_payment'];
+
+        $this->release($from, 'cancelled');
+    }
+
     public function scopeDashboardFilters($query, ?array $f, string $dateColumn = 'reserved_at'): void
     {
         $query

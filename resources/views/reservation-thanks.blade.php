@@ -125,6 +125,22 @@
             @endif
         </div>
 
+        @if ($reservation->canCustomerCancel())
+            <form method="POST" action="{{ route('reservations.cancel', $reservation) }}"
+                  onsubmit="return confirm('Cancel this reservation? The items will be released.')">
+                @csrf
+                @method('PATCH')
+                <button type="submit" class="btn btn-outline-danger w-100 mt-3">
+                    <i class="bi bi-x-circle me-1"></i>Cancel reservation
+                </button>
+            </form>
+        @elseif (in_array($reservation->status, ['pending', 'ready'], true))
+            <p class="reserve-note mt-3 mb-0">
+                <i class="bi bi-chat-dots me-1"></i>Paid online reservations can't be cancelled here.
+                <a href="{{ config('shop.messenger') }}" target="_blank" rel="noopener" class="fw-bold">Message us on Messenger</a> to cancel.
+            </p>
+        @endif
+
         <div class="order-actions">
             <a href="{{ route('account.reservations') }}" class="shop-item-btn">My reservations</a>
             <a href="{{ route('shop') }}" class="shop-item-btn is-primary">Back to shop</a>

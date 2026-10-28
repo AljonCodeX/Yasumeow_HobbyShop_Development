@@ -264,6 +264,35 @@ class ReservationController extends Controller
             ->with('error', 'Payment not completed. Your items are held for 30 minutes, then released automatically.');
     }
 
+    // Customer cancels their own reservation
+    public function cancel(Reservation $reservation)
+    {
+        abort_unless($reservation->user_id === Auth::id(), 403);
+
+        if (! $reservation->canCustomerCancel()) {
+            return redirect()->route('reservations.thanks', $reservation)
+                ->with('error', 'This reservation cannot be cancelled here. Please message us on Messenger.');
+        }
+
+        $reservation->customerCancel();
+
+        // The status is checked again inside the lock, so make sure it really changed
+        if ($reservation->refresh()->status !== 'cancelled') {
+            return redirect()->route('reservations.thanks', $reservation)
+                ->with('error', 'We could not cancel this reservation. Please refresh and try again.');
+        }
+
+        AdminAlert::send(
+            'Reservation cancelled by customer',
+            'Reservation ' . $reservation->reference . ' was cancelled by ' . $reservation->contact_name . '. Stock returned.',
+            'heroicon-o-x-circle',
+            'warning'
+        );
+
+        return redirect()->route('reservations.thanks', $reservation)
+            ->with('success', 'Your reservation was cancelled.');
+    }
+
     // Drops products that no longer exist from a session cart
     private function pruneCart(string $key): array
     {

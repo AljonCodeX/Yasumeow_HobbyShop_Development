@@ -92,6 +92,7 @@ Route::middleware('auth')->group(function () {
     // After checkout
     Route::get('/reservations/{reservation}/thanks', [ReservationController::class, 'thanks'])->name('reservations.thanks');
     Route::get('/reservations/{reservation}/cancelled', [ReservationController::class, 'cancelled'])->name('reservations.cancelled');
+    Route::patch('/reservations/{reservation}/cancel', [ReservationController::class, 'cancel'])->name('reservations.cancel');
     Route::post('/reservations/{reservation}/rating', [RatingController::class, 'store'])->name('reservations.rate');
     Route::post('/events/{event}/rating', [RatingController::class, 'storeEvent'])->name('events.rate');
 });
