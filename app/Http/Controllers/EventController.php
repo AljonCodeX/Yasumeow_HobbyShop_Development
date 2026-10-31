@@ -8,38 +8,50 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Support\AdminAlert;
+use App\Models\Category;
+use App\Models\Game;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 
 class EventController extends Controller
 {
     public function index(Request $request)
     {
-        $all = Event::with('game.category')
+        $selected = $request->query('category');
+        $sort = in_array($request->query('sort'), ['latest', 'oldest'], true)
+            ? $request->query('sort')
+            : null;
+
+        // Filter chips: categories that have any event
+        $categories = Category::whereIn('id', Game::whereIn('id', Event::select('game_id'))->select('category_id'))
+            ->orderBy('name')
+            ->get();
+        $category = $selected
+            ? $categories->first(fn ($c) => Str::slug($c->name) === $selected)
+            : null;
+
+        $query = Event::with('game.category')
             ->withCount(['registrations as taken_count' => function ($q) {
                 $q->where('status', 'registered');
             }])
-            ->upcoming()
-            ->get();
+            ->where('status', '!=', 'cancelled');
 
-        // Filter chips: only categories that have an upcoming event
-        $categories = $all->map(fn ($e) => $e->game?->category)
-            ->filter()
-            ->unique('id')
-            ->sortBy('name')
-            ->values();
+        if ($category) {
+            $query->whereHas('game', fn ($q) => $q->where('category_id', $category->id));
+        }
 
-        $selected = $request->query('category');
-        $events = $selected
-            ? $all->filter(fn ($e) => \Illuminate\Support\Str::slug($e->game?->category?->name ?? '') === $selected)->values()
-            : $all;
+        if ($sort) {
+            $query->orderBy('event_date', $sort === 'latest' ? 'desc' : 'asc');
+        } else {
+            // No sort picked: upcoming first (soonest), then past (newest first)
+            $now = now()->toDateTimeString();
+            $query->orderByRaw('event_date >= ? desc', [$now])
+                ->orderByRaw('CASE WHEN event_date >= ? THEN UNIX_TIMESTAMP(event_date) ELSE -UNIX_TIMESTAMP(event_date) END', [$now]);
+        }
 
-        $past = Event::with('game')
-            ->where('status', '!=', 'cancelled')
-            ->where(fn ($q) => $q->where('event_date', '<', now())->orWhere('status', 'completed'))
-            ->orderByDesc('event_date')
-            ->take(6)
-            ->get();
+        $events = $query->paginate(12)->withQueryString();
 
-        return view('events', compact('events', 'categories', 'selected', 'past'));
+        return view('events', compact('events', 'categories', 'selected', 'sort'));
     }
 
     public function show(Event $event)

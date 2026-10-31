@@ -94,7 +94,7 @@
         <section class="pt-5">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h2 class="h5 fw-bold text-uppercase mb-0">
-                    <i class="bi bi-grid me-2"></i>Shop by Category
+                    <i class="bi bi-grid me-2"></i>Browse by Category
                 </h2>
                 <a href="{{ url('/shop') }}" class="small fw-bold text-body text-decoration-none">
                     View All Products <i class="bi bi-arrow-right"></i>
@@ -149,6 +149,62 @@
             @endforelse
         </div>
     </section>
+
+    {{-- TOP PLAYERS --}}
+    @if ($topPlayers->isNotEmpty())
+        @php $rest = $topPlayers->slice(3); @endphp
+        <section class="pt-5">
+            <h2 class="h5 fw-bold text-uppercase mb-4">
+                <i class="bi bi-trophy me-2"></i>Top Players
+            </h2>
+
+            <div class="row g-4 align-items-end justify-content-center">
+                {{-- 1st to 3rd --}}
+                <div class="col-lg-7">
+                    <div class="podium">
+                        @foreach ($topPlayers->take(3) as $row)
+                            @php $place = ['1st', '2nd', '3rd'][$loop->index]; @endphp
+                            <div class="podium-slot podium-{{ $loop->iteration }}">
+                                <i class="bi bi-award-fill podium-medal" aria-hidden="true"></i>
+                                @include('partials.player-avatar', ['user' => $row->user, 'class' => 'podium-avatar'])
+                                <strong class="podium-name">{{ $row->user->name }}</strong>
+                                <span class="podium-meta">
+                                    {{ (int) $row->wins }} {{ (int) $row->wins === 1 ? 'win' : 'wins' }}
+                                    in {{ $row->events_played }} events
+                                </span>
+                                <div class="podium-step">
+                                    <span class="podium-place">{{ $place }}</span>
+                                    <span class="podium-points">{{ number_format($row->total_points) }} <small>pts</small></span>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+
+                {{-- 4th to 10th --}}
+                @if ($rest->isNotEmpty())
+                    <div class="col-lg-5">
+                        <ol class="rank-list">
+                            @foreach ($rest as $row)
+                                <li class="rank-row">
+                                    <span class="rank-num">{{ $loop->iteration + 3 }}th</span>
+                                    @include('partials.player-avatar', ['user' => $row->user, 'class' => 'rank-avatar'])
+                                    <div class="rank-info">
+                                        <strong>{{ $row->user->name }}</strong>
+                                        <span>
+                                            {{ (int) $row->wins }} {{ (int) $row->wins === 1 ? 'win' : 'wins' }}
+                                            in {{ $row->events_played }} events
+                                        </span>
+                                    </div>
+                                    <span class="rank-points">{{ number_format($row->total_points) }} <small>pts</small></span>
+                                </li>
+                            @endforeach
+                        </ol>
+                    </div>
+                @endif
+            </div>
+        </section>
+    @endif
 
     {{-- GAMES --}}
     @if ($games->isNotEmpty())

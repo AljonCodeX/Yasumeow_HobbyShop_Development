@@ -10,6 +10,8 @@ use App\Models\Reservation;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Rating;
 use App\Models\Registration;
+use Illuminate\Http\Request;
+use App\Models\Result;
 
 class PageController extends Controller
 {
@@ -87,7 +89,20 @@ class PageController extends Controller
             }
         }
 
-        return view('home', compact('events', 'games', 'categories', 'products', 'toRate', 'toRateEvent'));
+        // Top players: total points across all events
+        $topPlayers = Result::select('user_id')
+            ->selectRaw('SUM(points) as total_points')
+            ->selectRaw('SUM(placement = 1) as wins')
+            ->selectRaw('COUNT(*) as events_played')
+            ->with('user')
+            ->groupBy('user_id')
+            ->orderByDesc('total_points')
+            ->orderByDesc('wins')
+            ->orderBy('user_id')
+            ->take(10)
+            ->get();
+
+        return view('home', compact('events', 'games', 'categories', 'products', 'toRate', 'toRateEvent', 'topPlayers'));
     }
 
     // Display info for a category section on the Games pages
@@ -109,21 +124,23 @@ class PageController extends Controller
         return $meta;
     }
 
-    public function games()
+    public function games(Request $request)
     {
-        $games = Game::with('category')
-            ->where('is_active', true)
+        // Filter chips: only categories that have an active game
+        $categories = Category::whereIn('id', Game::where('is_active', true)->select('category_id'))
             ->orderBy('name')
             ->get();
 
-        // Filter chips: only categories that have a game
-        $chips = $games
-            ->map(fn ($g) => $g->category?->name ?? 'Others')
-            ->unique()
-            ->sort()
-            ->values();
+        $activeCategory = $request->integer('category') ?: null;
 
-        return view('games', compact('games', 'chips'));
+        $games = Game::with('category')
+            ->where('is_active', true)
+            ->when($activeCategory, fn ($q) => $q->where('category_id', $activeCategory))
+            ->orderBy('name')
+            ->paginate(12)
+            ->withQueryString();
+
+        return view('games', compact('games', 'categories', 'activeCategory'));
     }
 
     public function gameDetails(string $slug)
