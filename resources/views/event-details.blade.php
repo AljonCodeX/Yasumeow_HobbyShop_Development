@@ -118,10 +118,12 @@
                         <form method="POST" action="{{ route('events.register', $event) }}">
                             @csrf
                             @if ($event->price > 0)
-                                <button type="submit" name="payment_option" value="online" class="btn btn-info fw-bold w-100 mb-2">Pay online (QR Ph)</button>
-                                <button type="submit" name="payment_option" value="store" class="btn btn-outline-info fw-bold w-100">Pay in store</button>
+                                <button type="button" class="btn btn-info fw-bold w-100" data-bs-toggle="modal" data-bs-target="#payModal">Register</button>
                             @else
-                                <button type="submit" class="btn btn-info fw-bold w-100">Register</button>
+                                <form method="POST" action="{{ route('events.register', $event) }}">
+                                    @csrf
+                                    <button type="submit" class="btn btn-info fw-bold w-100">Register</button>
+                                </form>
                             @endif
                         </form>
                         @else
@@ -190,4 +192,23 @@
         </div>
     </div>
 </div>
+
+@if ($event->price > 0 && auth()->check())
+<div class="modal fade" id="payModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <form method="POST" action="{{ route('events.register', $event) }}" class="modal-content">
+            @csrf
+            <div class="modal-header">
+                <h5 class="modal-title">Choose payment method</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-3">Entry fee: <strong>₱{{ number_format((float) $event->price) }}</strong></p>
+                <button type="submit" name="payment_option" value="online" class="btn btn-info fw-bold w-100 mb-2">Pay now</button>
+                <button type="submit" name="payment_option" value="store" class="btn btn-outline-info fw-bold w-100">Pay in store</button>
+            </div>
+        </form>
+    </div>
+</div>
+@endif
 @endsection
