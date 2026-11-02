@@ -289,3 +289,22 @@
     line-height: 1.05rem;
     text-align: center;
 }
+
+// Phones: keep logo, brand and the icons on one row (logged in has an extra bag icon)
+@media (max-width: 767.98px) {
+    .site-navbar > .container {
+        flex-wrap: nowrap;
+    }
+
+    .site-navbar .navbar-brand {
+        flex: 1 1 0;
+        min-width: 0;
+        margin-right: 0;
+        font-size: 1.1rem;
+
+        img {
+            flex-shrink: 0;
+            height: 34px;
+        }
+    }
+}

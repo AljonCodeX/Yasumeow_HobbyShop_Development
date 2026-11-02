@@ -35,7 +35,7 @@
         </a>
 
         {{-- Phone: search + bag + menu buttons --}}
-        <div class="d-flex align-items-center gap-1 d-md-none">
+        <div class="d-flex align-items-center gap-1 d-md-none flex-shrink-0">
             <button type="button" class="nav-icon-btn" data-bs-toggle="modal" data-bs-target="#searchModal" aria-label="Search">
                 <i class="bi bi-search"></i>
             </button>
