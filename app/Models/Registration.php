@@ -7,8 +7,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Registration extends Model
 {
-    protected $fillable = ['user_id', 'event_id', 'registered_at', 'status'];
-
+    protected $fillable = [
+    'user_id', 'event_id', 'registered_at', 'status',
+    'payment_method', 'payment_status', 'paymongo_session_id',
+    ];
     protected function casts(): array
     {
         return ['registered_at' => 'datetime'];

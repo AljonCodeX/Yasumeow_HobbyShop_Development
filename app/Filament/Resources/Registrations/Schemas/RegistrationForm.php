@@ -57,6 +57,11 @@ class RegistrationForm
                 'registered' => 'Registered',
                 'cancelled'  => 'Cancelled',
             ])->default('registered')->required(),
+            Select::make('payment_status')->options([
+                'paid' => 'Paid',
+                'unpaid' => 'Unpaid (pay in store)',
+                'awaiting_payment' => 'Awaiting online payment',
+            ])->default('paid')->required(),
         ]);
     }
 }

@@ -6,6 +6,7 @@ use App\Models\Reservation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Support\AdminAlert;
+use App\Models\Registration;
 
 class PayMongoWebhookController extends Controller
 {
@@ -27,6 +28,46 @@ class PayMongoWebhookController extends Controller
 
         if (! $sessionId) {
             return response()->json(['message' => 'Ignored']);
+        }
+
+        // Event entry fee? Handle it here and stop.
+        $registration = Registration::with(['event', 'user'])->where('paymongo_session_id', $sessionId)->first();
+
+        if ($registration) {
+            $outcome = DB::transaction(function () use ($registration) {
+                $registration = Registration::lockForUpdate()->find($registration->id);
+
+                if ($registration->payment_status === 'paid') {
+                    return 'done'; // PayMongo can send the same event twice
+                }
+
+                // Paid after the 30-minute auto-cancel: only take it back if a slot is still free
+                if ($registration->status === 'cancelled' && $registration->event->slotsLeft() === 0) {
+                    return 'refund';
+                }
+
+                $registration->update(['status' => 'registered', 'payment_status' => 'paid']);
+
+                return 'paid';
+            });
+
+            if ($outcome === 'paid') {
+                AdminAlert::send(
+                    'Event payment received',
+                    $registration->user->name . ' paid ₱' . number_format((float) $registration->event->price, 2) . ' for ' . $registration->event->title . ' (QR Ph)',
+                    'heroicon-o-banknotes',
+                    'success'
+                );
+            } elseif ($outcome === 'refund') {
+                AdminAlert::send(
+                    'Refund needed, ' . $registration->event->title,
+                    $registration->user->name . ' paid after the slot was released and the event is now full. Refund in PayMongo.',
+                    'heroicon-o-banknotes',
+                    'danger'
+                );
+            }
+
+            return response()->json(['message' => 'OK']);
         }
 
         $paid = DB::transaction(function () use ($sessionId) {

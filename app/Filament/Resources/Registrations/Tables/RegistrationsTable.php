@@ -8,6 +8,7 @@ use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Filament\Actions\Action;
 
 class RegistrationsTable
 {
@@ -20,6 +21,15 @@ class RegistrationsTable
                 TextColumn::make('status')
                     ->badge()
                     ->color(fn (string $state): string => $state === 'registered' ? 'success' : 'danger'),
+                TextColumn::make('payment_method')->label('Pay via')->placeholder('Free'),
+                TextColumn::make('payment_status')
+                    ->label('Payment')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'paid' => 'success',
+                        'unpaid' => 'warning',
+                        default => 'gray',
+                    }),
                 TextColumn::make('registered_at')->dateTime('M d, g:i A')->sortable(),
             ])
             ->defaultSort('registered_at', 'desc')
@@ -30,7 +40,16 @@ class RegistrationsTable
                     'cancelled'  => 'Cancelled',
                 ]),
             ])
-            ->recordActions([EditAction::make()])
+            ->recordActions([
+                Action::make('markPaid')
+                    ->label('Mark paid')
+                    ->icon('heroicon-o-banknotes')
+                    ->color('success')
+                    ->visible(fn ($record) => $record->payment_status === 'unpaid')
+                    ->requiresConfirmation()
+                    ->action(fn ($record) => $record->update(['payment_status' => 'paid'])),
+                EditAction::make(),
+            ])
             ->toolbarActions([BulkActionGroup::make([DeleteBulkAction::make()])]);
     }
 }

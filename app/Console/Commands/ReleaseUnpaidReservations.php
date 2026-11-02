@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\Reservation;
 use Illuminate\Console\Command;
 use App\Support\AdminAlert;
+use App\Models\Registration;
 
 class ReleaseUnpaidReservations extends Command
 {
@@ -49,6 +50,12 @@ class ReleaseUnpaidReservations extends Command
                 );
             }
         }
+
+        // Unpaid online event registrations free their slot after 30 minutes
+        Registration::where('status', 'registered')
+            ->where('payment_status', 'awaiting_payment')
+            ->where('registered_at', '<', now()->subMinutes(30))
+            ->update(['status' => 'cancelled']);
 
         $this->info($unpaid->count() . ' unpaid cancelled, ' . $late->count() . ' expired.');
 

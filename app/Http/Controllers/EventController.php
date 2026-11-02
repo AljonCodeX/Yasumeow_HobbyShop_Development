@@ -12,6 +12,8 @@ use App\Models\Category;
 use App\Models\Game;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class EventController extends Controller
 {
@@ -68,19 +70,30 @@ class EventController extends Controller
 
         $results = $event->results()->with('user')->orderBy('placement')->take(10)->get();
 
-        return view('event-details', compact('event', 'isRegistered', 'results'));
+        return view('event-details', compact('event', 'isRegistered', 'results', 'registration'));
     }
 
-    public function register(Event $event)
+    public function register(Request $request, Event $event)
     {
         $userId = Auth::id();
 
+        // Free events skip this. Paid events must pick store or online.
+        $option = $event->price > 0
+            ? $request->validate(['payment_option' => ['required', 'in:store,online']])['payment_option']
+            : null;
+
+        $payment = match ($option) {
+            'store'  => 'unpaid',
+            'online' => 'awaiting_payment',
+            default  => 'paid',
+        };
+
         // Lock the event row so two people can't take the last slot at the same time
-        [$type, $message] = DB::transaction(function () use ($event, $userId) {
+        [$type, $message, $registration] = DB::transaction(function () use ($event, $userId, $option, $payment) {
             $event = Event::lockForUpdate()->findOrFail($event->id);
 
             if ($event->status !== 'open' || $event->event_date->isPast()) {
-                return ['error', 'Registration for this event is closed.'];
+                return ['error', 'Registration for this event is closed.', null];
             }
 
             $existing = Registration::where('event_id', $event->id)
@@ -88,32 +101,58 @@ class EventController extends Controller
                 ->first();
 
             if ($existing && $existing->status === 'registered') {
-                return ['error', 'You are already registered for this event.'];
+                return ['error', 'You are already registered for this event.', null];
             }
 
             if ($event->slotsLeft() === 0) {
-                return ['error', 'Sorry, this event is full.'];
+                return ['error', 'Sorry, this event is full.', null];
             }
 
             // Also re-activates someone who cancelled earlier
-            Registration::updateOrCreate(
+            $registration = Registration::updateOrCreate(
                 ['event_id' => $event->id, 'user_id' => $userId],
-                ['status' => 'registered', 'registered_at' => now()]
+                [
+                    'status'              => 'registered',
+                    'registered_at'       => now(),
+                    'payment_method'      => $option,
+                    'payment_status'      => $payment,
+                    'paymongo_session_id' => null,
+                ]
             );
 
-            return ['success', 'You are registered for ' . $event->title . '!'];
+            $message = 'You are registered for ' . $event->title . '!';
+            if ($option === 'store') {
+                $message .= ' Please pay ₱' . number_format((float) $event->price) . ' at the shop.';
+            }
+
+            return ['success', $message, $registration];
         });
 
-            if ($type === 'success') {
+        // Online: send the player to PayMongo. The webhook marks it paid.
+        if ($type === 'success' && $option === 'online') {
+            $checkoutUrl = $this->createEventCheckout($event, $registration);
+
+            if (! $checkoutUrl) {
+                $registration->update(['status' => 'cancelled']);
+
+                return redirect()->route('events.show', $event)
+                    ->with('error', 'We could not start the payment. Please try again.');
+            }
+
+            return redirect()->away($checkoutUrl);
+        }
+
+        if ($type === 'success') {
             AdminAlert::send(
                 'New event registration',
-                Auth::user()->name . ' registered for ' . $event->title,
+                Auth::user()->name . ' registered for ' . $event->title
+                    . ($payment === 'unpaid' ? ' (pay in store)' : ''),
                 'heroicon-o-user-plus',
                 'success'
             );
         }
 
-            if ($type === 'success' && $event->slotsLeft() === 0) {
+        if ($type === 'success' && $event->slotsLeft() === 0) {
             AdminAlert::send(
                 'Event full',
                 $event->title . ' has no slots left.',
@@ -123,6 +162,46 @@ class EventController extends Controller
         }
 
         return redirect()->route('events.show', $event)->with($type, $message);
+    }
+
+    // Returns the PayMongo checkout URL, or null if something went wrong
+    private function createEventCheckout(Event $event, Registration $registration): ?string
+    {
+        try {
+            $response = Http::timeout(15)
+                ->withBasicAuth(config('services.paymongo.secret_key'), '')
+                ->post('https://api.paymongo.com/v2/checkout_sessions', [
+                    'data' => [
+                        'attributes' => [
+                            'line_items' => [[
+                                'name'     => $event->title . ' entry fee',
+                                'amount'   => (int) round((float) $event->price * 100), // centavos
+                                'currency' => 'PHP',
+                                'quantity' => 1,
+                            ]],
+                            'payment_method_types' => ['qrph'],
+                            'success_url'          => route('events.show', $event),
+                            'cancel_url'           => route('events.show', $event),
+                            'reference_number'     => 'EVT-' . $registration->id,
+                            'description'          => 'Yasumeow Hobby Shop event: ' . $event->title,
+                        ],
+                    ],
+                ]);
+        } catch (\Throwable $e) {
+            Log::error('PayMongo event request failed', ['message' => $e->getMessage()]);
+
+            return null;
+        }
+
+        if (! $response->successful()) {
+            Log::error('PayMongo event checkout failed', ['body' => $response->body()]);
+
+            return null;
+        }
+
+        $registration->update(['paymongo_session_id' => $response->json('data.id')]);
+
+        return $response->json('data.attributes.checkout_url');
     }
 
     public function cancel(Event $event)

@@ -89,8 +89,16 @@
 
                     <div class="event-action">
                         @if ($isRegistered)
-                            <div class="alert alert-success py-2 small mb-2">
-                                <i class="bi bi-check-circle me-1"></i>You are registered.
+                            @php $pay = $registration->payment_status; @endphp
+                            <div class="alert {{ $pay === 'paid' ? 'alert-success' : 'alert-warning' }} py-2 small mb-2">
+                                <i class="bi bi-check-circle me-1"></i>
+                                @if ($pay === 'unpaid')
+                                    You are registered. Please pay ₱{{ number_format((float) $event->price) }} at the shop.
+                                @elseif ($pay === 'awaiting_payment')
+                                    Payment pending. Your slot is held for 30 minutes.
+                                @else
+                                    You are registered.
+                                @endif
                             </div>
                             @unless ($isPast)
                                 <form method="POST" action="{{ route('events.cancel', $event) }}"
@@ -107,10 +115,15 @@
                         @elseif ($left === 0)
                             <button class="btn btn-secondary w-100" disabled>Event Full</button>
                         @elseif (auth()->check())
-                            <form method="POST" action="{{ route('events.register', $event) }}">
-                                @csrf
+                        <form method="POST" action="{{ route('events.register', $event) }}">
+                            @csrf
+                            @if ($event->price > 0)
+                                <button type="submit" name="payment_option" value="online" class="btn btn-info fw-bold w-100 mb-2">Pay online (QR Ph)</button>
+                                <button type="submit" name="payment_option" value="store" class="btn btn-outline-info fw-bold w-100">Pay in store</button>
+                            @else
                                 <button type="submit" class="btn btn-info fw-bold w-100">Register</button>
-                            </form>
+                            @endif
+                        </form>
                         @else
                             <a href="{{ route('login') }}" class="btn btn-info fw-bold w-100">Log in to Register</a>
                         @endif
