@@ -19,7 +19,7 @@ class ResultForm
                 ->label('Result photo')
                 ->helperText('Winners poster or group photo, shown on the event page under Results.')
                 ->image()
-                ->disk('public')
+                ->disk(config('filesystems.default'))
                 ->directory('event-results')
                 ->imagePreviewHeight('160')
                 ->columnSpanFull(),

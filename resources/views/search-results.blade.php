@@ -42,7 +42,7 @@
                             <div class="game-card-cover">
                                 <span class="game-card-badge">{{ $game->category?->name }}</span>
                                 @if ($game->image)
-                                    <img src="{{ asset('storage/' . $game->image) }}" alt="{{ $game->name }}">
+                                    <img src="{{ \App\Support\Media::url($game->image) }}" alt="{{ $game->name }}">
                                 @else
                                     <i class="bi {{ $game->category?->icon ?? 'bi-controller' }}"></i>
                                 @endif

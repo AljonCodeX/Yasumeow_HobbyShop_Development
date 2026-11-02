@@ -56,7 +56,7 @@ class EventForm
                     ->columnSpanFull(),
                 FileUpload::make('image')
                     ->image()
-                    ->disk('public')
+                    ->disk(config('filesystems.default'))
                     ->directory('events')
                     ->columnSpanFull(),
             ]);

@@ -30,7 +30,7 @@ class ProductsTable
                 TextColumn::make('stock_qty')
                     ->numeric()
                     ->sortable(),
-                ImageColumn::make('image')->disk('public'),
+                ImageColumn::make('image')->disk(config('filesystems.default')),
                 IconColumn::make('is_featured')
                     ->boolean(),
                 TextColumn::make('created_at')

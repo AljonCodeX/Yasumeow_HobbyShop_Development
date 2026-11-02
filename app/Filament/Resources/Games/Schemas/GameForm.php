@@ -42,7 +42,7 @@ class GameForm
                     ->columnSpanFull(),
                 FileUpload::make('image')
                     ->image()
-                    ->disk('public')
+                    ->disk(config('filesystems.default'))
                     ->directory('games')
                     ->helperText('Optional. Without an image, the category icon is shown.')
                     ->columnSpanFull(),

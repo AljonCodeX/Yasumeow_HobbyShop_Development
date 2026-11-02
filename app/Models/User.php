@@ -70,7 +70,7 @@ use Filament\Panel;
     public function avatarUrl(): ?string
     {
         return $this->profile_photo
-            ? asset('storage/' . $this->profile_photo)
+            ? \App\Support\Media::url($this->profile_photo)
             : null;
     }
 

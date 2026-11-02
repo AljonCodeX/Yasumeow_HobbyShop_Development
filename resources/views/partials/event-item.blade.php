@@ -7,7 +7,7 @@
     <div class="shop-item {{ $ended ? 'is-out' : '' }}">
         <div class="shop-item-img position-relative">
             @if ($event->image)
-                <img src="{{ asset('storage/' . $event->image) }}" alt="{{ $event->title }}">
+                <img src="{{ \App\Support\Media::url($event->image) }}" alt="{{ $event->title }}">
             @else
                 <i class="bi {{ $event->game?->category?->icon ?? 'bi-calendar-event' }}"></i>
             @endif

@@ -26,7 +26,7 @@
             <div class="event-main">
                 <div class="event-hero">
                     @if ($event->image)
-                        <img src="{{ asset('storage/' . $event->image) }}" alt="{{ $event->title }}">
+                        <img src="{{ \App\Support\Media::url($event->image) }}" alt="{{ $event->title }}">
                     @else
                         <span class="event-hero-icon">
                             <i class="bi {{ $event->game?->category?->icon ?? 'bi-calendar-event' }}"></i>
@@ -123,9 +123,9 @@
                 <h2 class="checkout-section-title">Results</h2>
 
                 @if ($event->result_image)
-                    <a href="{{ asset('storage/' . $event->result_image) }}" target="_blank" rel="noopener"
+                    <a href="{{ \App\Support\Media::url($event->result_image) }}" target="_blank" rel="noopener"
                        class="event-result-photo" title="Open full size">
-                        <img src="{{ asset('storage/' . $event->result_image) }}"
+                        <img src="{{ \App\Support\Media::url($event->result_image) }}"
                              alt="{{ $event->title }} results" loading="lazy">
                     </a>
                 @endif

@@ -106,7 +106,7 @@
                     <a href="{{ url('/shop') }}?category={{ $category->id }}"
                        class="category-tile {{ $loop->index >= $categoryLimit ? 'category-extra d-none' : '' }}">
                         @if ($category->image)
-                            <img src="{{ asset('storage/' . $category->image) }}" alt="{{ $category->name }}" class="category-tile-img" loading="lazy">
+                            <img src="{{ \App\Support\Media::url($category->image) }}" alt="{{ $category->name }}" class="category-tile-img" loading="lazy">
                         @else
                             <i class="bi {{ $category->icon }}"></i>
                         @endif

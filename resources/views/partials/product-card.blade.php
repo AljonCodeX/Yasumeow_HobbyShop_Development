@@ -5,7 +5,7 @@
         <a href="{{ route('products.show', $product) }}" class="shop-item-link">
             <div class="shop-item-img">
                 @if ($product->image)
-                    <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}">
+                    <img src="{{ \App\Support\Media::url($product->image) }}" alt="{{ $product->name }}">
                 @else
                     <i class="bi {{ $product->category?->icon ?? 'bi-box-seam' }}"></i>
                 @endif

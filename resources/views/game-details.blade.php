@@ -12,7 +12,7 @@
             <div class="col-lg-8">
                 <div class="game-detail-hero overflow-hidden mb-4">
                     @if ($game->image)
-                        <img src="{{ asset('storage/' . $game->image) }}" alt="{{ $game->name }}" class="w-100 h-100 object-fit-cover">
+                        <img src="{{ \App\Support\Media::url($game->image) }}" alt="{{ $game->name }}" class="w-100 h-100 object-fit-cover">
                     @else
                         <i class="bi {{ $section['icon'] }}"></i>
                     @endif

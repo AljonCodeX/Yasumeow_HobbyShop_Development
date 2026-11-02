@@ -22,7 +22,7 @@ class CategoriesTable
                 TextColumn::make('name')
                     ->searchable(),
                 ImageColumn::make('image')
-                    ->disk('public')
+                    ->disk(config('filesystems.default'))
                     ->square(),
                 TextColumn::make('created_at')
                     ->dateTime()

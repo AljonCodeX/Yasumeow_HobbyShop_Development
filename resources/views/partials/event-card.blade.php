@@ -4,7 +4,7 @@
     <a href="{{ route('events.show', $event) }}" class="text-decoration-none">
         <div class="event-card-img position-relative">
             @if ($event->image)
-                <img src="{{ asset('storage/' . $event->image) }}" alt="{{ $event->title }}">
+                <img src="{{ \App\Support\Media::url($event->image) }}" alt="{{ $event->title }}">
             @else
                 <i class="bi {{ $event->game?->category?->icon ?? 'bi-calendar-event' }}"></i>
             @endif

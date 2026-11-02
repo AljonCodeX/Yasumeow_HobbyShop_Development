@@ -114,7 +114,7 @@
                             <li class="reserve-row">
                                 <div class="reserve-thumb">
                                     @if ($p->image)
-                                        <img src="{{ asset('storage/' . $p->image) }}" alt="{{ $p->name }}">
+                                        <img src="{{ \App\Support\Media::url($p->image) }}" alt="{{ $p->name }}">
                                     @else
                                         <i class="bi {{ $p->category?->icon ?? 'bi-box-seam' }}"></i>
                                     @endif

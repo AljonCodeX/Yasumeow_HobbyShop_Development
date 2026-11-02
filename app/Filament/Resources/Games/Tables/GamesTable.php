@@ -20,7 +20,7 @@ class GamesTable
     {
         return $table
             ->columns([
-                ImageColumn::make('image')->disk('public'),
+                ImageColumn::make('image')->disk(config('filesystems.default')),
                 TextColumn::make('name')->searchable()->sortable(),
                 TextColumn::make('category.name')->label('Category')->sortable(),
                 IconColumn::make('is_active')->label('Shown')->boolean(),

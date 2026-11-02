@@ -3,7 +3,7 @@
         <a href="{{ url('/games/' . $game->slug) }}" class="shop-item-link">
             <div class="shop-item-img">
                 @if ($game->image)
-                    <img src="{{ asset('storage/' . $game->image) }}" alt="{{ $game->name }}">
+                    <img src="{{ \App\Support\Media::url($game->image) }}" alt="{{ $game->name }}">
                 @else
                     <i class="bi {{ $game->category?->icon ?? 'bi-controller' }}"></i>
                 @endif

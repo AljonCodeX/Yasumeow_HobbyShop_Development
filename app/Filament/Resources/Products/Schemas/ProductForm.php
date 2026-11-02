@@ -46,7 +46,7 @@ class ProductForm
                         : null),
                 FileUpload::make('image')
                     ->image()
-                    ->disk('public')
+                    ->disk(config('filesystems.default'))
                     ->directory('products')
                     ->columnSpanFull(),
                 Toggle::make('is_featured')

@@ -19,7 +19,7 @@ class CategoryForm
                     ->columnSpanFull(),
                 FileUpload::make('image')
                     ->image()
-                    ->disk('public')
+                    ->disk(config('filesystems.default'))
                     ->directory('categories')
                     ->hintIcon('heroicon-o-photo')
                     ->hint('Shown on the home category tile')

@@ -84,7 +84,7 @@ class SearchController extends Controller
             'when'  => $e->event_date->format('M d, g:i A'),
             'fee'   => $e->price > 0 ? ['text' => '₱' . number_format((float) $e->price)] : ['text' => 'FREE'],
             'url'   => route('events.show', $e),
-            'image' => $e->image ? asset('storage/' . $e->image) : null,
+            'image' => $e->image ? \App\Support\Media::url($e->image) : null,
             'icon'  => $e->game?->category?->icon ?? 'bi-calendar-event',
         ];
     }
@@ -99,7 +99,7 @@ class SearchController extends Controller
                   'category' => $p->category?->name ?? 'Others',
                   'price'    => '₱' . number_format((float) $p->price),
                   'url'      => route('products.show', $p),
-                  'image'    => $p->image ? asset('storage/' . $p->image) : null,
+                  'image'    => $p->image ? \App\Support\Media::url($p->image) : null,
                   'icon'     => $p->category?->icon ?? 'bi-box-seam',
                   'stock'    => $p->stockStatus(),
                   's'        => mb_strtolower($p->name . ' ' . ($p->category?->name ?? '') . ' ' . $p->description),
@@ -109,7 +109,7 @@ class SearchController extends Controller
                 'name'  => $g->name,
                 'type'  => $g->category?->name ?? 'Game',
                 'url'   => url('/games/' . $g->slug),
-                'image' => $g->image ? asset('storage/' . $g->image) : null,
+                'image' => $g->image ? \App\Support\Media::url($g->image) : null,
                 'icon'  => $g->category?->icon ?? 'bi-controller',
                 's'     => mb_strtolower($g->name . ' ' . ($g->category?->name ?? '') . ' ' . $g->description),
             ])->all(),

@@ -57,7 +57,7 @@ class ProductController extends Controller
             'category' => $p->category?->name ?? 'Others',
             'price'    => '₱' . number_format((float) $p->price),
             'url'      => route('products.show', $p),
-            'image'    => $p->image ? asset('storage/' . $p->image) : null,
+            'image'    => $p->image ? \App\Support\Media::url($p->image) : null,
             'icon'     => $p->category?->icon ?? 'bi-box-seam',
             'stock'    => $p->stockStatus(),
         ]));
