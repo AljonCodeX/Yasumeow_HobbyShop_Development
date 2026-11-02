@@ -218,8 +218,8 @@
                     <div class="col-md-5">
                         <h5>Follow Us</h5>
                         <div class="footer-social">
-                            <a href="https://www.instagram.com/yasumeow/?hl=en" class="text-body" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
-                            <a href="https://www.facebook.com/Yasumeow/" class="text-body" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+                            <a href="https://www.facebook.com/Yasumeow/" class="text-body" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+                            <a href="https://www.instagram.com/yasumeow/?hl=en" class="text-body" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
                         </div>
 
                         <h5 class="mt-4">Contact Us</h5>
