@@ -11,7 +11,7 @@ class RegistrationsByGame extends ChartWidget
 
     protected static ?int $sort = 2;
 
-    protected ?string $heading = 'Most sign-ups by game';
+    protected ?string $heading = 'Most sign-ups by game category';
 
     protected function getType(): string
     {
@@ -20,10 +20,10 @@ class RegistrationsByGame extends ChartWidget
 
     protected function getData(): array
     {
-        $byGame = Registration::where('status', 'registered')
-            ->with('event.game')
+            $byGame = Registration::where('status', 'registered')
+            ->with('event.game.category')
             ->get()
-            ->countBy(fn ($r) => $r->event?->game?->name ?? 'Unknown');
+            ->countBy(fn ($r) => $r->event?->game?->category?->name ?? 'Uncategorized');
 
         return [
             'labels' => $byGame->keys()->all(),
