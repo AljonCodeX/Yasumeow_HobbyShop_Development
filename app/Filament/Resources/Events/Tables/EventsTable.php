@@ -63,25 +63,7 @@ class EventsTable
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make()
-                        ->before(function (DeleteBulkAction $action, Collection $records) {
-                            $ids = $records->modelKeys();
-
-                            $hasPlayers = Event::whereIn('id', $ids)
-                                ->where('status', '!=', 'cancelled')
-                                ->whereHas('registrations', fn ($q) => $q->where('status', 'registered'))
-                                ->exists();
-
-                            if ($hasPlayers || Result::whereIn('event_id', $ids)->exists()) {
-                                Notification::make()
-                                    ->title("Can't delete")
-                                    ->body('One or more selected events have registered players or results. Set them to Cancelled first.')
-                                    ->danger()
-                                    ->send();
-
-                                $action->cancel();
-                            }
-                        }),
+                DeleteBulkAction::make(),
                 ]),
             ]);
     }

@@ -15,21 +15,7 @@ class EditEvent extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            DeleteAction::make()
-                ->before(function (DeleteAction $action, Model $record) {
-                    $hasPlayers = $record->status !== 'cancelled'
-                        && $record->registrations()->where('status', 'registered')->exists();
-
-                    if ($hasPlayers || $record->results()->exists()) {
-                        Notification::make()
-                            ->title("Can't delete this event")
-                            ->body('It has registered players or results. Set the event to Cancelled first, then delete.')
-                            ->danger()
-                            ->send();
-
-                        $action->cancel();
-                    }
-                }),
+        DeleteAction::make(),
         ];
     }
 }
