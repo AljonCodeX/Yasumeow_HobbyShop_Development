@@ -15,18 +15,7 @@ class EditGame extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            DeleteAction::make()
-                ->before(function (DeleteAction $action, Model $record) {
-                    if ($record->events()->exists()) {
-                        Notification::make()
-                            ->title("Can't delete this game")
-                            ->body('It has events. Turn off "Show on website" instead.')
-                            ->danger()
-                            ->send();
-
-                        $action->cancel();
-                    }
-                }),
+            DeleteAction::make(),
         ];
     }
 }

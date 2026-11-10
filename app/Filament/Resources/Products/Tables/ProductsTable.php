@@ -50,18 +50,7 @@ class ProductsTable
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                DeleteBulkAction::make()
-                    ->before(function (DeleteBulkAction $action, Collection $records) {
-                        if (ReservationItem::whereIn('product_id', $records->modelKeys())->exists()) {
-                            Notification::make()
-                                ->title("Can't delete")
-                                ->body('One or more selected products are part of existing reservations.')
-                                ->danger()
-                                ->send();
-
-                            $action->cancel();
-                        }
-                    }),
+                DeleteBulkAction::make(),
                 ]),
             ]);
     }

@@ -7,9 +7,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Game extends Model
 {
+    use SoftDeletes;
     protected $fillable = [
         'name', 'slug', 'category_id', 'image',
         'description', 'about', 'guide', 'is_active',
@@ -25,6 +27,14 @@ class Game extends Model
 
     protected static function booted(): void
     {
+        static::deleting(function (Game $game) {
+            if (! $game->isForceDeleting()) {
+                $game->name = $game->name . ' (deleted ' . $game->id . ')';
+                $game->slug = $game->slug . '-deleted-' . $game->id;
+                $game->saveQuietly();
+            }
+        });
+        
         // The slug is made from the name, so the admin never types it
         static::saving(function (Game $game) {
             if (! $game->slug || $game->isDirty('name')) {

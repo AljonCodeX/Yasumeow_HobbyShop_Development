@@ -34,18 +34,7 @@ class GamesTable
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                DeleteBulkAction::make()
-                    ->before(function (DeleteBulkAction $action, Collection $records) {
-                        if (Event::whereIn('game_id', $records->modelKeys())->exists()) {
-                            Notification::make()
-                                ->title("Can't delete")
-                                ->body('One or more selected games have events.')
-                                ->danger()
-                                ->send();
-
-                            $action->cancel();
-                        }
-                    }),
+                DeleteBulkAction::make(),
                 ]),
             ]);
     }

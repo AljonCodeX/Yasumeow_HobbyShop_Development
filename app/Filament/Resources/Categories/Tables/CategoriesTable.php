@@ -41,20 +41,7 @@ class CategoriesTable
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                DeleteBulkAction::make()
-                    ->before(function (DeleteBulkAction $action, Collection $records) {
-                        $ids = $records->modelKeys();
-
-                        if (Product::whereIn('category_id', $ids)->exists() || Game::whereIn('category_id', $ids)->exists()) {
-                            Notification::make()
-                                ->title("Can't delete")
-                                ->body('One or more selected categories still have products or games.')
-                                ->danger()
-                                ->send();
-
-                            $action->cancel();
-                        }
-                    }),
+                DeleteBulkAction::make(),
                 ]),
             ]);
     }

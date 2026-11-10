@@ -15,18 +15,7 @@ class EditCategory extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            DeleteAction::make()
-                ->before(function (DeleteAction $action, Model $record) {
-                    if ($record->products()->exists() || $record->games()->exists()) {
-                        Notification::make()
-                            ->title("Can't delete this category")
-                            ->body('It still has products or games. Move or delete them first.')
-                            ->danger()
-                            ->send();
-
-                        $action->cancel();
-                    }
-                }),
+            DeleteAction::make(),
         ];
     }
 }

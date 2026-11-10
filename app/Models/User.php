@@ -9,12 +9,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Filament\Models\Contracts\FilamentUser;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Filament\Panel;
 
    class User extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -104,7 +105,7 @@ use Filament\Panel;
             ->whereHas('registrations', fn ($r) => $r->where('user_id', $this->id)->where('status', 'registered'))
             ->count();
     }
-    
+
     // Picked-up reservations the user has not rated yet
     public function pendingReservationRatings(): int
     {
@@ -121,5 +122,15 @@ use Filament\Panel;
             ->whereHas('results', fn ($q) => $q->where('user_id', $this->id))
             ->whereNotIn('id', Rating::where('user_id', $this->id)->whereNotNull('event_id')->select('event_id'))
             ->count();
+    }
+
+    protected static function booted(): void
+    {
+        static::deleting(function (User $user) {
+            if (! $user->isForceDeleting()) {
+                $user->email = 'deleted-' . $user->id . '-' . $user->email;
+                $user->saveQuietly();
+            }
+        });
     }
 }

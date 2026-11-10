@@ -15,18 +15,7 @@ class EditProduct extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            DeleteAction::make()
-                ->before(function (DeleteAction $action, Model $record) {
-                    if ($record->reservationItems()->exists()) {
-                        Notification::make()
-                            ->title("Can't delete this product")
-                            ->body('It is part of existing reservations, so it cannot be deleted.')
-                            ->danger()
-                            ->send();
-
-                        $action->cancel();
-                    }
-                }),
+            DeleteAction::make(),
         ];
     }
 }

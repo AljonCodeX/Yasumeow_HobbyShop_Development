@@ -4,9 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Category extends Model
 {
+    use SoftDeletes;
     protected $fillable = ['name', 'image'];
 
     public function products()
@@ -17,6 +19,16 @@ class Category extends Model
     public function games()
     {
         return $this->hasMany(Game::class);
+    }
+    
+    protected static function booted(): void
+    {
+        static::deleting(function (Category $category) {
+            if (! $category->isForceDeleting()) {
+                $category->name = $category->name . ' (deleted ' . $category->id . ')';
+                $category->saveQuietly();
+            }
+        });
     }
 
     public function getIconAttribute(): string
