@@ -8,7 +8,6 @@ use App\Models\Game;
 use App\Models\Product;
 use App\Models\Reservation;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Rating;
 use App\Models\Registration;
 use Illuminate\Http\Request;
 use App\Models\Result;
@@ -64,30 +63,6 @@ class PageController extends Controller
             ->take(8)
             ->get();
 
-        // Popup: newest picked-up order with no rating, else newest finished event with no rating
-        $toRate = null;
-        $toRateEvent = null;
-
-        if (Auth::check()) {
-            $userId = Auth::id();
-
-            $toRate = Reservation::with('items.product')
-                ->where('user_id', $userId)
-                ->where('status', 'picked_up')
-                ->doesntHave('rating')
-                ->latest('reserved_at')
-                ->first();
-
-            if (! $toRate) {
-                $toRateEvent = Event::where('status', 'completed')
-                    ->whereHas('results', fn ($q) => $q->where('user_id', $userId))
-                    ->whereNotIn('id', Rating::where('user_id', $userId)
-                        ->whereNotNull('event_id')
-                        ->select('event_id'))
-                    ->orderByDesc('event_date')
-                    ->first();
-            }
-        }
 
         // Top players: total points across all events
         $topPlayers = Result::select('user_id')
@@ -102,7 +77,7 @@ class PageController extends Controller
             ->take(10)
             ->get();
 
-        return view('home', compact('events', 'games', 'categories', 'products', 'toRate', 'toRateEvent', 'topPlayers'));
+        return view('home', compact('events', 'games', 'categories', 'products', 'topPlayers'));
     }
 
     // Display info for a category section on the Games pages

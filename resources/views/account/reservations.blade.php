@@ -81,6 +81,14 @@
                 <span>{{ $reservation->reserved_at->format('d-m-Y H:i') }}</span>
                 <span class="history-status {{ $class }}">{{ $label }}</span>
             </div>
+            @if ($reservation->status === 'picked_up' && ! $reservation->rating)
+                <button type="button" class="btn btn-dark btn-sm mt-2"
+                        data-bs-toggle="modal" data-bs-target="#rateModal"
+                        data-rate-action="{{ route('reservations.rate', $reservation) }}"
+                        data-rate-label="Reservation {{ $reservation->reference }}">
+                    <i class="bi bi-star me-1"></i>Rate
+                </button>
+            @endif
         </div>
     </a>
 @empty

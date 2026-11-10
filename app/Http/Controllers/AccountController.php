@@ -6,6 +6,7 @@ use App\Models\Product;
 use App\Models\Reservation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Rating;
 use App\Models\Event;
 use App\Models\Registration;
 use App\Models\Result;
@@ -43,7 +44,7 @@ class AccountController extends Controller
             'q'      => ['nullable', 'string', 'max:60'],
         ]);
 
-        $reservations = Reservation::with('items.product')
+        Reservation::with('items.product', 'rating')
             ->where('user_id', $request->user()->id)
             ->when($data['status'] ?? null, fn ($q, $s) => $q->whereIn(
                 'status',
@@ -108,8 +109,9 @@ class AccountController extends Controller
             ->withQueryString();
 
         $results = Result::where('user_id', $userId)->get()->keyBy('event_id');
+        $ratedEventIds = Rating::where('user_id', $userId)->whereNotNull('event_id')->pluck('event_id')->all();
 
-        return view('account.events', compact('registrations', 'results', 'filter', 'q', 'gameId', 'games'));
+        return view('account.events', compact('registrations', 'results', 'ratedEventIds', 'filter', 'q', 'gameId', 'games'));
     }
 
     public function info()

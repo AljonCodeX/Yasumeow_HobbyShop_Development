@@ -104,4 +104,22 @@ use Filament\Panel;
             ->whereHas('registrations', fn ($r) => $r->where('user_id', $this->id)->where('status', 'registered'))
             ->count();
     }
+    
+    // Picked-up reservations the user has not rated yet
+    public function pendingReservationRatings(): int
+    {
+        return Reservation::where('user_id', $this->id)
+            ->where('status', 'picked_up')
+            ->doesntHave('rating')
+            ->count();
+    }
+
+    // Completed events the user played in and has not rated yet
+    public function pendingEventRatings(): int
+    {
+        return Event::where('status', 'completed')
+            ->whereHas('results', fn ($q) => $q->where('user_id', $this->id))
+            ->whereNotIn('id', Rating::where('user_id', $this->id)->whereNotNull('event_id')->select('event_id'))
+            ->count();
+    }
 }

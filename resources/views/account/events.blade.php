@@ -80,6 +80,14 @@
                 <span>{{ $event->event_date->format('M j, Y g:i A') }}</span>
                 <span class="history-status {{ $class }}">{{ $label }}</span>
             </div>
+            @if ($result && $event->status === 'completed' && ! in_array($event->id, $ratedEventIds))
+                <button type="button" class="btn btn-dark btn-sm mt-2"
+                        data-bs-toggle="modal" data-bs-target="#rateModal"
+                        data-rate-action="{{ route('events.rate', $event) }}"
+                        data-rate-label="{{ $event->title }}">
+                    <i class="bi bi-star me-1"></i>Rate
+                </button>
+            @endif
         </div>
     </a>
 @empty

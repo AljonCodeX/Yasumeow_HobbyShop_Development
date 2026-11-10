@@ -67,10 +67,16 @@ class AppServiceProvider extends ServiceProvider
                     ? $user->newFavouritesCount('fav_avatar_seen_at')
                         + $user->newReservationChangesCount('fav_avatar_seen_at')
                         + $user->newEventChangesCount('fav_avatar_seen_at')
+                        + $user->pendingReservationRatings()
+                        + $user->pendingEventRatings()
                     : 0,
                 'favouriteMenuCount'   => $user ? $user->newFavouritesCount('fav_menu_seen_at') : 0,
-                'reservationMenuCount' => $user ? $user->newReservationChangesCount('res_menu_seen_at') : 0,
-                'eventMenuCount'       => $user ? $user->newEventChangesCount('event_menu_seen_at') : 0,
+                'reservationMenuCount' => $user
+                    ? $user->newReservationChangesCount('res_menu_seen_at') + $user->pendingReservationRatings()
+                    : 0,
+                'eventMenuCount'       => $user
+                    ? $user->newEventChangesCount('event_menu_seen_at') + $user->pendingEventRatings()
+                    : 0,
             ]);
         });
     }
