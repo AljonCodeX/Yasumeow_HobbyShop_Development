@@ -44,7 +44,7 @@ class AccountController extends Controller
             'q'      => ['nullable', 'string', 'max:60'],
         ]);
 
-        Reservation::with('items.product', 'rating')
+        $reservations = Reservation::with('items.product', 'rating')
             ->where('user_id', $request->user()->id)
             ->when($data['status'] ?? null, fn ($q, $s) => $q->whereIn(
                 'status',
